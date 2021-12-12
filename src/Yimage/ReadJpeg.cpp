@@ -1,0 +1,118 @@
+//****************************************************************************
+// Copyright © 2021 Jan Erik Breimo. All rights reserved.
+// Created by Jan Erik Breimo on 2021-11-13.
+//
+// This file is distributed under the BSD License.
+// License text is included with the source distribution.
+//****************************************************************************
+#include <Yimage/ReadJpeg.hpp>
+
+#include <jpeglib.h>
+#include <Yimage/YimageException.hpp>
+
+namespace yimage
+{
+    namespace
+    {
+        void handle_error(j_common_ptr cinfo)
+        {
+            char msg[JMSG_LENGTH_MAX];
+            (*cinfo->err->format_message)(cinfo, msg);
+            throw YimageException("Could not read JPEG image: "
+                                  + std::string(msg));
+        }
+
+        struct FileCloser
+        {
+            void operator()(FILE* file) const
+            {
+                fclose(file);
+            }
+        };
+
+        using UniqueFile = std::unique_ptr<FILE, FileCloser>;
+
+        struct JpegData
+        {
+            jpeg_error_mgr error_mgr = {};
+            jpeg_decompress_struct info = {};
+        };
+
+        void create_decompress(JpegData& data)
+        {
+            data.info.err = jpeg_std_error(&data.error_mgr);
+            data.error_mgr.error_exit = handle_error;
+            jpeg_create_decompress(&data.info);
+        }
+
+        Image read_image(JpegData& data)
+        {
+            jpeg_read_header(&data.info, TRUE);
+            jpeg_calc_output_dimensions(&data.info);
+            auto row_size = data.info.output_width
+                            * data.info.output_components;
+            auto* buffer = (*data.info.mem->alloc_sarray)
+                ((j_common_ptr)&data.info, JPOOL_IMAGE, row_size, 1);
+            jpeg_start_decompress(&data.info);
+
+            Image image(data.info.output_width,
+                        data.info.output_height,
+                        data.info.output_components == 3
+                                  ? PixelType::RGB24
+                                  : PixelType::MONO8);
+
+            auto* dst = image.data();
+
+            while (data.info.output_scanline < data.info.output_height)
+            {
+                jpeg_read_scanlines(&data.info, buffer, 1);
+                std::copy(buffer[0], buffer[0] + row_size, dst);
+                dst += row_size;
+            }
+
+            jpeg_finish_decompress(&data.info);
+            jpeg_destroy_decompress(&data.info);
+
+            return image;
+        }
+    }
+
+    Image read_jpeg(FILE* file)
+    {
+        JpegData data = {};
+        try
+        {
+            create_decompress(data);
+            jpeg_stdio_src(&data.info, file);
+            return read_image(data);
+        }
+        catch (std::exception&)
+        {
+            jpeg_destroy_decompress(&data.info);
+            throw;
+        }
+    }
+
+    Image read_jpeg(const std::string& path)
+    {
+        UniqueFile file(fopen(path.c_str(), "rb"));
+        return read_jpeg(file.get());
+    }
+
+    Image read_jpeg(const void* buffer, size_t size)
+    {
+        JpegData data = {};
+        try
+        {
+            create_decompress(data);
+            auto ucbuffer = static_cast<const unsigned char*>(buffer);
+            jpeg_mem_src(&data.info, ucbuffer, size);
+            return read_image(data);
+        }
+        catch (std::exception&)
+        {
+            jpeg_destroy_decompress(&data.info);
+            throw;
+        }
+    }
+}
