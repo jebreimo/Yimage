@@ -42,6 +42,12 @@ namespace yimage
         case PixelType::MONO8:
             png_info.bit_depth(8).bit_depth(PNG_COLOR_TYPE_GRAY);
             break;
+        case PixelType::ALPHA_MONO8:
+            YIMAGE_THROW("PNG doesn't support ALPHA_MONO8."
+                         " Convert the image to MONO_ALPHA8 first.");
+        case PixelType::MONO_ALPHA8:
+            png_info.bit_depth(8).bit_depth(PNG_COLOR_TYPE_GRAY_ALPHA);
+            break;
         case PixelType::RGB24:
             png_info.bit_depth(8).bit_depth(PNG_COLOR_TYPE_RGB);
             break;
