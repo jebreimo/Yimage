@@ -6,7 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include "Image.hpp"
+#include "ImageView.hpp"
 #include "PngInfo.hpp"
 #include "PngTransform.hpp"
 
@@ -21,8 +21,8 @@ namespace yimage
                    PngInfo info, PngTransform transform);
 
     void write_png(std::ostream& stream,
-                   const Image& img);
+                   const ImageView& img);
 
     void write_png(const std::string& fileName,
-                   const Image& img);
+                   const ImageView& img);
 }

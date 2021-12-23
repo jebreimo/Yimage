@@ -11,47 +11,29 @@
 
 namespace yimage
 {
-    size_t get_pixel_size(PixelType type)
-    {
-        switch (type)
-        {
-        case MONO8:
-            return 1;
-        case RGB24:
-            return 3;
-        case ARGB32:
-        case RGBA32:
-            return 4;
-        default:
-            return 0;
-        }
-    }
-
     Image::Image() = default;
 
     Image::Image(unsigned int width, unsigned int height, PixelType pixel_type)
         : m_width(width),
           m_height(height),
-          m_pixel_size(get_pixel_size(pixel_type)),
-          m_size(m_width * m_height * m_pixel_size),
           m_pixel_type(pixel_type)
     {
-        if (m_size == 0)
+        auto size = this->size();
+        if (size == 0)
             YIMAGE_THROW("Image size is 0 bytes.");
-        m_buffer.reset(new unsigned char[m_size]);
+        m_buffer.reset(new unsigned char[size]);
     }
 
     Image::Image(const Image& rhs)
         : m_width(rhs.width()),
           m_height(rhs.height()),
-          m_pixel_size(rhs.pixel_size()),
-          m_size(rhs.size()),
           m_pixel_type(rhs.pixel_type())
     {
-        if (m_size)
+        auto size = this->size();
+        if (size)
         {
-            m_buffer.reset(new unsigned char[m_size]);
-            std::copy(rhs.begin(), rhs.end(), data());
+            m_buffer.reset(new unsigned char[size]);
+            std::copy(rhs.data(), rhs.data() + size, data());
         }
     }
 
@@ -59,21 +41,21 @@ namespace yimage
         : m_width(rhs.width()),
           m_height(rhs.height()),
           m_pixel_type(rhs.pixel_type()),
-          m_size(rhs.size()),
           m_buffer(rhs.release())
     {}
 
     Image& Image::operator=(const Image& rhs)
     {
+        if (&rhs == this)
+            return *this;
+
         m_width = rhs.width();
         m_height = rhs.height();
-        m_pixel_size = rhs.pixel_size();
-        m_size = rhs.size();
         m_pixel_type = rhs.pixel_type();
-        if (auto size = m_width * m_height * m_pixel_size)
+        if (auto size = this->size())
         {
             m_buffer.reset(new unsigned char[size]);
-            std::copy(rhs.begin(), rhs.end(), data());
+            std::copy(rhs.data(), rhs.data() + size, data());
         }
         else
         {
@@ -86,37 +68,19 @@ namespace yimage
     {
         m_width = rhs.width();
         m_height = rhs.height();
-        m_pixel_size = rhs.pixel_size();
-        m_size = rhs.size();
         m_pixel_type = rhs.pixel_type();
         m_buffer = rhs.release();
         return *this;
     }
 
-    const unsigned char* Image::pixel(unsigned x, unsigned y) const
+    Image::operator ImageView() const
     {
-        auto index = (x + y * m_width) * m_pixel_size;
-        if (index >= m_size)
-            YIMAGE_THROW("Indexes are out of range.");
-        return m_buffer.get() + index;
+        return {m_buffer.get(), width(), height(), pixel_type()};
     }
 
-    unsigned char* Image::pixel(unsigned x, unsigned y)
+    Image::operator MutableImageView()
     {
-        auto index = (x + y * m_width) * m_pixel_size;
-        if (index >= m_size)
-            YIMAGE_THROW("Indexes are out of range.");
-        return m_buffer.get() + index;
-    }
-
-    const unsigned char* Image::begin() const
-    {
-        return m_buffer.get();
-    }
-
-    const unsigned char* Image::end() const
-    {
-        return m_buffer.get() + m_size;
+        return {m_buffer.get(), width(), height(), pixel_type()};
     }
 
     const unsigned char* Image::data() const
@@ -141,12 +105,7 @@ namespace yimage
 
     unsigned Image::size() const
     {
-        return m_size;
-    }
-
-    unsigned Image::pixel_size() const
-    {
-        return m_pixel_size;
+        return m_width * m_height * get_pixel_size(m_pixel_type);
     }
 
     PixelType Image::pixel_type() const
@@ -156,8 +115,9 @@ namespace yimage
 
     std::unique_ptr<unsigned char> Image::release()
     {
-        m_width = m_height = m_pixel_size = m_size = 0;
+        m_width = m_height = 0;
         m_pixel_type = PixelType::NONE;
+        m_buffer = nullptr;
         return std::move(m_buffer);
     }
 }

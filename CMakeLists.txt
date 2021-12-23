@@ -21,6 +21,8 @@ endif ()
 
 option(YIMAGE_BUILD_EXTRAS "Build apps in the extras dir" ${YIMAGE_MASTER_PROJECT})
 
+option(YIMAGE_BUILD_TESTS "Build unit tests" ${YIMAGE_MASTER_PROJECT})
+
 option(YIMAGE_INSTALL "Generate the install target" ${YIMAGE_MASTER_PROJECT})
 
 find_package(JPEG REQUIRED)
@@ -41,7 +43,7 @@ add_library(Yimage
     src/Yimage/PngWriter.cpp
     src/Yimage/ReadJpeg.cpp
     src/Yimage/WritePng.cpp
-    )
+    include/Yimage/ImageView.hpp src/Yimage/ImageView.cpp include/Yimage/ImageData.hpp include/Yimage/PixelType.hpp src/Yimage/PixelType.cpp)
 
 include(GNUInstallDirs)
 
@@ -59,6 +61,19 @@ target_link_libraries(Yimage
 
 add_library(Yimage::Yimage ALIAS Yimage)
 
+if (YIMAGE_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests/YimageTest)
+endif ()
+
 if (YIMAGE_BUILD_EXTRAS)
     add_subdirectory(extras/jpg2png)
 endif()
+
+if (YIMAGE_MASTER_PROJECT AND DEFINED LOCAL_SOURCE_PACKAGE_DIR)
+    set(TARBALL_NAME ${LOCAL_SOURCE_PACKAGE_DIR}/${PROJECT_NAME}-${PROJECT_VERSION}.tar.gz)
+    add_custom_target(${PROJECT_NAME}_BUILD_SRC_TARBALL
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMAND git archive -v --format=tar.gz --prefix=${PROJECT_NAME}/ HEAD > ${TARBALL_NAME}
+        )
+endif ()

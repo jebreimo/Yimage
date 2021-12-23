@@ -9,24 +9,18 @@
 #include <cstdio>
 #include <memory>
 #include <string>
+#include "ImageView.hpp"
 
 namespace yimage
 {
-    enum PixelType
-    {
-        NONE,
-        MONO8,
-        RGB24,
-        ARGB32,
-        RGBA32
-    };
-
-    size_t get_pixel_size(PixelType type);
-
     class Image
     {
     public:
         Image();
+
+        Image(std::unique_ptr<unsigned char> buffer,
+              unsigned width, unsigned height,
+              PixelType pixel_type);
 
         Image(unsigned width, unsigned height, PixelType pixel_type);
 
@@ -39,16 +33,10 @@ namespace yimage
         Image& operator=(Image&& rhs) noexcept;
 
         [[nodiscard]]
-        const unsigned char* pixel(unsigned x, unsigned y) const;
+        operator ImageView() const;
 
         [[nodiscard]]
-        unsigned char* pixel(unsigned x, unsigned y);
-
-        [[nodiscard]]
-        const unsigned char* begin() const;
-
-        [[nodiscard]]
-        const unsigned char* end() const;
+        operator MutableImageView();
 
         [[nodiscard]]
         const unsigned char* data() const;
@@ -66,17 +54,12 @@ namespace yimage
         unsigned size() const;
 
         [[nodiscard]]
-        unsigned pixel_size() const;
-
-        [[nodiscard]]
         PixelType pixel_type() const;
 
         std::unique_ptr<unsigned char> release();
     private:
         unsigned m_width = 0;
         unsigned m_height = 0;
-        unsigned m_pixel_size = 0;
-        unsigned m_size = 0;
         PixelType m_pixel_type = PixelType::NONE;
         std::unique_ptr<unsigned char> m_buffer;
     };

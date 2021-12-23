@@ -33,31 +33,31 @@ namespace yimage
         write_png(stream, image, image_size, std::move(options), transform);
     }
 
-    void write_png(std::ostream& stream, const Image& img)
+    void write_png(std::ostream& stream, const ImageView& img)
     {
         auto png_info = PngInfo().width(img.width()).height(img.height());
 
         switch (img.pixel_type())
         {
-        case MONO8:
+        case PixelType::MONO8:
             png_info.bit_depth(8).bit_depth(PNG_COLOR_TYPE_GRAY);
             break;
-        case RGB24:
+        case PixelType::RGB24:
             png_info.bit_depth(8).bit_depth(PNG_COLOR_TYPE_RGB);
             break;
-        case ARGB32:
+        case PixelType::ARGB32:
             YIMAGE_THROW("PNG doesn't support ARGB32."
                          " Convert the image to RGBA32 first.");
-        case RGBA32:
+        case PixelType::RGBA32:
             png_info.bit_depth(8).bit_depth(PNG_COLOR_TYPE_RGBA);
             break;
-        case NONE:
+        case PixelType::NONE:
             break;
         }
         write_png(stream, img.data(), img.size(), png_info, PngTransform());
     }
 
-    void write_png(const std::string& fileName, const Image& img)
+    void write_png(const std::string& fileName, const ImageView& img)
     {
         std::ofstream stream(fileName);
         if (!stream)
