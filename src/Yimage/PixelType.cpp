@@ -15,8 +15,8 @@ namespace yimage
         {
         case PixelType::MONO8:
             return 1;
-        case PixelType::ALPHA_MONO8:
-        case PixelType::MONO_ALPHA8:
+        case PixelType::ALPHA_MONO16:
+        case PixelType::MONO_ALPHA16:
             return 2;
         case PixelType::RGB24:
             return 3;

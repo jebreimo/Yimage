@@ -40,22 +40,22 @@ namespace yimage
         switch (img.pixel_type())
         {
         case PixelType::MONO8:
-            png_info.bit_depth(8).bit_depth(PNG_COLOR_TYPE_GRAY);
+            png_info.bit_depth(8).color_type(PNG_COLOR_TYPE_GRAY);
             break;
-        case PixelType::ALPHA_MONO8:
-            YIMAGE_THROW("PNG doesn't support ALPHA_MONO8."
-                         " Convert the image to MONO_ALPHA8 first.");
-        case PixelType::MONO_ALPHA8:
-            png_info.bit_depth(8).bit_depth(PNG_COLOR_TYPE_GRAY_ALPHA);
+        case PixelType::ALPHA_MONO16:
+            YIMAGE_THROW("PNG doesn't support ALPHA_MONO16."
+                         " Convert the image to MONO_ALPHA16 first.");
+        case PixelType::MONO_ALPHA16:
+            png_info.bit_depth(8).color_type(PNG_COLOR_TYPE_GRAY_ALPHA);
             break;
         case PixelType::RGB24:
-            png_info.bit_depth(8).bit_depth(PNG_COLOR_TYPE_RGB);
+            png_info.bit_depth(8).color_type(PNG_COLOR_TYPE_RGB);
             break;
         case PixelType::ARGB32:
             YIMAGE_THROW("PNG doesn't support ARGB32."
                          " Convert the image to RGBA32 first.");
         case PixelType::RGBA32:
-            png_info.bit_depth(8).bit_depth(PNG_COLOR_TYPE_RGBA);
+            png_info.bit_depth(8).color_type(PNG_COLOR_TYPE_RGBA);
             break;
         case PixelType::NONE:
             break;

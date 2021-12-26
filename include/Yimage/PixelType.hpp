@@ -14,8 +14,8 @@ namespace yimage
     {
         NONE,
         MONO8,
-        ALPHA_MONO8,
-        MONO_ALPHA8,
+        ALPHA_MONO16,
+        MONO_ALPHA16,
         RGB24,
         ARGB32,
         RGBA32
