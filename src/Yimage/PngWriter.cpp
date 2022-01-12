@@ -6,10 +6,10 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #include "Yimage/PngWriter.hpp"
-#include "Yimage/YimageException.hpp"
 
 #include <ostream>
 #include <utility>
+#include "Yimage/YimageException.hpp"
 
 namespace yimage
 {
@@ -109,12 +109,16 @@ namespace yimage
 
     PngWriter& PngWriter::operator=(PngWriter&& obj) noexcept
     {
+        if (this == &obj)
+            return *this;
         if (m_png_ptr)
             png_destroy_write_struct(&m_png_ptr, &m_info_ptr);
         m_info = std::move(obj.m_info);
         m_transform = obj.m_transform;
-        std::swap(m_png_ptr, obj.m_png_ptr);
-        std::swap(m_info_ptr, obj.m_info_ptr);
+        m_png_ptr = obj.m_png_ptr;
+        obj.m_png_ptr = nullptr;
+        m_info_ptr = obj.m_info_ptr;
+        obj.m_info_ptr = nullptr;
         return *this;
     }
 

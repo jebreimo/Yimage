@@ -6,12 +6,24 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #include <Yimage/Image.hpp>
-#include <Yimage/YimageException.hpp>
+
 #include <algorithm>
+#include <Yimage/YimageException.hpp>
 
 namespace yimage
 {
     Image::Image() = default;
+
+    Image::Image(std::unique_ptr<unsigned char> buffer,
+                 unsigned int width, unsigned int height,
+                 PixelType pixel_type)
+        : m_buffer(move(buffer)),
+          m_width(width),
+          m_height(height),
+          m_pixel_type(pixel_type)
+    {
+
+    }
 
     Image::Image(unsigned int width, unsigned int height, PixelType pixel_type)
         : m_width(width),
@@ -103,9 +115,14 @@ namespace yimage
         return m_height;
     }
 
+    unsigned Image::row_size() const
+    {
+        return (m_width * get_pixel_size(m_pixel_type) + 7) / 8;
+    }
+
     unsigned Image::size() const
     {
-        return m_width * m_height * get_pixel_size(m_pixel_type);
+        return m_height * row_size();
     }
 
     PixelType Image::pixel_type() const

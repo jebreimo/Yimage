@@ -1,47 +1,47 @@
 //****************************************************************************
-// Copyright © 2021 Jan Erik Breimo. All rights reserved.
-// Created by Jan Erik Breimo on 2021-12-17.
+// Copyright © 2022 Jan Erik Breimo. All rights reserved.
+// Created by Jan Erik Breimo on 2022-01-08.
 //
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include <cstdint>
-#include "PixelType.hpp"
+#include "ImageView.hpp"
 
 namespace yimage
 {
-    class ImageView
+    class MutableImageView
     {
     public:
-        ImageView();
+        MutableImageView();
 
-        ImageView(const unsigned char* buffer,
-                  unsigned width,
-                  unsigned height,
-                  PixelType pixel_type);
+        MutableImageView(unsigned char* buffer,
+                         unsigned width, unsigned height,
+                         PixelType pixel_type);
 
         [[nodiscard]]
-        constexpr const unsigned char* pixel_pointer(unsigned x, unsigned y) const
+        operator ImageView() const;
+
+        [[nodiscard]]
+        constexpr unsigned char* pixel_pointer(unsigned x, unsigned y)
         {
             return m_buffer + y * row_size() + x * m_pixel_size / 8;
         }
 
-
         [[nodiscard]]
-        constexpr const unsigned char* begin() const
+        constexpr unsigned char* begin()
         {
             return m_buffer;
         }
 
         [[nodiscard]]
-        constexpr const unsigned char* end() const
+        constexpr unsigned char* end()
         {
             return m_buffer + size();
         }
 
         [[nodiscard]]
-        constexpr const unsigned char* data() const
+        constexpr unsigned char* data()
         {
             return m_buffer;
         }
@@ -87,18 +87,12 @@ namespace yimage
         unsigned m_height = 0;
         unsigned m_pixel_size = 0;
         PixelType m_pixel_type = PixelType::NONE;
-        const unsigned char* m_buffer = nullptr;
+        unsigned char* m_buffer = nullptr;
     };
 
-    bool operator==(const ImageView& a, const ImageView& b);
+    bool operator==(const MutableImageView& a, const MutableImageView& b);
 
-    struct Rgba8
-    {
-        uint8_t r = 0;
-        uint8_t g = 0;
-        uint8_t b = 0;
-        uint8_t a = 0;
-    };
+    void paste(ImageView img, int x, int y, MutableImageView mut_img);
 
-    Rgba8 get_rgba8(const ImageView& image, unsigned x, unsigned y);
+    void set_rgba8(MutableImageView& image, unsigned x, unsigned y, Rgba8 rgba);
 }

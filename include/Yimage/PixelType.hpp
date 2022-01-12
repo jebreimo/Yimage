@@ -13,12 +13,21 @@ namespace yimage
     enum class PixelType
     {
         NONE,
-        MONO8,
-        ALPHA_MONO16,
-        MONO_ALPHA16,
-        RGB24,
-        ARGB32,
-        RGBA32
+        MONO_1,
+        MONO_2,
+        MONO_4,
+        MONO_8,
+        MONO_16,
+        ALPHA_MONO_8,
+        MONO_ALPHA_8,
+        ALPHA_MONO_16,
+        MONO_ALPHA_16,
+        RGB_8,
+        RGB_16,
+        ARGB_8,
+        RGBA_8,
+        ARGB_16,
+        RGBA_16
     };
 
     size_t get_pixel_size(PixelType type);

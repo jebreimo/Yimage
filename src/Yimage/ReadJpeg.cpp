@@ -58,8 +58,8 @@ namespace yimage
             Image image(data.info.output_width,
                         data.info.output_height,
                         data.info.output_components == 3
-                                  ? PixelType::RGB24
-                                  : PixelType::MONO8);
+                                  ? PixelType::RGB_8
+                                  : PixelType::MONO_8);
 
             auto* dst = image.data();
 

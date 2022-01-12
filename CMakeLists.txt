@@ -30,23 +30,26 @@ find_package(PNG REQUIRED)
 
 add_library(Yimage
     include/Yimage/Image.hpp
-    include/Yimage/ImageData.hpp
     include/Yimage/ImageView.hpp
+    include/Yimage/MutableImageView.hpp
     include/Yimage/PixelType.hpp
     include/Yimage/PngInfo.hpp
     include/Yimage/PngTransform.hpp
     include/Yimage/PngWriter.hpp
     include/Yimage/ReadJpeg.hpp
+    include/Yimage/ReadPng.hpp
     include/Yimage/WritePng.hpp
     include/Yimage/Yimage.hpp
     include/Yimage/YimageException.hpp
     src/Yimage/Image.cpp
     src/Yimage/ImageView.cpp
+    src/Yimage/MutableImageView.cpp
     src/Yimage/PixelType.cpp
     src/Yimage/PngInfo.cpp
     src/Yimage/PngTransform.cpp
     src/Yimage/PngWriter.cpp
     src/Yimage/ReadJpeg.cpp
+    src/Yimage/ReadPng.cpp
     src/Yimage/WritePng.cpp
     )
 
@@ -73,6 +76,7 @@ endif ()
 
 if (YIMAGE_BUILD_EXTRAS)
     add_subdirectory(extras/jpg2png)
+    add_subdirectory(extras/transparent)
 endif()
 
 if (YIMAGE_MASTER_PROJECT AND DEFINED ENV{LOCAL_SOURCE_PACKAGE_DIR})

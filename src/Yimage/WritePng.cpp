@@ -36,31 +36,57 @@ namespace yimage
     void write_png(std::ostream& stream, const ImageView& img)
     {
         auto png_info = PngInfo().width(img.width()).height(img.height());
+        PngTransform transform;
 
         switch (img.pixel_type())
         {
-        case PixelType::MONO8:
+        case PixelType::MONO_1:
+            png_info.bit_depth(1).color_type(PNG_COLOR_TYPE_GRAY);
+            break;
+        case PixelType::MONO_2:
+            png_info.bit_depth(2).color_type(PNG_COLOR_TYPE_GRAY);
+            break;
+        case PixelType::MONO_4:
+            png_info.bit_depth(4).color_type(PNG_COLOR_TYPE_GRAY);
+            break;
+        case PixelType::MONO_8:
             png_info.bit_depth(8).color_type(PNG_COLOR_TYPE_GRAY);
             break;
-        case PixelType::ALPHA_MONO16:
-            YIMAGE_THROW("PNG doesn't support ALPHA_MONO16."
-                         " Convert the image to MONO_ALPHA16 first.");
-        case PixelType::MONO_ALPHA16:
+        case PixelType::ALPHA_MONO_8:
+            transform.invert_alpha(true);
+            [[fallthrough]];
+        case PixelType::MONO_ALPHA_8:
             png_info.bit_depth(8).color_type(PNG_COLOR_TYPE_GRAY_ALPHA);
             break;
-        case PixelType::RGB24:
+        case PixelType::ALPHA_MONO_16:
+            transform.invert_alpha(true);
+            [[fallthrough]];
+        case PixelType::MONO_ALPHA_16:
+            png_info.bit_depth(16).color_type(PNG_COLOR_TYPE_GRAY_ALPHA);
+            break;
+        case PixelType::RGB_8:
             png_info.bit_depth(8).color_type(PNG_COLOR_TYPE_RGB);
             break;
-        case PixelType::ARGB32:
-            YIMAGE_THROW("PNG doesn't support ARGB32."
-                         " Convert the image to RGBA32 first.");
-        case PixelType::RGBA32:
+        case PixelType::RGB_16:
+            png_info.bit_depth(16).color_type(PNG_COLOR_TYPE_RGB);
+            break;
+        case PixelType::ARGB_8:
+            transform.invert_alpha(true);
+            [[fallthrough]];
+        case PixelType::RGBA_8:
             png_info.bit_depth(8).color_type(PNG_COLOR_TYPE_RGBA);
             break;
-        case PixelType::NONE:
+        case PixelType::ARGB_16:
+            transform.invert_alpha(true);
+            [[fallthrough]];
+        case PixelType::RGBA_16:
+            png_info.bit_depth(16).color_type(PNG_COLOR_TYPE_RGBA);
             break;
+        default:
+            YIMAGE_THROW("Unsupported pixel type: "
+                         + std::to_string(int(img.pixel_type())));
         }
-        write_png(stream, img.data(), img.size(), png_info, PngTransform());
+        write_png(stream, img.data(), img.size(), png_info, transform);
     }
 
     void write_png(const std::string& fileName, const ImageView& img)

@@ -9,7 +9,7 @@
 #include <cstdio>
 #include <memory>
 #include <string>
-#include "ImageView.hpp"
+#include "MutableImageView.hpp"
 
 namespace yimage
 {
@@ -49,6 +49,9 @@ namespace yimage
 
         [[nodiscard]]
         unsigned height() const;
+
+        [[nodiscard]]
+        unsigned row_size() const;
 
         [[nodiscard]]
         unsigned size() const;
