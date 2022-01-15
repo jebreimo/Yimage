@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.21)
-project(Yimage VERSION 0.0.3)
+project(Yimage VERSION 0.0.4)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -36,6 +36,7 @@ add_library(Yimage
     include/Yimage/PngInfo.hpp
     include/Yimage/PngTransform.hpp
     include/Yimage/PngWriter.hpp
+    include/Yimage/ReadImage.hpp
     include/Yimage/ReadJpeg.hpp
     include/Yimage/ReadPng.hpp
     include/Yimage/WritePng.hpp
@@ -48,6 +49,7 @@ add_library(Yimage
     src/Yimage/PngInfo.cpp
     src/Yimage/PngTransform.cpp
     src/Yimage/PngWriter.cpp
+    src/Yimage/ReadImage.cpp
     src/Yimage/ReadJpeg.cpp
     src/Yimage/ReadPng.cpp
     src/Yimage/WritePng.cpp

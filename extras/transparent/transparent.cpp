@@ -7,8 +7,8 @@
 //****************************************************************************
 #include <iostream>
 #include <Argos/Argos.hpp>
+#include <Yimage/ReadImage.hpp>
 #include <Yimage/WritePng.hpp>
-#include <Yimage/ReadPng.hpp>
 
 argos::ParsedArguments parse_arguments(int argc, char* argv[])
 {
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
     try
     {
         const auto args = parse_arguments(argc, argv);
-        auto image = yimage::read_png(args.value("FILE").as_string());
+        auto image = yimage::read_image(args.value("FILE").as_string());
         print_image_specs(std::cout, image);
         yimage::Image output(image.width(), image.height(), yimage::PixelType::MONO_ALPHA_8);
         yimage::ImageView src = image;
