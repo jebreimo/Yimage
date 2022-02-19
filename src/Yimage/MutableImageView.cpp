@@ -74,7 +74,7 @@ namespace yimage
 
         for (unsigned i = 0; i < n_rows; ++i)
         {
-            std::copy(src, src + n_copy * mut_img.pixel_size(), dst);
+            std::copy(src, src + n_copy * mut_img.pixel_size() / 8, dst);
             src += img.width();
             dst += mut_img.width();
         }

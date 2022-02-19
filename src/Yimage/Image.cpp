@@ -21,9 +21,7 @@ namespace yimage
           m_width(width),
           m_height(height),
           m_pixel_type(pixel_type)
-    {
-
-    }
+    {}
 
     Image::Image(unsigned int width, unsigned int height, PixelType pixel_type)
         : m_width(width),
@@ -134,7 +132,6 @@ namespace yimage
     {
         m_width = m_height = 0;
         m_pixel_type = PixelType::NONE;
-        m_buffer = nullptr;
         return std::move(m_buffer);
     }
 }

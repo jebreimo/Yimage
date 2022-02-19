@@ -33,7 +33,7 @@ TEST_CASE("test MutableImageView::paste")
 
     SECTION("in the center")
     {
-        mut_image1.paste(image2, 1, 1);
+        paste(image2, 1, 1, mut_image1);
         std::vector<uint8_t> buffer3{
             0, 1, 2, 3,
             4, 20, 21, 7,
@@ -44,7 +44,7 @@ TEST_CASE("test MutableImageView::paste")
     }
     SECTION("partially outside 1")
     {
-        mut_image1.paste(image2, 3, -1);
+        paste(image2, 3, -1, mut_image1);
         std::vector<uint8_t> buffer3{
             0, 1, 2, 22,
             4, 5, 6, 7,
@@ -55,7 +55,7 @@ TEST_CASE("test MutableImageView::paste")
     }
     SECTION("partially outside 2")
     {
-        mut_image1.paste(image2, 0, 3);
+        paste(image2, 0, 3, mut_image1);
         std::vector<uint8_t> buffer3{
             0, 1, 2, 3,
             4, 5, 6, 7,
