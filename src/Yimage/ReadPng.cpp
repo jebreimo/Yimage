@@ -137,7 +137,7 @@ namespace yimage
         //const auto pixel_size = channels * bit_depth;
         //const auto row_size = width * pixel_size;
         //const auto image_size = row_size * height;
-        Image image(width, height, get_pixel_type(color_type, bit_depth));
+        Image image(get_pixel_type(color_type, bit_depth), width, height);
         MutableImageView view = image;
         std::vector<uint8_t*> row_pointers(height);
         for (size_t i = 0; i < height; ++i)

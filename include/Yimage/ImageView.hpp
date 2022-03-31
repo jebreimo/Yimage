@@ -7,6 +7,7 @@
 //****************************************************************************
 #pragma once
 #include <cstdint>
+#include <utility>
 #include "PixelType.hpp"
 
 namespace yimage
@@ -17,77 +18,85 @@ namespace yimage
         ImageView();
 
         ImageView(const unsigned char* buffer,
-                  unsigned width,
-                  unsigned height,
-                  PixelType pixel_type);
+                  PixelType pixel_type,
+                  size_t width,
+                  size_t height,
+                  size_t row_gap_size = 0);
 
         [[nodiscard]]
-        constexpr const unsigned char* pixel_pointer(unsigned x, unsigned y) const
+        constexpr const unsigned char* pixel_pointer(size_t x, size_t y) const
         {
-            return m_buffer + y * row_size() + x * m_pixel_size / 8;
-        }
-
-
-        [[nodiscard]]
-        constexpr const unsigned char* begin() const
-        {
-            return m_buffer;
+            return buffer_ + y * row_size() + x * pixel_size_ / 8;
         }
 
         [[nodiscard]]
-        constexpr const unsigned char* end() const
+        constexpr std::pair<const unsigned char*, const unsigned char*>
+        row(size_t index) const
         {
-            return m_buffer + size();
+            auto start = buffer_ + index * row_size();
+            return {start, start + (width_ * pixel_size_ + 7) / 8};
         }
 
         [[nodiscard]]
         constexpr const unsigned char* data() const
         {
-            return m_buffer;
+            return buffer_;
         }
 
         [[nodiscard]]
-        constexpr unsigned width() const
+        constexpr size_t width() const
         {
-            return m_width;
+            return width_;
         }
 
         [[nodiscard]]
-        constexpr unsigned height() const
+        constexpr size_t height() const
         {
-            return m_height;
+            return height_;
         }
 
         [[nodiscard]]
-        constexpr unsigned row_size() const
+        constexpr size_t row_size() const
         {
-            return (m_width * m_pixel_size + 7) / 8;
+            return gap_size_ + (width_ * pixel_size_ + 7) / 8;
         }
 
         [[nodiscard]]
-        constexpr unsigned size() const
+        constexpr size_t size() const
         {
-            return m_height * row_size();
+            auto last_row = (width_ * pixel_size_ + 7) / 8;
+            return height_ == 0 ? 0 : (height_ - 1) * row_size() + last_row;
         }
 
         [[nodiscard]]
-        constexpr unsigned pixel_size() const
+        constexpr size_t pixel_size() const
         {
-            return m_pixel_size;
+            return pixel_size_;
         }
 
         [[nodiscard]]
         constexpr PixelType pixel_type() const
         {
-            return m_pixel_type;
+            return pixel_type_;
         }
 
+        [[nodiscard]]
+        constexpr bool is_contiguous() const
+        {
+            return gap_size_ == 0 || height_ <= 1;
+        }
+
+        [[nodiscard]]
+        ImageView
+        subimage(size_t x, size_t y,
+                 size_t width = SIZE_MAX, size_t height = SIZE_MAX) const;
     private:
-        unsigned m_width = 0;
-        unsigned m_height = 0;
-        unsigned m_pixel_size = 0;
-        PixelType m_pixel_type = PixelType::NONE;
-        const unsigned char* m_buffer = nullptr;
+        size_t width_ = 0;
+        size_t height_ = 0;
+        size_t gap_size_ = 0;
+        size_t pixel_size_ = 0;
+        PixelType pixel_type_ = PixelType::NONE;
+        const unsigned char* buffer_ = nullptr;
     };
 
     bool operator==(const ImageView& a, const ImageView& b);

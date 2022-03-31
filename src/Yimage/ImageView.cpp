@@ -16,27 +16,57 @@ namespace yimage
     ImageView::ImageView() = default;
 
     ImageView::ImageView(const unsigned char* buffer,
-                         unsigned int width,
-                         unsigned int height,
-                         PixelType pixel_type)
-        : m_width(width),
-          m_height(height),
-          m_pixel_size(get_pixel_size(pixel_type)),
-          m_pixel_type(pixel_type),
-          m_buffer(buffer)
+                         PixelType pixel_type,
+                         size_t width,
+                         size_t height,
+                         size_t row_gap_size)
+        : width_(width),
+          height_(height),
+          gap_size_(row_gap_size),
+          pixel_size_(get_pixel_size(pixel_type)),
+          pixel_type_(pixel_type),
+          buffer_(buffer)
     {}
+
+    ImageView
+    ImageView::subimage(size_t x, size_t y, size_t width, size_t height) const
+    {
+        x = std::min(x, width_);
+        y = std::min(y, height_);
+        width = std::min(width, width_ - x);
+        height = std::min(height, height_ - y);
+        auto gap_size = gap_size_ + ((width_ - width) * pixel_size_ + 7) / 8;
+        auto buffer = pixel_pointer(x, y);
+        return {buffer, pixel_type_, width, height, gap_size};
+    }
 
     bool operator==(const ImageView& a, const ImageView& b)
     {
-        return a.width() == b.width()
-               && a.height() == b.height()
-               && a.pixel_type() == b.pixel_type()
-               && std::equal(a.begin(), a.end(), b.begin(), b.end());
+        if (a.width() != b.width()
+            || a.height() != b.height()
+            || a.pixel_type() != b.pixel_type())
+        {
+            return false;
+        }
+        if (a.is_contiguous() && b.is_contiguous())
+        {
+            return std::equal(a.data(), a.data() + a.size(),
+                              b.data(), b.data() + b.size());
+        }
+
+        for (size_t i = 0; i < a.height(); ++i)
+        {
+            auto [ab, ae] = a.row(i);
+            auto [bb, be] = a.row(i);
+            if (!std::equal(ab, ae, bb, be))
+                return false;
+        }
+
+        return true;
     }
 
     Rgba8 get_rgba8(const ImageView& image, unsigned int x, unsigned int y)
     {
-        auto pixel_size = get_pixel_size(image.pixel_type());
         auto ptr = image.pixel_pointer(x, y);
         switch (image.pixel_type())
         {
@@ -63,6 +93,5 @@ namespace yimage
         }
         YIMAGE_THROW("Unsupported pixel type: "
                      + std::to_string(int(image.pixel_type())));
-        return {};
     }
 }

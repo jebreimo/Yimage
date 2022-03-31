@@ -55,11 +55,11 @@ namespace yimage
                 ((j_common_ptr)&data.info, JPOOL_IMAGE, row_size, 1);
             jpeg_start_decompress(&data.info);
 
-            Image image(data.info.output_width,
-                        data.info.output_height,
-                        data.info.output_components == 3
+            Image image(data.info.output_components == 3
                                   ? PixelType::RGB_8
-                                  : PixelType::MONO_8);
+                                  : PixelType::MONO_8,
+                        data.info.output_width,
+                        data.info.output_height);
 
             auto* dst = image.data();
 
@@ -105,8 +105,8 @@ namespace yimage
         try
         {
             create_decompress(data);
-            auto ucbuffer = static_cast<const unsigned char*>(buffer);
-            jpeg_mem_src(&data.info, ucbuffer, size);
+            const auto* uc_buffer = static_cast<const unsigned char*>(buffer);
+            jpeg_mem_src(&data.info, uc_buffer, size);
             return read_image(data);
         }
         catch (std::exception&)

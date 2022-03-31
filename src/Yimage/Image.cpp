@@ -15,43 +15,49 @@ namespace yimage
     Image::Image() = default;
 
     Image::Image(std::unique_ptr<unsigned char> buffer,
-                 unsigned int width, unsigned int height,
-                 PixelType pixel_type)
-        : m_buffer(move(buffer)),
-          m_width(width),
-          m_height(height),
-          m_pixel_type(pixel_type)
+                 PixelType pixel_type,
+                 size_t width, size_t height,
+                 size_t row_gap_size)
+        : width_(width),
+          height_(height),
+          gap_size_(row_gap_size),
+          pixel_type_(pixel_type),
+          buffer_(move(buffer))
     {}
 
-    Image::Image(unsigned int width, unsigned int height, PixelType pixel_type)
-        : m_width(width),
-          m_height(height),
-          m_pixel_type(pixel_type)
+    Image::Image(PixelType pixel_type,
+                 size_t width, size_t height,
+                 size_t row_gap_size)
+        : width_(width),
+          height_(height),
+          gap_size_(row_gap_size),
+          pixel_type_(pixel_type)
     {
         auto size = this->size();
         if (size == 0)
             YIMAGE_THROW("Image size is 0 bytes.");
-        m_buffer.reset(new unsigned char[size]);
+        buffer_.reset(new unsigned char[size]);
     }
 
     Image::Image(const Image& rhs)
-        : m_width(rhs.width()),
-          m_height(rhs.height()),
-          m_pixel_type(rhs.pixel_type())
+        : width_(rhs.width()),
+          height_(rhs.height()),
+          gap_size_(rhs.gap_size_),
+          pixel_type_(rhs.pixel_type())
     {
         auto size = this->size();
         if (size)
         {
-            m_buffer.reset(new unsigned char[size]);
+            buffer_.reset(new unsigned char[size]);
             std::copy(rhs.data(), rhs.data() + size, data());
         }
     }
 
     Image::Image(Image&& rhs) noexcept
-        : m_width(rhs.width()),
-          m_height(rhs.height()),
-          m_pixel_type(rhs.pixel_type()),
-          m_buffer(rhs.release())
+        : width_(rhs.width()),
+          height_(rhs.height()),
+          pixel_type_(rhs.pixel_type()),
+          buffer_(rhs.release())
     {}
 
     Image& Image::operator=(const Image& rhs)
@@ -59,79 +65,81 @@ namespace yimage
         if (&rhs == this)
             return *this;
 
-        m_width = rhs.width();
-        m_height = rhs.height();
-        m_pixel_type = rhs.pixel_type();
+        width_ = rhs.width();
+        height_ = rhs.height();
+        gap_size_ = rhs.gap_size_;
+        pixel_type_ = rhs.pixel_type();
         if (auto size = this->size())
         {
-            m_buffer.reset(new unsigned char[size]);
+            buffer_.reset(new unsigned char[size]);
             std::copy(rhs.data(), rhs.data() + size, data());
         }
         else
         {
-            m_buffer.reset();
+            buffer_.reset();
         }
         return *this;
     }
 
     Image& Image::operator=(Image&& rhs) noexcept
     {
-        m_width = rhs.width();
-        m_height = rhs.height();
-        m_pixel_type = rhs.pixel_type();
-        m_buffer = rhs.release();
+        width_ = rhs.width();
+        height_ = rhs.height();
+        gap_size_ = rhs.gap_size_;
+        pixel_type_ = rhs.pixel_type();
+        buffer_ = rhs.release();
         return *this;
     }
 
     Image::operator ImageView() const
     {
-        return {m_buffer.get(), width(), height(), pixel_type()};
+        return {buffer_.get(), pixel_type_, width_, height_, gap_size_};
     }
 
     Image::operator MutableImageView()
     {
-        return {m_buffer.get(), width(), height(), pixel_type()};
+        return {buffer_.get(), pixel_type_, width_, height_, gap_size_};
     }
 
     const unsigned char* Image::data() const
     {
-        return m_buffer.get();
+        return buffer_.get();
     }
 
     unsigned char* Image::data()
     {
-        return m_buffer.get();
+        return buffer_.get();
     }
 
-    unsigned Image::width() const
+    size_t Image::width() const
     {
-        return m_width;
+        return width_;
     }
 
-    unsigned Image::height() const
+    size_t Image::height() const
     {
-        return m_height;
+        return height_;
     }
 
-    unsigned Image::row_size() const
+    size_t Image::row_size() const
     {
-        return (m_width * get_pixel_size(m_pixel_type) + 7) / 8;
+        return gap_size_ + (width_ * get_pixel_size(pixel_type_) + 7) / 8;
     }
 
-    unsigned Image::size() const
+    size_t Image::size() const
     {
-        return m_height * row_size();
+        return height_ * row_size();
     }
 
     PixelType Image::pixel_type() const
     {
-        return m_pixel_type;
+        return pixel_type_;
     }
 
     std::unique_ptr<unsigned char> Image::release()
     {
-        m_width = m_height = 0;
-        m_pixel_type = PixelType::NONE;
-        return std::move(m_buffer);
+        width_ = height_ = gap_size_ = 0;
+        pixel_type_ = PixelType::NONE;
+        return std::move(buffer_);
     }
 }

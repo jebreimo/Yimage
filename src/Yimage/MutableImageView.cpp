@@ -16,20 +16,34 @@ namespace yimage
     MutableImageView::MutableImageView() = default;
 
     MutableImageView::MutableImageView(unsigned char* buffer,
-                                       unsigned width,
-                                       unsigned height,
-                                       PixelType pixel_type)
-        : m_width(width),
-          m_height(height),
-          m_pixel_size(get_pixel_size(pixel_type)),
-          m_pixel_type(pixel_type),
-          m_buffer(buffer)
-    {
-    }
+                                       PixelType pixel_type,
+                                       size_t width,
+                                       size_t height,
+                                       size_t row_gap_size)
+        : width_(width),
+          height_(height),
+          gap_size_(row_gap_size),
+          pixel_size_(get_pixel_size(pixel_type)),
+          pixel_type_(pixel_type),
+          buffer_(buffer)
+    {}
 
     MutableImageView::operator ImageView() const
     {
-        return {m_buffer, m_width, m_height, m_pixel_type};
+        return {buffer_, pixel_type_, width_, height_, gap_size_};
+    }
+
+    MutableImageView
+    MutableImageView::subimage(size_t x, size_t y,
+                               size_t width, size_t height) const
+    {
+        x = std::min(x, width_);
+        y = std::min(y, height_);
+        width = std::min(width, width_ - x);
+        height = std::min(height, height_ - y);
+        auto gap_size = gap_size_ + ((width_ - width) * pixel_size_ + 7) / 8;
+        auto buffer = buffer_ + y * row_size() + x * pixel_size_ / 8;
+        return {buffer, pixel_type_, width, height, gap_size};
     }
 
     bool operator==(const MutableImageView& a, const MutableImageView& b)
@@ -37,51 +51,43 @@ namespace yimage
         return static_cast<ImageView>(a) == static_cast<ImageView>(b);
     }
 
-    void paste(ImageView img, int x, int y, MutableImageView mut_img)
+    void paste(ImageView img, ptrdiff_t x, ptrdiff_t y, MutableImageView mut_img)
     {
         if (img.pixel_type() != mut_img.pixel_type())
             YIMAGE_THROW("Source image has a different pixel type.");
         if (img.pixel_size() < 8)
             YIMAGE_THROW("Pixel sizes less than 8 bits are not supported.");
 
-        unsigned src_x = 0, dst_x = unsigned(x);
         if (x < 0)
-        {
-            src_x = std::min(unsigned(-x), img.width());
-            dst_x = 0;
-        }
+            img = img.subimage(size_t(-x), 0);
         else
-        {
-            dst_x = std::min(dst_x, mut_img.width());
-        }
-        auto n_copy = std::min(img.width() - src_x, mut_img.width() - dst_x);
+            mut_img = mut_img.subimage(size_t(x), 0);
 
-        unsigned src_y = 0, dst_y = unsigned(y);
         if (y < 0)
-        {
-            src_y = std::min(unsigned(-y), img.height());
-            dst_y = 0;
-        }
+            img = img.subimage(0, size_t(-y));
         else
+            mut_img = mut_img.subimage(0, size_t(y));
+
+        auto width = std::min(img.width(), mut_img.width());
+        auto height = std::min(img.height(), mut_img.height());
+        img = img.subimage(0, 0, width, height);
+        mut_img = mut_img.subimage(0, 0, width, height);
+
+        if (img.is_contiguous() && mut_img.is_contiguous())
         {
-            dst_y = std::min(dst_y, mut_img.height());
+            std::copy(img.data(), img.data() + img.size(), mut_img.data());
+            return;
         }
-        auto n_rows = std::min(img.height() - src_y, mut_img.height() - dst_y);
 
-
-        auto src = img.pixel_pointer(src_x, src_y);
-        auto dst = mut_img.pixel_pointer(dst_x, dst_y);
-
-        for (unsigned i = 0; i < n_rows; ++i)
+        for (size_t i = 0; i < img.height(); ++i)
         {
-            std::copy(src, src + n_copy * mut_img.pixel_size() / 8, dst);
-            src += img.width();
-            dst += mut_img.width();
+            auto [i_b, i_e] = img.row(i);
+            auto [m_b, m_e] = mut_img.row(i);
+            std::copy(i_b, i_e, m_b);
         }
     }
 
-    void set_rgba8(MutableImageView& image, unsigned int x, unsigned int y,
-                   Rgba8 rgba)
+    void set_rgba8(MutableImageView& image, size_t x, size_t y, Rgba8 rgba)
     {
         auto* ptr = image.pixel_pointer(x, y);
         switch (image.pixel_type())

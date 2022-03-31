@@ -19,10 +19,11 @@ namespace yimage
         Image();
 
         Image(std::unique_ptr<unsigned char> buffer,
-              unsigned width, unsigned height,
-              PixelType pixel_type);
+              PixelType pixel_type,
+              size_t width, size_t height, size_t row_gap_size = 0);
 
-        Image(unsigned width, unsigned height, PixelType pixel_type);
+        Image(PixelType pixel_type, size_t width, size_t height,
+              size_t row_gap_size = 0);
 
         Image(const Image& rhs);
 
@@ -45,25 +46,26 @@ namespace yimage
         unsigned char* data();
 
         [[nodiscard]]
-        unsigned width() const;
+        size_t width() const;
 
         [[nodiscard]]
-        unsigned height() const;
+        size_t height() const;
 
         [[nodiscard]]
-        unsigned row_size() const;
+        size_t row_size() const;
 
         [[nodiscard]]
-        unsigned size() const;
+        size_t size() const;
 
         [[nodiscard]]
         PixelType pixel_type() const;
 
         std::unique_ptr<unsigned char> release();
     private:
-        unsigned m_width = 0;
-        unsigned m_height = 0;
-        PixelType m_pixel_type = PixelType::NONE;
-        std::unique_ptr<unsigned char> m_buffer;
+        size_t width_ = 0;
+        size_t height_ = 0;
+        size_t gap_size_ = 0;
+        PixelType pixel_type_ = PixelType::NONE;
+        std::unique_ptr<unsigned char> buffer_;
     };
 }

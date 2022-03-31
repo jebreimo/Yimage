@@ -27,9 +27,9 @@ TEST_CASE("test MutableImageView::paste")
         20, 21,
         22, 23
     };
-    MutableImageView mut_image1(buffer1.data(), 4, 4, PixelType::MONO_8);
+    MutableImageView mut_image1(buffer1.data(), PixelType::MONO_8, 4, 4);
     ImageView image1 = mut_image1;
-    ImageView image2(buffer2.data(), 2, 2, PixelType::MONO_8);
+    ImageView image2(buffer2.data(), PixelType::MONO_8, 2, 2);
 
     SECTION("in the center")
     {
@@ -40,7 +40,7 @@ TEST_CASE("test MutableImageView::paste")
             8, 22, 23, 11,
             12, 13, 14, 15
         };
-        REQUIRE(image1 == ImageView(buffer3.data(), 4, 4, PixelType::MONO_8));
+        REQUIRE(image1 == ImageView(buffer3.data(), PixelType::MONO_8, 4, 4));
     }
     SECTION("partially outside 1")
     {
@@ -51,7 +51,7 @@ TEST_CASE("test MutableImageView::paste")
             8, 9, 10, 11,
             12, 13, 14, 15
         };
-        REQUIRE(image1 == ImageView(buffer3.data(), 4, 4, PixelType::MONO_8));
+        REQUIRE(image1 == ImageView(buffer3.data(), PixelType::MONO_8, 4, 4));
     }
     SECTION("partially outside 2")
     {
@@ -62,6 +62,17 @@ TEST_CASE("test MutableImageView::paste")
             8, 9, 10, 11,
             20, 21, 14, 15
         };
-        REQUIRE(image1 == ImageView(buffer3.data(), 4, 4, PixelType::MONO_8));
+        REQUIRE(image1 == ImageView(buffer3.data(), PixelType::MONO_8, 4, 4));
+    }
+    SECTION("completely outside")
+    {
+        paste(image2, 2, 4, mut_image1);
+        std::vector<uint8_t> buffer3{
+            0, 1, 2, 3,
+            4, 5, 6, 7,
+            8, 9, 10, 11,
+            12, 13, 14, 15
+        };
+        REQUIRE(image1 == ImageView(buffer3.data(), PixelType::MONO_8, 4, 4));
     }
 }
