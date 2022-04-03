@@ -8,12 +8,6 @@
 #include <catch2/catch.hpp>
 #include "Yimage/Image.hpp"
 
-//yimage::Image make_mono_image(unsigned width, unsigned height,
-//                              const std::vector<uint8_t>& pixels)
-//{
-//    return
-//}
-
 TEST_CASE("test MutableImageView::paste")
 {
     using namespace yimage;

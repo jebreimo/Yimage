@@ -26,7 +26,10 @@ namespace yimage
           pixel_size_(get_pixel_size(pixel_type)),
           pixel_type_(pixel_type),
           buffer_(buffer)
-    {}
+    {
+        if (pixel_size_ % 8 != 0 && (width_ * pixel_size_) % 8)
+            YIMAGE_THROW("The size of a row of pixels must be divisible by 8.");
+    }
 
     MutableImageView::operator ImageView() const
     {
@@ -41,7 +44,7 @@ namespace yimage
         y = std::min(y, height_);
         width = std::min(width, width_ - x);
         height = std::min(height, height_ - y);
-        auto gap_size = gap_size_ + ((width_ - width) * pixel_size_ + 7) / 8;
+        auto gap_size = gap_size_ + ((width_ - width) * pixel_size_) / 8;
         auto buffer = buffer_ + y * row_size() + x * pixel_size_ / 8;
         return {buffer, pixel_type_, width, height, gap_size};
     }

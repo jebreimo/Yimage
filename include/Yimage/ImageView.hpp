@@ -34,7 +34,7 @@ namespace yimage
         row(size_t index) const
         {
             auto start = buffer_ + index * row_size();
-            return {start, start + (width_ * pixel_size_ + 7) / 8};
+            return {start, start + width_ * pixel_size_ / 8};
         }
 
         [[nodiscard]]
@@ -58,13 +58,13 @@ namespace yimage
         [[nodiscard]]
         constexpr size_t row_size() const
         {
-            return gap_size_ + (width_ * pixel_size_ + 7) / 8;
+            return gap_size_ + width_ * pixel_size_ / 8;
         }
 
         [[nodiscard]]
         constexpr size_t size() const
         {
-            auto last_row = (width_ * pixel_size_ + 7) / 8;
+            auto last_row = width_ * pixel_size_ / 8;
             return height_ == 0 ? 0 : (height_ - 1) * row_size() + last_row;
         }
 
@@ -87,9 +87,9 @@ namespace yimage
         }
 
         [[nodiscard]]
-        ImageView
-        subimage(size_t x, size_t y,
-                 size_t width = SIZE_MAX, size_t height = SIZE_MAX) const;
+        ImageView subimage(size_t x, size_t y,
+                           size_t width = SIZE_MAX,
+                           size_t height = SIZE_MAX) const;
     private:
         size_t width_ = 0;
         size_t height_ = 0;
@@ -109,5 +109,13 @@ namespace yimage
         uint8_t a = 0;
     };
 
-    Rgba8 get_rgba8(const ImageView& image, unsigned x, unsigned y);
+    bool operator==(const Rgba8& a, const Rgba8& b);
+
+    bool operator!=(const Rgba8& a, const Rgba8& b);
+
+    std::string to_string(const Rgba8& rgba);
+
+    std::ostream& operator<<(std::ostream& os, const Rgba8& rgba);
+
+    Rgba8 get_rgba8(const ImageView& image, size_t x, size_t y);
 }

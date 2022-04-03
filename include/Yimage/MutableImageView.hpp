@@ -35,7 +35,7 @@ namespace yimage
         row(size_t index) const
         {
             auto start = buffer_ + index * row_size();
-            return {start, start + (width_ * pixel_size_ + 7) / 8};
+            return {start, start + width_ * pixel_size_ / 8};
         }
 
         [[nodiscard]]
@@ -59,13 +59,13 @@ namespace yimage
         [[nodiscard]]
         constexpr size_t row_size() const
         {
-            return gap_size_ + (width_ * pixel_size_ + 7) / 8;
+            return gap_size_ + width_ * pixel_size_ / 8;
         }
 
         [[nodiscard]]
         constexpr size_t size() const
         {
-            auto last_row = (width_ * pixel_size_ + 7) / 8;
+            auto last_row = width_ * pixel_size_ / 8;
             return height_  == 0 ? 0 : (height_ - 1) * row_size() + last_row;
         }
 

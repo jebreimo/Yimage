@@ -16,7 +16,7 @@ FetchContent_Declare(catch
 FetchContent_MakeAvailable(catch)
 
 add_executable(YimageTest
-    YimageTestMain.cpp test_MutableImageView.cpp)
+    YimageTestMain.cpp test_MutableImageView.cpp test_ImageView.cpp)
 
 target_link_libraries(YimageTest
     Catch2::Catch2

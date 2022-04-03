@@ -23,7 +23,11 @@ namespace yimage
           gap_size_(row_gap_size),
           pixel_type_(pixel_type),
           buffer_(move(buffer))
-    {}
+    {
+        auto pixel_size = get_pixel_size(pixel_type);
+        if (pixel_size % 8 != 0 && (width_ * pixel_size) % 8)
+            YIMAGE_THROW("The size of a row of pixels must be divisible by 8.");
+    }
 
     Image::Image(PixelType pixel_type,
                  size_t width, size_t height,
@@ -36,6 +40,9 @@ namespace yimage
         auto size = this->size();
         if (size == 0)
             YIMAGE_THROW("Image size is 0 bytes.");
+        auto pixel_size = get_pixel_size(pixel_type);
+        if (pixel_size % 8 != 0 && (width_ * pixel_size) % 8)
+            YIMAGE_THROW("The size of a row of pixels must be divisible by 8.");
         buffer_.reset(new unsigned char[size]);
     }
 
@@ -123,7 +130,7 @@ namespace yimage
 
     size_t Image::row_size() const
     {
-        return gap_size_ + (width_ * get_pixel_size(pixel_type_) + 7) / 8;
+        return gap_size_ + (width_ * get_pixel_size(pixel_type_)) / 8;
     }
 
     size_t Image::size() const
