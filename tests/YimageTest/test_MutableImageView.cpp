@@ -104,3 +104,50 @@ TEST_CASE("test set_rgba8")
         REQUIRE(buffer1[11] == 11);
     }
 }
+
+TEST_CASE("test fill_rgba8")
+{
+    using namespace yimage;
+    std::vector<uint8_t> buffer(8*8);
+    SECTION("mono8 chess board")
+    {
+        constexpr Rgba8 B{0, 0, 0, 0xFF};
+        constexpr Rgba8 W{0xFF, 0xFF, 0xFF, 0xFF};
+        std::vector<Rgba8> colors{W, B, W, B, W, B, W, B,
+                                  B, W, B, W, B, W, B, W};
+        MutableImageView img(buffer.data(), PixelType::MONO_8, 8, 8);
+        fill_rgba8(img, colors.data(), colors.size());
+        constexpr uint8_t b = 0;
+        constexpr uint8_t w = 255;
+        std::vector<uint8_t> expected{
+            w, b, w, b, w, b, w, b,
+            b, w, b, w, b, w, b, w,
+            w, b, w, b, w, b, w, b,
+            b, w, b, w, b, w, b, w,
+            w, b, w, b, w, b, w, b,
+            b, w, b, w, b, w, b, w,
+            w, b, w, b, w, b, w, b,
+            b, w, b, w, b, w, b, w
+        };
+        REQUIRE(buffer == expected);
+    }
+    SECTION("unaligned rgb8")
+    {
+        MutableImageView img(buffer.data(), PixelType::RGB_8, 5, 4);
+        constexpr Rgba8 R{0xFF, 0, 0, 0xFF};
+        constexpr Rgba8 G{0, 0xFF, 0, 0xFF};
+        constexpr Rgba8 B{0, 0, 0xFF, 0xFF};
+
+        std::vector<Rgba8> colors{R, G, B};
+        fill_rgba8(img, colors.data(), colors.size());
+        constexpr uint8_t w = 255;
+        std::vector<uint8_t> expected{
+            w, 0, 0, 0, w, 0, 0, 0, w, w, 0, 0, 0, w, 0,
+            0, 0, w, w, 0, 0, 0, w, 0, 0, 0, w, w, 0, 0,
+            0, w, 0, 0, 0, w, w, 0, 0, 0, w, 0, 0, 0, w,
+            w, 0, 0, 0, w, 0, 0, 0, w, w, 0, 0, 0, w, 0
+        };
+        buffer.resize(5 * 4 * 3);
+        REQUIRE(buffer == expected);
+    }
+}

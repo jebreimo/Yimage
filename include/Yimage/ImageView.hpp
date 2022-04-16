@@ -23,6 +23,11 @@ namespace yimage
                   size_t height,
                   size_t row_gap_size = 0);
 
+        explicit operator bool()
+        {
+            return buffer_ && width_ && height_;
+        }
+
         [[nodiscard]]
         constexpr const unsigned char* pixel_pointer(size_t x, size_t y) const
         {

@@ -24,6 +24,11 @@ namespace yimage
         [[nodiscard]]
         operator ImageView() const;
 
+        explicit operator bool()
+        {
+            return buffer_ && width_ && height_;
+        }
+
         [[nodiscard]]
         constexpr unsigned char* pixel_pointer(size_t x, size_t y) const
         {
@@ -106,4 +111,8 @@ namespace yimage
                MutableImageView mut_img);
 
     void set_rgba8(MutableImageView& image, size_t x, size_t y, Rgba8 rgba);
+
+    void fill_rgba8(MutableImageView image, Rgba8 rgba);
+
+    void fill_rgba8(MutableImageView image, const Rgba8* rgba, size_t num_rgba);
 }
