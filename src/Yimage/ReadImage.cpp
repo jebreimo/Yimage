@@ -15,8 +15,9 @@
 namespace yimage
 {
     constexpr char PNG_SIGNATURE[4] = {'\x89', 'P', 'N', 'G'};
-    constexpr char JPEG_SIGNATURE1[3] = {'\xFF', '\xD8', '\xFF'};
-    constexpr char JPEG_SIGNATURE2[4] = {'J', 'F', 'I', 'F'};
+    constexpr char JPEG_SIGNATURE[3] = {'\xFF', '\xD8', '\xFF'};
+    constexpr char JPEG_JFIF_SIGNATURE[4] = {'J', 'F', 'I', 'F'};
+    constexpr char JPEG_EXIF_SIGNATURE[4] = {'E', 'x', 'i', 'f'};
 
     Image read_image(const std::string& path)
     {
@@ -31,8 +32,9 @@ namespace yimage
         {
             return read_png(file);
         }
-        else if (std::equal(buffer, buffer + 3, JPEG_SIGNATURE1)
-                 && std::equal(buffer + 6, buffer + 10, JPEG_SIGNATURE2))
+        else if (std::equal(buffer, buffer + 3, JPEG_SIGNATURE)
+                 && (std::equal(buffer + 6, buffer + 10, JPEG_JFIF_SIGNATURE)
+                     || std::equal(buffer + 6, buffer + 10, JPEG_EXIF_SIGNATURE)))
         {
             file.close();
             return read_jpeg(path);
