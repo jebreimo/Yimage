@@ -9,6 +9,7 @@
 #include "Yimage/YimageException.hpp"
 
 #include <algorithm>
+#include <ostream>
 #include <string>
 
 namespace yimage

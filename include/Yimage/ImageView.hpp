@@ -7,6 +7,7 @@
 //****************************************************************************
 #pragma once
 #include <cstdint>
+#include <iosfwd>
 #include <utility>
 #include "PixelType.hpp"
 
