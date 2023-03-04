@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.21)
-project(Yimage VERSION 0.1.1)
+project(Yimage VERSION 0.1.2)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -24,6 +24,10 @@ option(YIMAGE_BUILD_EXTRAS "Build apps in the extras dir" ${YIMAGE_MASTER_PROJEC
 option(YIMAGE_BUILD_TESTS "Build unit tests" ${YIMAGE_MASTER_PROJECT})
 
 option(YIMAGE_INSTALL "Generate the install target" ${YIMAGE_MASTER_PROJECT})
+
+if (EMSCRIPTEN)
+    list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/emscripten)
+endif ()
 
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
