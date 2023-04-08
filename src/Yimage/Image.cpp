@@ -22,7 +22,7 @@ namespace yimage
           height_(height),
           gap_size_(row_gap_size),
           pixel_type_(pixel_type),
-          buffer_(move(buffer))
+          buffer_(std::move(buffer))
     {
         auto pixel_size = get_pixel_size(pixel_type);
         if (pixel_size % 8 != 0 && (width_ * pixel_size) % 8)

@@ -105,7 +105,8 @@ namespace yimage
 
     PngInfo& PngInfo::add_text(std::string key, std::string value)
     {
-        return add_text(move(key), move(value), PNG_TEXT_COMPRESSION_NONE);
+        return add_text(std::move(key), std::move(value),
+                        PNG_TEXT_COMPRESSION_NONE);
     }
 
     PngInfo& PngInfo::add_text(std::string key, std::string value, int compression)
