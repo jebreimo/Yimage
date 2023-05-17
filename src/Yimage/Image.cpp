@@ -98,6 +98,11 @@ namespace yimage
         return *this;
     }
 
+    Image::operator bool() const
+    {
+        return bool(buffer_);
+    }
+
     Image::operator ImageView() const
     {
         return {buffer_.get(), pixel_type_, width_, height_, gap_size_};

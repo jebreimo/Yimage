@@ -33,6 +33,9 @@ namespace yimage
         Image& operator=(Image&& rhs) noexcept;
 
         [[nodiscard]]
+        explicit operator bool() const;
+
+        [[nodiscard]]
         operator ImageView() const;
 
         [[nodiscard]]
