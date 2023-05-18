@@ -38,18 +38,18 @@ namespace Yimage
         explicit operator bool() const final;
 
         [[nodiscard]]
-        const unsigned char* pixel_pointer(size_t x, size_t y) const override;
+        const unsigned char* pixel_pointer(size_t x, size_t y) const final;
 
         [[nodiscard]]
-        unsigned char* mut_pixel_pointer(size_t x, size_t y) const override;
+        unsigned char* mut_pixel_pointer(size_t x, size_t y) const final;
 
         [[nodiscard]]
         std::pair<const unsigned char*, const unsigned char*>
-        row(size_t index) const override;
+        row(size_t index) const final;
 
         [[nodiscard]]
         std::pair<unsigned char*, unsigned char*>
-        mut_row(size_t index) const override;
+        mut_row(size_t index) const final;
 
         [[nodiscard]]
         const unsigned char* data() const final;
@@ -58,42 +58,42 @@ namespace Yimage
         unsigned char* mut_data() const final;
 
         [[nodiscard]]
-        size_t width() const override;
+        size_t width() const final;
 
         [[nodiscard]]
-        size_t height() const override;
+        size_t height() const final;
 
         [[nodiscard]]
-        size_t row_size() const override;
+        size_t row_size() const final;
 
         [[nodiscard]]
-        size_t size() const override;
+        size_t size() const final;
 
         [[nodiscard]]
-        size_t pixel_size() const override;
+        size_t pixel_size() const final;
 
         [[nodiscard]]
-        PixelType pixel_type() const override;
+        PixelType pixel_type() const final;
 
         [[nodiscard]]
-        bool is_contiguous() const override;
+        bool is_contiguous() const final;
 
         [[nodiscard]]
-        size_t row_gap_size() const override;
+        size_t row_gap_size() const final;
 
         [[nodiscard]]
-        ImageView subimage(size_t x, size_t y) const override;
+        ImageView subimage(size_t x, size_t y) const final;
 
         [[nodiscard]]
         ImageView subimage(size_t x, size_t y,
-                           size_t width, size_t height) const override;
+                           size_t width, size_t height) const final;
 
         [[nodiscard]]
-        MutImageView mut_subimage(size_t x, size_t y) const override;
+        MutImageView mut_subimage(size_t x, size_t y) const final;
 
         [[nodiscard]]
         MutImageView mut_subimage(size_t x, size_t y,
-                                  size_t width, size_t height) const override;
+                                  size_t width, size_t height) const final;
 
         std::unique_ptr<unsigned char> release();
     private:
