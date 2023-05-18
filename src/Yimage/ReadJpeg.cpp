@@ -61,7 +61,7 @@ namespace Yimage
                         data.info.output_width,
                         data.info.output_height);
 
-            auto* dst = image.data();
+            auto* dst = image.mut_data();
 
             while (data.info.output_scanline < data.info.output_height)
             {

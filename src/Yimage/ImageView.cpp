@@ -40,7 +40,7 @@ namespace Yimage
     ImageView
     ImageView::subimage(size_t x, size_t y, size_t width, size_t height) const
     {
-        return make_subimage<ImageView>(*this, x, y, width, height);
+        return make_subimage(*this, x, y, width, height);
     }
 
     bool operator==(const ImageView& a, const ImageView& b)

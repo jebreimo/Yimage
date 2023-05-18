@@ -57,7 +57,7 @@ namespace Yimage
         if (size)
         {
             buffer_.reset(new unsigned char[size]);
-            std::copy(rhs.data(), rhs.data() + size, data());
+            std::copy(rhs.data(), rhs.data() + size, mut_data());
         }
     }
 
@@ -80,7 +80,7 @@ namespace Yimage
         if (auto size = this->size())
         {
             buffer_.reset(new unsigned char[size]);
-            std::copy(rhs.data(), rhs.data() + size, data());
+            std::copy(rhs.data(), rhs.data() + size, mut_data());
         }
         else
         {
@@ -109,9 +109,9 @@ namespace Yimage
         return ImageView(*this).pixel_pointer(x, y);
     }
 
-    unsigned char* Image::pixel_pointer(size_t x, size_t y)
+    unsigned char* Image::mut_pixel_pointer(size_t x, size_t y) const
     {
-        return MutImageView(*this).pixel_pointer(x, y);
+        return MutImageView(*this).mut_pixel_pointer(x, y);
     }
 
     std::pair<const unsigned char*, const unsigned char*>
@@ -120,9 +120,10 @@ namespace Yimage
         return ImageView(*this).row(index);
     }
 
-    std::pair<unsigned char*, unsigned char*> Image::row(size_t index)
+    std::pair<unsigned char*, unsigned char*>
+    Image::mut_row(size_t index) const
     {
-        return MutImageView(*this).row(index);
+        return MutImageView(*this).mut_row(index);
     }
 
     const unsigned char* Image::data() const
@@ -130,7 +131,7 @@ namespace Yimage
         return buffer_.get();
     }
 
-    unsigned char* Image::data()
+    unsigned char* Image::mut_data() const
     {
         return buffer_.get();
     }
@@ -183,18 +184,18 @@ namespace Yimage
     ImageView
     Image::subimage(size_t x, size_t y, size_t width, size_t height) const
     {
-        return make_subimage<ImageView>(*this, x, y, width, height);
+        return make_subimage(*this, x, y, width, height);
     }
 
-    MutImageView Image::mut_subimage(size_t x, size_t y)
+    MutImageView Image::mut_subimage(size_t x, size_t y) const
     {
         return MutImageView(*this).mut_subimage(x, y);
     }
 
     MutImageView
-    Image::mut_subimage(size_t x, size_t y, size_t width, size_t height)
+    Image::mut_subimage(size_t x, size_t y, size_t width, size_t height) const
     {
-        return make_subimage<MutImageView>(*this, x, y, width, height);
+        return make_mut_subimage(*this, x, y, width, height);
     }
 
     std::unique_ptr<unsigned char> Image::release()

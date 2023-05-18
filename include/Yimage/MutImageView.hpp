@@ -16,7 +16,7 @@ namespace Yimage
     public:
         MutImageView();
 
-        explicit MutImageView(IMutImage& img);
+        explicit MutImageView(const IMutImage& img);
 
         MutImageView(unsigned char* buffer,
                      PixelType pixel_type,
@@ -37,7 +37,8 @@ namespace Yimage
         }
 
         [[nodiscard]]
-        constexpr unsigned char* pixel_pointer(size_t x, size_t y) override
+        constexpr unsigned char*
+        mut_pixel_pointer(size_t x, size_t y) const override
         {
             return buffer_ + y * row_size() + x * pixel_size_ / 8;
         }
@@ -52,7 +53,7 @@ namespace Yimage
 
         [[nodiscard]]
         constexpr std::pair<unsigned char*, unsigned char*>
-        row(size_t index) override
+        mut_row(size_t index) const override
         {
             auto start = buffer_ + index * row_size();
             return {start, start + width_ * pixel_size_ / 8};
@@ -65,7 +66,7 @@ namespace Yimage
         }
 
         [[nodiscard]]
-        constexpr unsigned char* data() override
+        constexpr unsigned char* mut_data() const override
         {
             return buffer_;
         }
@@ -128,11 +129,12 @@ namespace Yimage
                  size_t width, size_t height) const override;
 
         [[nodiscard]]
-        MutImageView mut_subimage(size_t x, size_t y) override;
+        MutImageView mut_subimage(size_t x, size_t y) const override;
 
         [[nodiscard]]
         MutImageView
-        mut_subimage(size_t x, size_t y, size_t width, size_t height) override;
+        mut_subimage(size_t x, size_t y,
+                     size_t width, size_t height) const override;
     private:
         size_t width_ = 0;
         size_t height_ = 0;

@@ -41,21 +41,21 @@ namespace Yimage
         const unsigned char* pixel_pointer(size_t x, size_t y) const override;
 
         [[nodiscard]]
-        unsigned char* pixel_pointer(size_t x, size_t y) override;
-
-        [[nodiscard]]
-        std::pair<unsigned char*, unsigned char*>
-        row(size_t index) override;
+        unsigned char* mut_pixel_pointer(size_t x, size_t y) const override;
 
         [[nodiscard]]
         std::pair<const unsigned char*, const unsigned char*>
         row(size_t index) const override;
 
         [[nodiscard]]
+        std::pair<unsigned char*, unsigned char*>
+        mut_row(size_t index) const override;
+
+        [[nodiscard]]
         const unsigned char* data() const final;
 
         [[nodiscard]]
-        unsigned char* data() final;
+        unsigned char* mut_data() const final;
 
         [[nodiscard]]
         size_t width() const override;
@@ -69,26 +69,31 @@ namespace Yimage
         [[nodiscard]]
         size_t size() const override;
 
+        [[nodiscard]]
         size_t pixel_size() const override;
 
         [[nodiscard]]
         PixelType pixel_type() const override;
 
+        [[nodiscard]]
         bool is_contiguous() const override;
 
+        [[nodiscard]]
         size_t row_gap_size() const override;
 
         [[nodiscard]]
         ImageView subimage(size_t x, size_t y) const override;
 
         [[nodiscard]]
-        ImageView subimage(size_t x, size_t y, size_t width, size_t height) const override;
+        ImageView subimage(size_t x, size_t y,
+                           size_t width, size_t height) const override;
 
         [[nodiscard]]
-        MutImageView mut_subimage(size_t x, size_t y) override;
+        MutImageView mut_subimage(size_t x, size_t y) const override;
 
         [[nodiscard]]
-        MutImageView mut_subimage(size_t x, size_t y, size_t width, size_t height) override;
+        MutImageView mut_subimage(size_t x, size_t y,
+                                  size_t width, size_t height) const override;
 
         std::unique_ptr<unsigned char> release();
     private:

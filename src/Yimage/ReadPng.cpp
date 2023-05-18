@@ -140,7 +140,7 @@ namespace Yimage
         Image image(get_pixel_type(color_type, bit_depth), width, height);
         std::vector<uint8_t*> row_pointers(height);
         for (size_t i = 0; i < height; ++i)
-            row_pointers[i] = image.pixel_pointer(0, i);
+            row_pointers[i] = image.mut_pixel_pointer(0, i);
         png_read_image(png.png_ptr, row_pointers.data());
         return image;
     }

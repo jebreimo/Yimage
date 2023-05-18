@@ -16,9 +16,10 @@ namespace Yimage
 {
     MutImageView::MutImageView() = default;
 
-    MutImageView::MutImageView(IMutImage& img)
-        : MutImageView(img.data(), img.pixel_type(),
-                       img.width(), img.height(), img.row_gap_size())
+    MutImageView::MutImageView(const IMutImage& img)
+        : MutImageView(img.mut_data(), img.pixel_type(),
+                       img.width(), img.height(),
+                       img.row_gap_size())
     {}
 
     MutImageView::MutImageView(unsigned char* buffer,
@@ -46,19 +47,19 @@ namespace Yimage
     MutImageView::subimage(size_t x, size_t y,
                            size_t width, size_t height) const
     {
-        return make_subimage<ImageView>(*this, x, y, width, height);
+        return make_subimage(*this, x, y, width, height);
     }
 
-    MutImageView MutImageView::mut_subimage(size_t x, size_t y)
+    MutImageView MutImageView::mut_subimage(size_t x, size_t y) const
     {
         return mut_subimage(x, y, SIZE_MAX, SIZE_MAX);
     }
 
     MutImageView
     MutImageView::mut_subimage(size_t x, size_t y,
-                               size_t width, size_t height)
+                               size_t width, size_t height) const
     {
-        return make_subimage<MutImageView>(*this, x, y, width, height);
+        return make_mut_subimage(*this, x, y, width, height);
     }
 
     bool operator==(const MutImageView& a, const MutImageView& b)

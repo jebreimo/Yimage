@@ -8,20 +8,37 @@
 #pragma once
 #include <algorithm>
 #include <cstddef>
-
+#include "Yimage/MutImageView.hpp"
 namespace Yimage
 {
-    template <typename ViewType>
-    ViewType make_subimage(auto&& view, size_t x, size_t y,
-                           size_t width, size_t height)
+    [[nodiscard]]
+    inline ImageView make_subimage(const IImage& img, size_t x, size_t y,
+                                   size_t width, size_t height)
     {
-        x = std::min(x, view.width());
-        y = std::min(y, view.height());
-        width = std::min(width, view.width() - x);
-        height = std::min(height, view.height() - y);
-        auto gap_size = view.row_gap_size()
-                        + ((view.width() - width) * view.pixel_size()) / 8;
-        auto buffer = view.data() + y * view.row_size() + x * view.pixel_size() / 8;
-        return ViewType(buffer, view.pixel_type(), width, height, gap_size);
+        x = std::min(x, img.width());
+        y = std::min(y, img.height());
+        width = std::min(width, img.width() - x);
+        height = std::min(height, img.height() - y);
+        auto gap_size = img.row_gap_size()
+                        + ((img.width() - width) * img.pixel_size()) / 8;
+        auto buffer = img.data() + y * img.row_size()
+                      + x * img.pixel_size() / 8;
+        return {buffer, img.pixel_type(), width, height, gap_size};
+    }
+
+    [[nodiscard]]
+    inline MutImageView
+    make_mut_subimage(const IMutImage& img, size_t x, size_t y,
+                      size_t width, size_t height)
+    {
+        x = std::min(x, img.width());
+        y = std::min(y, img.height());
+        width = std::min(width, img.width() - x);
+        height = std::min(height, img.height() - y);
+        auto gap_size = img.row_gap_size()
+                        + ((img.width() - width) * img.pixel_size()) / 8;
+        auto buffer = img.mut_data() + y * img.row_size()
+                      + x * img.pixel_size() / 8;
+        return {buffer, img.pixel_type(), width, height, gap_size};
     }
 }

@@ -16,29 +16,30 @@ namespace Yimage
     {
     public:
         [[nodiscard]]
-        virtual unsigned char* data() = 0;
+        virtual unsigned char* mut_data() const = 0;
 
         [[nodiscard]]
-        virtual unsigned char* pixel_pointer(size_t x, size_t y) = 0;
+        virtual unsigned char*
+        mut_pixel_pointer(size_t x, size_t y) const = 0;
 
         [[nodiscard]]
         virtual std::pair<unsigned char*, unsigned char*>
-        row(size_t index) = 0;
+        mut_row(size_t index) const = 0;
 
         [[nodiscard]]
-        virtual MutImageView mut_subimage(size_t x, size_t y) = 0;
+        virtual MutImageView mut_subimage(size_t x, size_t y) const = 0;
 
         [[nodiscard]]
         virtual MutImageView
-        mut_subimage(size_t x, size_t y, size_t width, size_t height) = 0;
+        mut_subimage(size_t x, size_t y, size_t width, size_t height) const = 0;
     };
 
     void paste(const IImage& img, IMutImage& mut_img,
                ptrdiff_t x, ptrdiff_t y);
 
-    void set_rgba8(IMutImage& image, size_t x, size_t y, Rgba8 rgba);
+    void set_rgba8(const IMutImage& image, size_t x, size_t y, Rgba8 rgba);
 
-    void fill_rgba8(IMutImage& image, Rgba8 rgba);
+    void fill_rgba8(const IMutImage& image, Rgba8 rgba);
 
-    void fill_rgba8(IMutImage& image, const Rgba8* rgba, size_t num_rgba);
+    void fill_rgba8(const IMutImage& image, const Rgba8* rgba, size_t num_rgba);
 }

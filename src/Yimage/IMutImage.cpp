@@ -15,7 +15,8 @@
 
 namespace Yimage
 {
-    void paste(const IImage& img, IMutImage& mut_img, ptrdiff_t x, ptrdiff_t y)
+    void paste(const IImage& img, IMutImage& mut_img,
+               ptrdiff_t x, ptrdiff_t y)
     {
         if (img.pixel_type() != mut_img.pixel_type())
             YIMAGE_THROW("Source and destination images can't have different pixel types.");
@@ -41,14 +42,14 @@ namespace Yimage
 
         if (view.is_contiguous() && mut_view.is_contiguous())
         {
-            std::copy(view.data(), view.data() + view.size(), mut_view.data());
+            std::copy(view.data(), view.data() + view.size(), mut_view.mut_data());
             return;
         }
 
         for (size_t i = 0; i < view.height(); ++i)
         {
             auto [i_b, i_e] = view.row(i);
-            auto [m_b, m_e] = mut_view.row(i);
+            auto [m_b, m_e] = mut_view.mut_row(i);
             std::copy(i_b, i_e, m_b);
         }
     }
@@ -159,19 +160,19 @@ namespace Yimage
         return result;
     }
 
-    void set_rgba8(IMutImage& image, size_t x, size_t y, Rgba8 rgba)
+    void set_rgba8(const IMutImage& image, size_t x, size_t y, Rgba8 rgba)
     {
         auto bytes = get_color_bytes(rgba, image.pixel_type());
         std::copy(bytes.bytes, bytes.bytes + bytes.size,
-                  image.pixel_pointer(x, y));
+                  image.mut_pixel_pointer(x, y));
     }
 
-    void fill_rgba8(IMutImage& image, Rgba8 rgba)
+    void fill_rgba8(const IMutImage& image, Rgba8 rgba)
     {
         fill_rgba8(image, &rgba, 1);
     }
 
-    void fill_rgba8(IMutImage& image, const Rgba8* rgba, size_t num_rgba)
+    void fill_rgba8(const IMutImage& image, const Rgba8* rgba, size_t num_rgba)
     {
         if (!image)
             return;
@@ -186,7 +187,7 @@ namespace Yimage
         auto src_it = bytes.begin();
         for (size_t y = 0; y < image.height(); ++y)
         {
-            auto [beg, end] = image.row(y);
+            auto [beg, end] = image.mut_row(y);
             while (std::distance(src_it, bytes.end())
                    <= std::distance(beg, end))
             {
