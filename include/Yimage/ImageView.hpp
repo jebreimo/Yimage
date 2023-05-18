@@ -37,14 +37,14 @@ namespace Yimage
         }
 
         [[nodiscard]]
-        constexpr const unsigned char*
+        const unsigned char*
         pixel_pointer(size_t x, size_t y) const final
         {
             return buffer_ + y * row_size() + x * pixel_size_ / 8;
         }
 
         [[nodiscard]]
-        constexpr std::pair<const unsigned char*, const unsigned char*>
+        std::pair<const unsigned char*, const unsigned char*>
         row(size_t index) const final
         {
             auto start = buffer_ + index * row_size();
@@ -52,56 +52,56 @@ namespace Yimage
         }
 
         [[nodiscard]]
-        constexpr const unsigned char* data() const final
+        const unsigned char* data() const final
         {
             return buffer_;
         }
 
         [[nodiscard]]
-        constexpr size_t width() const final
+        size_t width() const final
         {
             return width_;
         }
 
         [[nodiscard]]
-        constexpr size_t height() const final
+        size_t height() const final
         {
             return height_;
         }
 
         [[nodiscard]]
-        constexpr size_t row_size() const final
+        size_t row_size() const final
         {
             return gap_size_ + width_ * pixel_size_ / 8;
         }
 
         [[nodiscard]]
-        constexpr size_t size() const final
+        size_t size() const final
         {
             auto last_row = width_ * pixel_size_ / 8;
             return height_ == 0 ? 0 : (height_ - 1) * row_size() + last_row;
         }
 
         [[nodiscard]]
-        constexpr size_t pixel_size() const final
+        size_t pixel_size() const final
         {
             return pixel_size_;
         }
 
         [[nodiscard]]
-        constexpr PixelType pixel_type() const final
+        PixelType pixel_type() const final
         {
             return pixel_type_;
         }
 
         [[nodiscard]]
-        constexpr bool is_contiguous() const final
+        bool is_contiguous() const final
         {
             return gap_size_ == 0 || height_ <= 1;
         }
 
         [[nodiscard]]
-        constexpr size_t row_gap_size() const final
+        size_t row_gap_size() const final
         {
             return gap_size_;
         }
