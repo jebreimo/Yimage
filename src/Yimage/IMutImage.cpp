@@ -1,93 +1,54 @@
 //****************************************************************************
-// Copyright © 2022 Jan Erik Breimo. All rights reserved.
-// Created by Jan Erik Breimo on 2022-01-08.
+// Copyright © 2023 Jan Erik Breimo. All rights reserved.
+// Created by Jan Erik Breimo on 2023-05-18.
 //
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Yimage/MutableImageView.hpp"
+#include "Yimage/IMutImage.hpp"
 
 #include <algorithm>
-#include <iterator>
 #include <string>
 #include <vector>
+#include "Yimage/MutImageView.hpp"
 #include "Yimage/YimageException.hpp"
 
-namespace yimage
+namespace Yimage
 {
-    MutableImageView::MutableImageView() = default;
-
-    MutableImageView::MutableImageView(unsigned char* buffer,
-                                       PixelType pixel_type,
-                                       size_t width,
-                                       size_t height,
-                                       size_t row_gap_size)
-        : width_(width),
-          height_(height),
-          gap_size_(row_gap_size),
-          pixel_size_(get_pixel_size(pixel_type)),
-          pixel_type_(pixel_type),
-          buffer_(buffer)
-    {
-        if (pixel_size_ % 8 != 0 && (width_ * pixel_size_) % 8)
-            YIMAGE_THROW("The size of a row of pixels must be divisible by 8.");
-    }
-
-    MutableImageView::operator ImageView() const
-    {
-        return {buffer_, pixel_type_, width_, height_, gap_size_};
-    }
-
-    MutableImageView
-    MutableImageView::subimage(size_t x, size_t y,
-                               size_t width, size_t height) const
-    {
-        x = std::min(x, width_);
-        y = std::min(y, height_);
-        width = std::min(width, width_ - x);
-        height = std::min(height, height_ - y);
-        auto gap_size = gap_size_ + ((width_ - width) * pixel_size_) / 8;
-        auto buffer = buffer_ + y * row_size() + x * pixel_size_ / 8;
-        return {buffer, pixel_type_, width, height, gap_size};
-    }
-
-    bool operator==(const MutableImageView& a, const MutableImageView& b)
-    {
-        return static_cast<ImageView>(a) == static_cast<ImageView>(b);
-    }
-
-    void paste(ImageView img, ptrdiff_t x, ptrdiff_t y, MutableImageView mut_img)
+    void paste(const IImage& img, IMutImage& mut_img, ptrdiff_t x, ptrdiff_t y)
     {
         if (img.pixel_type() != mut_img.pixel_type())
-            YIMAGE_THROW("Source image has a different pixel type.");
+            YIMAGE_THROW("Source and destination images can't have different pixel types.");
         if (img.pixel_size() < 8)
             YIMAGE_THROW("Pixel sizes less than 8 bits are not supported.");
 
+        ImageView view(img);
+        MutImageView mut_view(mut_img);
         if (x < 0)
-            img = img.subimage(size_t(-x), 0);
+            view = view.subimage(size_t(-x), 0);
         else
-            mut_img = mut_img.subimage(size_t(x), 0);
+            mut_view = mut_view.mut_subimage(size_t(x), 0);
 
         if (y < 0)
-            img = img.subimage(0, size_t(-y));
+            view = view.subimage(0, size_t(-y));
         else
-            mut_img = mut_img.subimage(0, size_t(y));
+            mut_view = mut_view.mut_subimage(0, size_t(y));
 
-        auto width = std::min(img.width(), mut_img.width());
-        auto height = std::min(img.height(), mut_img.height());
-        img = img.subimage(0, 0, width, height);
-        mut_img = mut_img.subimage(0, 0, width, height);
+        auto width = std::min(view.width(), mut_view.width());
+        auto height = std::min(view.height(), mut_view.height());
+        view = view.subimage(0, 0, width, height);
+        mut_view = mut_view.mut_subimage(0, 0, width, height);
 
-        if (img.is_contiguous() && mut_img.is_contiguous())
+        if (view.is_contiguous() && mut_view.is_contiguous())
         {
-            std::copy(img.data(), img.data() + img.size(), mut_img.data());
+            std::copy(view.data(), view.data() + view.size(), mut_view.data());
             return;
         }
 
-        for (size_t i = 0; i < img.height(); ++i)
+        for (size_t i = 0; i < view.height(); ++i)
         {
-            auto [i_b, i_e] = img.row(i);
-            auto [m_b, m_e] = mut_img.row(i);
+            auto [i_b, i_e] = view.row(i);
+            auto [m_b, m_e] = mut_view.row(i);
             std::copy(i_b, i_e, m_b);
         }
     }
@@ -105,7 +66,7 @@ namespace yimage
 
     ColorBytes get_color_bytes(Rgba8 rgba, PixelType pixel_type)
     {
-        ColorBytes result;
+        ColorBytes result = {};
         switch (pixel_type)
         {
         case PixelType::MONO_8:
@@ -198,20 +159,19 @@ namespace yimage
         return result;
     }
 
-    void set_rgba8(MutableImageView& image, size_t x, size_t y, Rgba8 rgba)
+    void set_rgba8(IMutImage& image, size_t x, size_t y, Rgba8 rgba)
     {
         auto bytes = get_color_bytes(rgba, image.pixel_type());
         std::copy(bytes.bytes, bytes.bytes + bytes.size,
                   image.pixel_pointer(x, y));
     }
 
-
-    void fill_rgba8(MutableImageView& image, Rgba8 rgba)
+    void fill_rgba8(IMutImage& image, Rgba8 rgba)
     {
         fill_rgba8(image, &rgba, 1);
     }
 
-    void fill_rgba8(MutableImageView image, const Rgba8* rgba, size_t num_rgba)
+    void fill_rgba8(IMutImage& image, const Rgba8* rgba, size_t num_rgba)
     {
         if (!image)
             return;
@@ -227,7 +187,8 @@ namespace yimage
         for (size_t y = 0; y < image.height(); ++y)
         {
             auto [beg, end] = image.row(y);
-            while (std::distance(src_it, bytes.end()) <= std::distance(beg, end))
+            while (std::distance(src_it, bytes.end())
+                   <= std::distance(beg, end))
             {
                 beg = std::copy(src_it, bytes.end(), beg);
                 src_it = bytes.begin();

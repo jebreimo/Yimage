@@ -13,14 +13,14 @@
 argos::ParsedArguments parse_arguments(int argc, char* argv[])
 {
     using namespace argos;
-    return ArgumentParser(argv[0])
+    return ArgumentParser()
         .add(Argument("FILE").help("A png image."))
         .add(Argument("OUTPUT FILE")
             .help("The name of the resulting image."))
         .parse(argc, argv);
 }
 
-void print_image_specs(std::ostream& stream, const yimage::Image& img)
+void print_image_specs(std::ostream& stream, const Yimage::Image& img)
 {
     stream << "width: " << img.width()
            << "\nheight: " << img.height()
@@ -33,21 +33,19 @@ int main(int argc, char* argv[])
     try
     {
         const auto args = parse_arguments(argc, argv);
-        auto image = yimage::read_image(args.value("FILE").as_string());
-        print_image_specs(std::cout, image);
-        yimage::Image output(image.width(), image.height(), yimage::PixelType::MONO_ALPHA_8);
-        yimage::ImageView src = image;
-        yimage::MutableImageView dst = output;
-        for (unsigned y = 0; y < image.height(); ++y)
+        auto src = Yimage::read_image(args.value("FILE").as_string());
+        print_image_specs(std::cout, src);
+        Yimage::Image dst(Yimage::PixelType::MONO_ALPHA_8, src.width(), src.height());
+        for (unsigned y = 0; y < src.height(); ++y)
         {
-            for (unsigned x = 0; x < image.width(); ++x)
+            for (unsigned x = 0; x < src.width(); ++x)
             {
-                auto rgba = yimage::get_rgba8(src, x, y);
+                auto rgba = Yimage::get_rgba8(src, x, y);
                 auto a = 255 - std::max(rgba.r, std::max(rgba.g, rgba.b));
-                yimage::set_rgba8(dst, x, y, yimage::Rgba8{.a = uint8_t(a)});
+                Yimage::set_rgba8(dst, x, y, Yimage::Rgba8{.a = uint8_t(a)});
             }
         }
-        yimage::write_png(args.value("OUTPUT FILE").as_string(), output);
+        Yimage::write_png(args.value("OUTPUT FILE").as_string(), dst);
     }
     catch (std::exception& ex)
     {

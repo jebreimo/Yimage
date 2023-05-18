@@ -9,7 +9,7 @@
 
 #include <stdexcept>
 
-namespace yimage
+namespace Yimage
 {
     class YimageException : public std::runtime_error
     {
@@ -19,7 +19,7 @@ namespace yimage
 }
 
 #define YIMAGE_THROW_3_(file, line, msg) \
-    throw ::yimage::YimageException(file ":" #line ": " msg)
+    throw ::Yimage::YimageException(file ":" #line ": " msg)
 
 #define YIMAGE_THROW_2_(file, line, msg) \
     YIMAGE_THROW_3_(file, line, msg)

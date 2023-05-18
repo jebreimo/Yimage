@@ -12,7 +12,7 @@ include(FetchContent)
 
 FetchContent_Declare(argos
     GIT_REPOSITORY "https://github.com/jebreimo/Argos.git"
-    GIT_TAG "v1.1.3")
+    GIT_TAG "v1.1.271")
 
 FetchContent_MakeAvailable(argos)
 

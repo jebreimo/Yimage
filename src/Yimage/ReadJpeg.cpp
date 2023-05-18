@@ -10,7 +10,7 @@
 #include <jpeglib.h>
 #include <Yimage/YimageException.hpp>
 
-namespace yimage
+namespace Yimage
 {
     namespace
     {

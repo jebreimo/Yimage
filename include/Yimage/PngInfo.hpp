@@ -13,7 +13,7 @@
 #include <vector>
 #include <png.h>
 
-namespace yimage
+namespace Yimage
 {
     class PngInfo
     {

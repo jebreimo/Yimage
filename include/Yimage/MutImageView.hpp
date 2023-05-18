@@ -1,35 +1,28 @@
 //****************************************************************************
-// Copyright © 2021 Jan Erik Breimo. All rights reserved.
-// Created by Jan Erik Breimo on 2021-12-17.
+// Copyright © 2022 Jan Erik Breimo. All rights reserved.
+// Created by Jan Erik Breimo on 2022-01-08.
 //
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include <cstdint>
-#include <iosfwd>
-#include <utility>
-#include "IImage.hpp"
-#include "PixelType.hpp"
+#include "ImageView.hpp"
+#include "IMutImage.hpp"
 
 namespace Yimage
 {
-    class ImageView : public IImage
+    class MutImageView : public IMutImage
     {
     public:
-        ImageView();
+        MutImageView();
 
-        explicit ImageView(const IImage& img)
-            : ImageView(img.data(), img.pixel_type(),
-                        img.width(), img.height(),
-                        img.row_gap_size())
-        {}
+        explicit MutImageView(IMutImage& img);
 
-        ImageView(const unsigned char* buffer,
-                  PixelType pixel_type,
-                  size_t width,
-                  size_t height,
-                  size_t row_gap_size = 0);
+        MutImageView(unsigned char* buffer,
+                     PixelType pixel_type,
+                     size_t width,
+                     size_t height,
+                     size_t row_gap_size = 0);
 
         explicit operator bool() const override
         {
@@ -44,6 +37,12 @@ namespace Yimage
         }
 
         [[nodiscard]]
+        constexpr unsigned char* pixel_pointer(size_t x, size_t y) override
+        {
+            return buffer_ + y * row_size() + x * pixel_size_ / 8;
+        }
+
+        [[nodiscard]]
         constexpr std::pair<const unsigned char*, const unsigned char*>
         row(size_t index) const override
         {
@@ -52,7 +51,21 @@ namespace Yimage
         }
 
         [[nodiscard]]
+        constexpr std::pair<unsigned char*, unsigned char*>
+        row(size_t index) override
+        {
+            auto start = buffer_ + index * row_size();
+            return {start, start + width_ * pixel_size_ / 8};
+        }
+
+        [[nodiscard]]
         constexpr const unsigned char* data() const override
+        {
+            return buffer_;
+        }
+
+        [[nodiscard]]
+        constexpr unsigned char* data() override
         {
             return buffer_;
         }
@@ -79,7 +92,7 @@ namespace Yimage
         constexpr size_t size() const override
         {
             auto last_row = width_ * pixel_size_ / 8;
-            return height_ == 0 ? 0 : (height_ - 1) * row_size() + last_row;
+            return height_  == 0 ? 0 : (height_ - 1) * row_size() + last_row;
         }
 
         [[nodiscard]]
@@ -110,16 +123,24 @@ namespace Yimage
         ImageView subimage(size_t x, size_t y) const override;
 
         [[nodiscard]]
-        ImageView subimage(size_t x, size_t y,
-                           size_t width, size_t height) const override;
+        ImageView
+        subimage(size_t x, size_t y,
+                 size_t width, size_t height) const override;
+
+        [[nodiscard]]
+        MutImageView mut_subimage(size_t x, size_t y) override;
+
+        [[nodiscard]]
+        MutImageView
+        mut_subimage(size_t x, size_t y, size_t width, size_t height) override;
     private:
         size_t width_ = 0;
         size_t height_ = 0;
         size_t gap_size_ = 0;
         size_t pixel_size_ = 0;
         PixelType pixel_type_ = PixelType::NONE;
-        const unsigned char* buffer_ = nullptr;
+        unsigned char* buffer_ = nullptr;
     };
 
-    bool operator==(const ImageView& a, const ImageView& b);
+    bool operator==(const MutImageView& a, const MutImageView& b);
 }

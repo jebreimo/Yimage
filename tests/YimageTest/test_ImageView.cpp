@@ -8,9 +8,9 @@
 #include <catch2/catch.hpp>
 #include "Yimage/Image.hpp"
 
-using yimage::ImageView;
-using yimage::PixelType;
-using yimage::Rgba8;
+using Yimage::ImageView;
+using Yimage::PixelType;
+using Yimage::Rgba8;
 
 TEST_CASE("test get_rgba8")
 {

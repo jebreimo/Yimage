@@ -7,7 +7,7 @@
 //****************************************************************************
 #include "Yimage/PngTransform.hpp"
 
-namespace yimage
+namespace Yimage
 {
     bool PngTransform::invert_alpha() const
     {

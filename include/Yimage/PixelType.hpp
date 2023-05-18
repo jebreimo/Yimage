@@ -8,7 +8,7 @@
 #pragma once
 #include <cstddef>
 
-namespace yimage
+namespace Yimage
 {
     enum class PixelType
     {

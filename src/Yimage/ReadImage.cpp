@@ -12,7 +12,7 @@
 #include "Yimage/ReadPng.hpp"
 #include "Yimage/YimageException.hpp"
 
-namespace yimage
+namespace Yimage
 {
     constexpr char PNG_SIGNATURE[4] = {'\x89', 'P', 'N', 'G'};
     constexpr char JPEG_SIGNATURE[3] = {'\xFF', '\xD8', '\xFF'};

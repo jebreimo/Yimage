@@ -8,9 +8,10 @@
 #include <Yimage/Image.hpp>
 
 #include <algorithm>
-#include <Yimage/YimageException.hpp>
+#include "Yimage/YimageException.hpp"
+#include "ImageUtilities.hpp"
 
-namespace yimage
+namespace Yimage
 {
     Image::Image() = default;
 
@@ -103,14 +104,25 @@ namespace yimage
         return bool(buffer_);
     }
 
-    Image::operator ImageView() const
+    const unsigned char* Image::pixel_pointer(size_t x, size_t y) const
     {
-        return {buffer_.get(), pixel_type_, width_, height_, gap_size_};
+        return ImageView(*this).pixel_pointer(x, y);
     }
 
-    Image::operator MutableImageView()
+    unsigned char* Image::pixel_pointer(size_t x, size_t y)
     {
-        return {buffer_.get(), pixel_type_, width_, height_, gap_size_};
+        return MutImageView(*this).pixel_pointer(x, y);
+    }
+
+    std::pair<const unsigned char*, const unsigned char*>
+    Image::row(size_t index) const
+    {
+        return ImageView(*this).row(index);
+    }
+
+    std::pair<unsigned char*, unsigned char*> Image::row(size_t index)
+    {
+        return MutImageView(*this).row(index);
     }
 
     const unsigned char* Image::data() const
@@ -146,6 +158,43 @@ namespace yimage
     PixelType Image::pixel_type() const
     {
         return pixel_type_;
+    }
+
+    size_t Image::pixel_size() const
+    {
+        return get_pixel_size(pixel_type_);
+    }
+
+    bool Image::is_contiguous() const
+    {
+        return gap_size_ == 0 || height_ <= 1;
+    }
+
+    size_t Image::row_gap_size() const
+    {
+        return gap_size_;
+    }
+
+    ImageView Image::subimage(size_t x, size_t y) const
+    {
+        return ImageView(*this).subimage(x, y);
+    }
+
+    ImageView
+    Image::subimage(size_t x, size_t y, size_t width, size_t height) const
+    {
+        return make_subimage<ImageView>(*this, x, y, width, height);
+    }
+
+    MutImageView Image::mut_subimage(size_t x, size_t y)
+    {
+        return MutImageView(*this).mut_subimage(x, y);
+    }
+
+    MutImageView
+    Image::mut_subimage(size_t x, size_t y, size_t width, size_t height)
+    {
+        return make_subimage<MutImageView>(*this, x, y, width, height);
     }
 
     std::unique_ptr<unsigned char> Image::release()

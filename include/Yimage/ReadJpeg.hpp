@@ -10,7 +10,7 @@
 #include <string>
 #include "Image.hpp"
 
-namespace yimage
+namespace Yimage
 {
     Image read_jpeg(const std::string& path);
 

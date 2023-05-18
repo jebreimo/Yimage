@@ -11,7 +11,7 @@
 #include <utility>
 #include "Yimage/YimageException.hpp"
 
-namespace yimage
+namespace Yimage
 {
     namespace
     {

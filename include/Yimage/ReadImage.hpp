@@ -9,7 +9,7 @@
 #include <string>
 #include "Image.hpp"
 
-namespace yimage
+namespace Yimage
 {
     Image read_image(const std::string& path);
 }

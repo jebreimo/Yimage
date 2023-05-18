@@ -12,7 +12,7 @@
 #include "PngInfo.hpp"
 #include "PngTransform.hpp"
 
-namespace yimage
+namespace Yimage
 {
     class PngWriter
     {

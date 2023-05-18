@@ -9,7 +9,7 @@
 #include <string>
 #include "Image.hpp"
 
-namespace yimage
+namespace Yimage
 {
     Image read_png(std::istream& stream);
 

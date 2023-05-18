@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
         std::cerr << "Not a JPEG file: " << jpg_path.string() << "\n";
         return 0;
     }
-    auto image = yimage::read_jpeg(jpg_path.string());
-    yimage::write_png(png_path.string(), image);
+    auto image = Yimage::read_jpeg(jpg_path.string());
+    Yimage::write_png(png_path.string(), image);
     return 0;
 }

@@ -7,7 +7,7 @@
 //****************************************************************************
 #include "Yimage/PixelType.hpp"
 
-namespace yimage
+namespace Yimage
 {
     size_t get_pixel_size(PixelType type)
     {

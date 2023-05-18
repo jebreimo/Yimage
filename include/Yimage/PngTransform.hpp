@@ -9,7 +9,7 @@
 
 #include <optional>
 
-namespace yimage
+namespace Yimage
 {
     class PngTransform
     {

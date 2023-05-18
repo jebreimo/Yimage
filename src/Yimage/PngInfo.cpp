@@ -8,7 +8,7 @@
 #include "Yimage/PngInfo.hpp"
 #include "Yimage/YimageException.hpp"
 
-namespace yimage
+namespace Yimage
 {
     unsigned PngInfo::width() const
     {

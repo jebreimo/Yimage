@@ -10,7 +10,7 @@
 
 TEST_CASE("test paste")
 {
-    using namespace yimage;
+    using namespace Yimage;
     std::vector<uint8_t> buffer1{
         0, 1, 2, 3,
         4, 5, 6, 7,
@@ -21,13 +21,13 @@ TEST_CASE("test paste")
         20, 21,
         22, 23
     };
-    MutableImageView mut_image1(buffer1.data(), PixelType::MONO_8, 4, 4);
-    ImageView image1 = mut_image1;
+    MutImageView mut_image1(buffer1.data(), PixelType::MONO_8, 4, 4);
+    ImageView image1(mut_image1);
     ImageView image2(buffer2.data(), PixelType::MONO_8, 2, 2);
 
     SECTION("in the center")
     {
-        paste(image2, 1, 1, mut_image1);
+        paste(image2, mut_image1, 1, 1);
         std::vector<uint8_t> buffer3{
             0, 1, 2, 3,
             4, 20, 21, 7,
@@ -38,7 +38,7 @@ TEST_CASE("test paste")
     }
     SECTION("partially outside 1")
     {
-        paste(image2, 3, -1, mut_image1);
+        paste(image2, mut_image1, 3, -1);
         std::vector<uint8_t> buffer3{
             0, 1, 2, 22,
             4, 5, 6, 7,
@@ -49,7 +49,7 @@ TEST_CASE("test paste")
     }
     SECTION("partially outside 2")
     {
-        paste(image2, 0, 3, mut_image1);
+        paste(image2, mut_image1, 0, 3);
         std::vector<uint8_t> buffer3{
             0, 1, 2, 3,
             4, 5, 6, 7,
@@ -60,7 +60,7 @@ TEST_CASE("test paste")
     }
     SECTION("completely outside")
     {
-        paste(image2, 2, 4, mut_image1);
+        paste(image2, mut_image1, 2, 4);
         std::vector<uint8_t> buffer3{
             0, 1, 2, 3,
             4, 5, 6, 7,
@@ -73,7 +73,7 @@ TEST_CASE("test paste")
 
 TEST_CASE("test set_rgba8")
 {
-    using namespace yimage;
+    using namespace Yimage;
     std::vector<uint8_t> buffer1{
         0, 1, 2, 3,
         4, 5, 6, 7,
@@ -82,7 +82,7 @@ TEST_CASE("test set_rgba8")
     };
     SECTION("rgba8 image")
     {
-        MutableImageView img(buffer1.data(), PixelType::RGBA_8, 2, 2);
+        MutImageView img(buffer1.data(), PixelType::RGBA_8, 2, 2);
         set_rgba8(img, 1, 0, {0x33, 0x77, 0xCC, 0xFF});
         set_rgba8(img, 0, 1, {0x44, 0x88, 0xDD, 0xEE});
         REQUIRE(buffer1[4] == 0x33);
@@ -92,7 +92,7 @@ TEST_CASE("test set_rgba8")
     }
     SECTION("rgb8 image")
     {
-        MutableImageView img(buffer1.data(), PixelType::RGB_8, 2, 2, 2);
+        MutImageView img(buffer1.data(), PixelType::RGB_8, 2, 2, 2);
         set_rgba8(img, 1, 0, {0x33, 0x77, 0xCC, 0xFF});
         set_rgba8(img, 0, 1, {0x44, 0x88, 0xDD, 0xEE});
         REQUIRE(buffer1[3] == 0x33);
@@ -107,7 +107,7 @@ TEST_CASE("test set_rgba8")
 
 TEST_CASE("test fill_rgba8")
 {
-    using namespace yimage;
+    using namespace Yimage;
     std::vector<uint8_t> buffer(8*8);
     SECTION("mono8 chess board")
     {
@@ -115,7 +115,7 @@ TEST_CASE("test fill_rgba8")
         constexpr Rgba8 W{0xFF, 0xFF, 0xFF, 0xFF};
         std::vector<Rgba8> colors{W, B, W, B, W, B, W, B,
                                   B, W, B, W, B, W, B, W};
-        MutableImageView img(buffer.data(), PixelType::MONO_8, 8, 8);
+        MutImageView img(buffer.data(), PixelType::MONO_8, 8, 8);
         fill_rgba8(img, colors.data(), colors.size());
         constexpr uint8_t b = 0;
         constexpr uint8_t w = 255;
@@ -133,7 +133,7 @@ TEST_CASE("test fill_rgba8")
     }
     SECTION("unaligned rgb8")
     {
-        MutableImageView img(buffer.data(), PixelType::RGB_8, 5, 4);
+        MutImageView img(buffer.data(), PixelType::RGB_8, 5, 4);
         constexpr Rgba8 R{0xFF, 0, 0, 0xFF};
         constexpr Rgba8 G{0, 0xFF, 0, 0xFF};
         constexpr Rgba8 B{0, 0, 0xFF, 0xFF};

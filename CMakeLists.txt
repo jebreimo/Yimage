@@ -35,7 +35,7 @@ find_package(PNG REQUIRED)
 add_library(Yimage
     include/Yimage/Image.hpp
     include/Yimage/ImageView.hpp
-    include/Yimage/MutableImageView.hpp
+    include/Yimage/MutImageView.hpp
     include/Yimage/PixelType.hpp
     include/Yimage/PngInfo.hpp
     include/Yimage/PngTransform.hpp
@@ -48,7 +48,7 @@ add_library(Yimage
     include/Yimage/YimageException.hpp
     src/Yimage/Image.cpp
     src/Yimage/ImageView.cpp
-    src/Yimage/MutableImageView.cpp
+    src/Yimage/MutImageView.cpp
     src/Yimage/PixelType.cpp
     src/Yimage/PngInfo.cpp
     src/Yimage/PngTransform.cpp
@@ -57,7 +57,7 @@ add_library(Yimage
     src/Yimage/ReadJpeg.cpp
     src/Yimage/ReadPng.cpp
     src/Yimage/WritePng.cpp
-    )
+    include/Yimage/IImage.hpp include/Yimage/IMutImage.hpp src/Yimage/Rgba8.cpp include/Yimage/Rgba8.hpp src/Yimage/IImage.cpp src/Yimage/IMutImage.cpp src/Yimage/ImageUtilities.hpp)
 
 include(GNUInstallDirs)
 

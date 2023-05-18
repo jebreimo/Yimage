@@ -11,7 +11,7 @@
 #include "Yimage/PngWriter.hpp"
 #include "Yimage/YimageException.hpp"
 
-namespace yimage
+namespace Yimage
 {
     void write_png(std::ostream& stream,
                    const void* image, size_t image_size,
@@ -33,7 +33,7 @@ namespace yimage
         write_png(stream, image, image_size, std::move(options), transform);
     }
 
-    void write_png(std::ostream& stream, const ImageView& img)
+    void write_png(std::ostream& stream, const IImage& img)
     {
         auto png_info = PngInfo().width(img.width()).height(img.height());
         PngTransform transform;
@@ -89,7 +89,7 @@ namespace yimage
         write_png(stream, img.data(), img.size(), png_info, transform);
     }
 
-    void write_png(const std::string& fileName, const ImageView& img)
+    void write_png(const std::string& fileName, const IImage& img)
     {
         std::ofstream stream(fileName);
         if (!stream)
