@@ -1,36 +1,27 @@
 //****************************************************************************
-// Copyright © 2021 Jan Erik Breimo. All rights reserved.
-// Created by Jan Erik Breimo on 2021-12-17.
+// Copyright © 2022 Jan Erik Breimo. All rights reserved.
+// Created by Jan Erik Breimo on 2022-01-08.
 //
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include <cstdint>
-#include <iosfwd>
-#include <utility>
-#include "PixelType.hpp"
-#include "Rgba8.hpp"
+#include "ImageView.hpp"
 
 namespace Yimage
 {
-    class Image;
-    class MutableImageView;
-
-    class ImageView
+    class MutableImageView
     {
     public:
-        ImageView();
+        MutableImageView();
 
-        ImageView(const Image& img);
+        MutableImageView(Image& img);
 
-        ImageView(const MutableImageView& view);
-
-        ImageView(const unsigned char* buffer,
-                  PixelType pixel_type,
-                  size_t width,
-                  size_t height,
-                  size_t row_gap_size = 0);
+        MutableImageView(unsigned char* buffer,
+                         PixelType pixel_type,
+                         size_t width,
+                         size_t height,
+                         size_t row_gap_size = 0);
 
         explicit constexpr operator bool() const
         {
@@ -38,14 +29,14 @@ namespace Yimage
         }
 
         [[nodiscard]]
-        constexpr const unsigned char*
+        constexpr unsigned char*
         pixel_pointer(size_t x, size_t y) const
         {
             return buffer_ + y * row_size() + x * pixel_size_ / 8;
         }
 
         [[nodiscard]]
-        constexpr std::pair<const unsigned char*, const unsigned char*>
+        constexpr std::pair<unsigned char*, unsigned char*>
         row(size_t index) const
         {
             auto start = buffer_ + index * row_size();
@@ -53,7 +44,7 @@ namespace Yimage
         }
 
         [[nodiscard]]
-        constexpr const unsigned char* data() const
+        constexpr unsigned char* data() const
         {
             return buffer_;
         }
@@ -80,7 +71,7 @@ namespace Yimage
         constexpr size_t size() const
         {
             auto last_row = width_ * pixel_size_ / 8;
-            return height_ == 0 ? 0 : (height_ - 1) * row_size() + last_row;
+            return height_  == 0 ? 0 : (height_ - 1) * row_size() + last_row;
         }
 
         [[nodiscard]]
@@ -108,21 +99,27 @@ namespace Yimage
         }
 
         [[nodiscard]]
-        ImageView subimage(size_t x, size_t y) const;
+        MutableImageView subimage(size_t x, size_t y) const;
 
         [[nodiscard]]
-        ImageView subimage(size_t x, size_t y,
-                           size_t width, size_t height) const;
+        MutableImageView
+        subimage(size_t x, size_t y, size_t width, size_t height) const;
     private:
         size_t width_ = 0;
         size_t height_ = 0;
         size_t gap_size_ = 0;
         size_t pixel_size_ = 0;
         PixelType pixel_type_ = PixelType::NONE;
-        const unsigned char* buffer_ = nullptr;
+        unsigned char* buffer_ = nullptr;
     };
 
-    bool operator==(const ImageView& a, const ImageView& b);
+    bool operator==(const MutableImageView& a, const MutableImageView& b);
 
-    Rgba8 get_rgba8(const ImageView& image, size_t x, size_t y);
+    void paste(ImageView src, MutableImageView dst, ptrdiff_t x, ptrdiff_t y);
+
+    void set_rgba8(const MutableImageView& image, size_t x, size_t y, Rgba8 rgba);
+
+    void fill_rgba8(const MutableImageView& image, Rgba8 rgba);
+
+    void fill_rgba8(const MutableImageView& image, const Rgba8* rgba, size_t num_rgba);
 }

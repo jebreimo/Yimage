@@ -33,7 +33,7 @@ namespace Yimage
         write_png(stream, image, image_size, std::move(options), transform);
     }
 
-    void write_png(std::ostream& stream, const IImage& img)
+    void write_png(std::ostream& stream, const ImageView& img)
     {
         auto png_info = PngInfo().width(img.width()).height(img.height());
         PngTransform transform;
@@ -89,7 +89,7 @@ namespace Yimage
         write_png(stream, img.data(), img.size(), png_info, transform);
     }
 
-    void write_png(const std::string& fileName, const IImage& img)
+    void write_png(const std::string& fileName, const ImageView& img)
     {
         std::ofstream stream(fileName);
         if (!stream)

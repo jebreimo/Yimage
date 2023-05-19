@@ -9,12 +9,11 @@
 #include <memory>
 #include <string>
 #include "ImageView.hpp"
-#include "IMutImage.hpp"
-#include "MutImageView.hpp"
+#include "MutableImageView.hpp"
 
 namespace Yimage
 {
-    class Image : public IMutImage
+    class Image
     {
     public:
         Image();
@@ -35,65 +34,65 @@ namespace Yimage
         Image& operator=(Image&& rhs) noexcept;
 
         [[nodiscard]]
-        explicit operator bool() const final;
+        explicit operator bool() const;
 
         [[nodiscard]]
-        const unsigned char* pixel_pointer(size_t x, size_t y) const final;
+        const unsigned char* pixel_pointer(size_t x, size_t y) const;
 
         [[nodiscard]]
-        unsigned char* mut_pixel_pointer(size_t x, size_t y) const final;
+        unsigned char* pixel_pointer(size_t x, size_t y);
 
         [[nodiscard]]
         std::pair<const unsigned char*, const unsigned char*>
-        row(size_t index) const final;
+        row(size_t index) const;
 
         [[nodiscard]]
         std::pair<unsigned char*, unsigned char*>
-        mut_row(size_t index) const final;
+        row(size_t index);
 
         [[nodiscard]]
-        const unsigned char* data() const final;
+        const unsigned char* data() const;
 
         [[nodiscard]]
-        unsigned char* mut_data() const final;
+        unsigned char* data();
 
         [[nodiscard]]
-        size_t width() const final;
+        size_t width() const;
 
         [[nodiscard]]
-        size_t height() const final;
+        size_t height() const;
 
         [[nodiscard]]
-        size_t row_size() const final;
+        size_t row_size() const;
 
         [[nodiscard]]
-        size_t size() const final;
+        size_t size() const;
 
         [[nodiscard]]
-        size_t pixel_size() const final;
+        size_t pixel_size() const;
 
         [[nodiscard]]
-        PixelType pixel_type() const final;
+        PixelType pixel_type() const;
 
         [[nodiscard]]
-        bool is_contiguous() const final;
+        bool is_contiguous() const;
 
         [[nodiscard]]
-        size_t row_gap_size() const final;
+        size_t row_gap_size() const;
 
         [[nodiscard]]
-        ImageView subimage(size_t x, size_t y) const final;
+        ImageView subimage(size_t x, size_t y) const;
 
         [[nodiscard]]
         ImageView subimage(size_t x, size_t y,
-                           size_t width, size_t height) const final;
+                           size_t width, size_t height) const;
 
         [[nodiscard]]
-        MutImageView mut_subimage(size_t x, size_t y) const final;
+        MutableImageView mutable_subimage(size_t x, size_t y);
 
         [[nodiscard]]
-        MutImageView mut_subimage(size_t x, size_t y,
-                                  size_t width, size_t height) const final;
+        MutableImageView mutable_subimage(size_t x, size_t y,
+                                          size_t width, size_t height);
 
         std::unique_ptr<unsigned char> release();
     private:
