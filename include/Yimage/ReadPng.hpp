@@ -14,4 +14,6 @@ namespace Yimage
     Image read_png(std::istream& stream);
 
     Image read_png(const std::string& path);
+
+    Image read_png(const void* buffer, size_t size);
 }

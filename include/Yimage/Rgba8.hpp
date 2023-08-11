@@ -13,6 +13,22 @@ namespace Yimage
 {
     struct Rgba8
     {
+        constexpr Rgba8() = default;
+
+        explicit constexpr Rgba8(uint32_t rgba)
+            : r(uint8_t(rgba >> 24)),
+              g(uint8_t((rgba >> 16) & 0xFF)),
+              b(uint8_t((rgba >> 8) & 0xFF)),
+              a(uint8_t(rgba & 0xFF))
+        {}
+
+        constexpr Rgba8(uint8_t r, uint8_t g, uint8_t b, uint8_t a = 0xFF)
+            : r(r),
+              g(g),
+              b(b),
+              a(a)
+        {}
+
         uint8_t r = 0;
         uint8_t g = 0;
         uint8_t b = 0;

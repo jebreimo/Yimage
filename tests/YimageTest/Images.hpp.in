@@ -1,0 +1,11 @@
+//****************************************************************************
+// Copyright © 2023 Jan Erik Breimo. All rights reserved.
+// Created by Jan Erik Breimo on 2023-08-07.
+//
+// This file is distributed under the BSD License.
+// License text is included with the source distribution.
+//****************************************************************************
+#include <cstddef>
+#include "Resources.hpp"
+
+const char THUMB_UP_PNG_RAW[] = #embed "thumb_up.png";

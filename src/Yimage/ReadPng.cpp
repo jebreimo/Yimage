@@ -9,6 +9,7 @@
 
 #include <png.h>
 #include <fstream>
+#include <span>
 #include <vector>
 #include "Yimage/YimageException.hpp"
 
@@ -16,17 +17,48 @@ namespace Yimage
 {
     namespace
     {
+        class MemoryReader
+        {
+        public:
+            MemoryReader(const void* buffer, size_t size)
+                : span_(static_cast<const unsigned char*>(buffer), size)
+            {}
+
+            bool read(unsigned char* dest, size_t count)
+            {
+                if (current_ + count > span_.size())
+                    return false;
+                auto first = span_.data() + current_;
+                current_ += count;
+                auto last = span_.data() + current_;
+                std::copy(first, last, dest);
+                return true;
+            }
+        private:
+            std::span<const unsigned char> span_;
+            size_t current_ = 0;
+        };
+
         extern "C" {
 
-        void user_read_data(png_structp png_ptr,
-                            png_bytep data,
-                            png_size_t length)
+        void user_read_istream_data(png_structp png_ptr,
+                                    png_bytep data,
+                                    png_size_t length)
         {
             auto stream = static_cast<std::istream*>(png_get_io_ptr(png_ptr));
             stream->read(reinterpret_cast<char*>(data),
                           std::streamsize(length));
             if (size_t(stream->gcount()) != length)
-                png_error(png_ptr, "Could not read the expected number of bytes.");
+                png_error(png_ptr, "Could not read the requested number of bytes.");
+        }
+
+        void user_read_buffer_data(png_structp png_ptr,
+                                   png_bytep data,
+                                   png_size_t length)
+        {
+            auto reader = static_cast<MemoryReader*>(png_get_io_ptr(png_ptr));
+            if (!reader->read(data, length))
+                png_error(png_ptr, "Could not read the requested number of bytes.");
         }
         }
     }
@@ -68,7 +100,7 @@ namespace Yimage
         png_infop info_ptr = nullptr;
     };
 
-    PngHandle init_png(std::istream& stream)
+    PngHandle create_png_handle()
     {
         auto png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
         if (!png_ptr)
@@ -79,7 +111,6 @@ namespace Yimage
             png_destroy_read_struct(&png_ptr, nullptr, nullptr);
             YIMAGE_THROW("Can not create PNG info struct.");
         }
-        png_set_read_fn(png_ptr, &stream, user_read_data);
         return {png_ptr, info_ptr};
     }
 
@@ -125,9 +156,8 @@ namespace Yimage
                      + std::to_string(bit_depth) + ".");
     }
 
-    Image read_png(std::istream& stream)
+    Image read_png(const PngHandle& png)
     {
-        auto png = init_png(stream);
         png_read_info(png.png_ptr, png.info_ptr);
         const auto width = png_get_image_width(png.png_ptr, png.info_ptr);
         const auto height = png_get_image_height(png.png_ptr, png.info_ptr);
@@ -145,11 +175,26 @@ namespace Yimage
         return image;
     }
 
+    Image read_png(std::istream& stream)
+    {
+        auto png = create_png_handle();
+        png_set_read_fn(png.png_ptr, &stream, user_read_istream_data);
+        return read_png(png);
+    }
+
     Image read_png(const std::string& path)
     {
         std::ifstream file(path, std::ios::binary);
         if (!file)
             YIMAGE_THROW("Can not open file: " + path);
         return read_png(file);
+    }
+
+    Image read_png(const void* buffer, size_t size)
+    {
+        auto png = create_png_handle();
+        MemoryReader reader(buffer, size);
+        png_set_read_fn(png.png_ptr, &reader, user_read_buffer_data);
+        return read_png(png);
     }
 }
