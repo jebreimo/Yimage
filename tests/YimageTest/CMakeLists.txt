@@ -27,7 +27,7 @@ add_executable(YimageTest
     YimageTestMain.cpp
     test_MutableImageView.cpp
     test_ImageView.cpp
-    test_ReadPng.cpp
+    test_ReadImage.cpp
     Resources.hpp
     Resources.cpp
 )

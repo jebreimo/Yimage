@@ -7,6 +7,7 @@
 //****************************************************************************
 #include "Yimage/ReadImage.hpp"
 
+#include <algorithm>
 #include <fstream>
 #include "Yimage/ReadJpeg.hpp"
 #include "Yimage/ReadPng.hpp"
@@ -14,32 +15,59 @@
 
 namespace Yimage
 {
-    constexpr char PNG_SIGNATURE[4] = {'\x89', 'P', 'N', 'G'};
-    constexpr char JPEG_SIGNATURE[3] = {'\xFF', '\xD8', '\xFF'};
-    constexpr char JPEG_JFIF_SIGNATURE[4] = {'J', 'F', 'I', 'F'};
-    constexpr char JPEG_EXIF_SIGNATURE[4] = {'E', 'x', 'i', 'f'};
+    namespace
+    {
+        constexpr char PNG_SIGNATURE[4] = {'\x89', 'P', 'N', 'G'};
+        constexpr char JPEG_SIGNATURE[3] = {'\xFF', '\xD8', '\xFF'};
+        constexpr char JPEG_JFIF_SIGNATURE[4] = {'J', 'F', 'I', 'F'};
+        constexpr char JPEG_EXIF_SIGNATURE[4] = {'E', 'x', 'i', 'f'};
+    }
+
+    ImageFormat get_image_format(const void* buffer, size_t size)
+    {
+        auto bytes = static_cast<const char*>(buffer);
+        if (size >= 4 && std::equal(bytes, bytes + 4, PNG_SIGNATURE))
+            return ImageFormat::PNG;
+
+        if (size >= 10
+            && std::equal(bytes, bytes + 3, JPEG_SIGNATURE)
+            && (std::equal(bytes + 6, bytes + 10, JPEG_JFIF_SIGNATURE)
+                || std::equal(bytes + 6, bytes + 10, JPEG_EXIF_SIGNATURE)))
+        {
+            return ImageFormat::JPEG;
+        }
+        return ImageFormat::UNKNOWN;
+    }
 
     Image read_image(const std::string& path)
     {
         std::ifstream file(path, std::ios::binary);
         char buffer[16];
         file.read(buffer, 16);
-        if (size_t(file.gcount()) != 16)
-            YIMAGE_THROW("Unrecognized image format.");
 
-        file.seekg(0, std::ios::beg);
-        if (std::equal(buffer, buffer + 4, PNG_SIGNATURE))
+        switch (get_image_format(buffer, size_t(file.gcount())))
         {
-            return read_png(file);
-        }
-        else if (std::equal(buffer, buffer + 3, JPEG_SIGNATURE)
-                 && (std::equal(buffer + 6, buffer + 10, JPEG_JFIF_SIGNATURE)
-                     || std::equal(buffer + 6, buffer + 10, JPEG_EXIF_SIGNATURE)))
-        {
+        case ImageFormat::UNKNOWN:
+            YIMAGE_THROW("Unrecognized image format.");
+        case ImageFormat::JPEG:
             file.close();
             return read_jpeg(path);
+        case ImageFormat::PNG:
+            file.seekg(0, std::ios::beg);
+            return read_png(file);
         }
+    }
 
-        YIMAGE_THROW("Unrecognized image format.");
+    Image read_image(const void* buffer, size_t size)
+    {
+        switch (get_image_format(buffer, size))
+        {
+        case ImageFormat::UNKNOWN:
+            YIMAGE_THROW("Unrecognized image format.");
+        case ImageFormat::JPEG:
+            return read_jpeg(buffer, size);
+        case ImageFormat::PNG:
+            return read_png(buffer, size);
+        }
     }
 }

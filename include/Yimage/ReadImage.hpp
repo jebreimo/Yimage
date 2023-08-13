@@ -11,5 +11,24 @@
 
 namespace Yimage
 {
+    enum class ImageFormat
+    {
+        UNKNOWN,
+        JPEG,
+        PNG
+    };
+
+    /**
+     * @brief Determines the image format from the file signature.
+     * @param buffer The image or start of the image. The buffer should
+     *      should contain at least the first 16 bytes of the image.
+     * @param size The size of buffer in bytes.
+     * @return The image format or UNKNOWN if the format is unrecognized
+     *      or the buffer is too small to be determined.
+     */
+    ImageFormat get_image_format(const void* buffer, size_t size);
+
     Image read_image(const std::string& path);
+
+    Image read_image(const void* buffer, size_t size);
 }

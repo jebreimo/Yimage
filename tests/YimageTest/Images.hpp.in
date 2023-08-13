@@ -8,4 +8,6 @@
 #include <cstddef>
 #include "Resources.hpp"
 
-const char THUMB_UP_PNG_RAW[] = #embed "thumb_up.png";
+const char THUMB_UP_PNG_RAW[] = #embed "images/thumb_up.png";
+
+const char CITY_JPG_RAW[] = #embed "images/City.jpg";
