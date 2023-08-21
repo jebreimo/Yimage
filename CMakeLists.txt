@@ -57,7 +57,11 @@ add_library(Yimage
     src/Yimage/ReadJpeg.cpp
     src/Yimage/ReadPng.cpp
     src/Yimage/WritePng.cpp
-    src/Yimage/Rgba8.cpp include/Yimage/Rgba8.hpp src/Yimage/ImageUtilities.hpp)
+    src/Yimage/Rgba8.cpp include/Yimage/Rgba8.hpp src/Yimage/ImageUtilities.hpp
+    include/Yimage/ImageAlgorithms.hpp
+    src/Yimage/ImageAlgorithms.cpp
+    src/Yimage/ColorBytes.cpp
+    src/Yimage/ColorBytes.hpp)
 
 include(GNUInstallDirs)
 

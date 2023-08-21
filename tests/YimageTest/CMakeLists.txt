@@ -11,7 +11,7 @@ project(YimageTest)
 include(FetchContent)
 FetchContent_Declare(catch
     GIT_REPOSITORY "https://github.com/catchorg/Catch2.git"
-    GIT_TAG "v2.13.7"
+    GIT_TAG "v3.4.0"
 )
 FetchContent_Declare(cppembed
     GIT_REPOSITORY "https://github.com/jebreimo/cppembed.git"
@@ -24,12 +24,12 @@ list(APPEND CMAKE_MODULE_PATH ${cppembed_SOURCE_DIR}/cmake)
 include(TargetEmbedCppData)
 
 add_executable(YimageTest
-    YimageTestMain.cpp
-    test_MutableImageView.cpp
-    test_ImageView.cpp
-    test_ReadImage.cpp
     Resources.hpp
     Resources.cpp
+    test_ImageView.cpp
+    test_ImageAlgorithms.cpp
+    test_MutableImageView.cpp
+    test_ReadImage.cpp
 )
 
 target_include_directories(YimageTest
@@ -38,7 +38,7 @@ target_include_directories(YimageTest
 )
 
 target_link_libraries(YimageTest
-    Catch2::Catch2
+    Catch2::Catch2WithMain
     Yimage::Yimage
 )
 

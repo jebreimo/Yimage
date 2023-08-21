@@ -5,8 +5,8 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include <catch2/catch.hpp>
 #include "Yimage/Image.hpp"
+#include <catch2/catch_test_macros.hpp>
 
 using Yimage::ImageView;
 using Yimage::PixelType;

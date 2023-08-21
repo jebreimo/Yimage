@@ -69,6 +69,9 @@ namespace Yimage
         size_t size() const;
 
         [[nodiscard]]
+        /**
+         * @brief Returns the pixel size measured in bits.
+         */
         size_t pixel_size() const;
 
         [[nodiscard]]

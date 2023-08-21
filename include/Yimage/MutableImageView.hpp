@@ -115,11 +115,5 @@ namespace Yimage
 
     bool operator==(const MutableImageView& a, const MutableImageView& b);
 
-    void paste(ImageView src, MutableImageView dst, ptrdiff_t x, ptrdiff_t y);
-
     void set_rgba8(const MutableImageView& image, size_t x, size_t y, Rgba8 rgba);
-
-    void fill_rgba8(const MutableImageView& image, Rgba8 rgba);
-
-    void fill_rgba8(const MutableImageView& image, const Rgba8* rgba, size_t num_rgba);
 }
