@@ -15,7 +15,7 @@ FetchContent_Declare(catch
 )
 FetchContent_Declare(cppembed
     GIT_REPOSITORY "https://github.com/jebreimo/cppembed.git"
-    GIT_TAG "main"
+    GIT_TAG "v0.1.0"
 )
 FetchContent_MakeAvailable(catch cppembed)
 
