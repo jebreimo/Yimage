@@ -7,6 +7,7 @@
 //****************************************************************************
 #pragma once
 
+#include "ImageAlgorithms.hpp"
 #include "ReadImage.hpp"
 #include "ReadJpeg.hpp"
 #include "ReadPng.hpp"
