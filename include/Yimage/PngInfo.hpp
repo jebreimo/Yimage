@@ -65,7 +65,8 @@ namespace Yimage
 
         PngInfo& add_text(std::string key, std::string value);
 
-        PngInfo& add_text(std::string key, std::string value, int32_t compression);
+        PngInfo& add_text(std::string key, const std::string& value,
+                          int32_t compression);
 
         [[nodiscard]]
         const std::optional<std::pair<uint32_t, uint32_t>>& pixels_per_meter() const;

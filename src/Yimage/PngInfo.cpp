@@ -6,7 +6,6 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #include "Yimage/PngInfo.hpp"
-#include "Yimage/YimageException.hpp"
 
 namespace Yimage
 {
@@ -109,7 +108,8 @@ namespace Yimage
                         PNG_TEXT_COMPRESSION_NONE);
     }
 
-    PngInfo& PngInfo::add_text(std::string key, std::string value, int compression)
+    PngInfo& PngInfo::add_text(std::string key, const std::string& value,
+                               int compression)
     {
         m_strings.push_back(std::move(key));
         auto key_ptr = &m_strings.back();
