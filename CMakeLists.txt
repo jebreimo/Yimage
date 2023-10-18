@@ -34,6 +34,7 @@ find_package(PNG REQUIRED)
 
 add_library(Yimage
     include/Yimage/Image.hpp
+    include/Yimage/ImageAlgorithms.hpp
     include/Yimage/ImageView.hpp
     include/Yimage/MutableImageView.hpp
     include/Yimage/PixelType.hpp
@@ -43,11 +44,16 @@ add_library(Yimage
     include/Yimage/ReadImage.hpp
     include/Yimage/ReadJpeg.hpp
     include/Yimage/ReadPng.hpp
+    include/Yimage/Rgba8.hpp
     include/Yimage/WritePng.hpp
     include/Yimage/Yimage.hpp
     include/Yimage/YimageException.hpp
+    src/Yimage/ColorBytes.cpp
+    src/Yimage/ColorBytes.hpp
     src/Yimage/Image.cpp
+    src/Yimage/ImageAlgorithms.cpp
     src/Yimage/ImageView.cpp
+    src/Yimage/ImageUtilities.hpp
     src/Yimage/MutableImageView.cpp
     src/Yimage/PixelType.cpp
     src/Yimage/PngInfo.cpp
@@ -56,12 +62,9 @@ add_library(Yimage
     src/Yimage/ReadImage.cpp
     src/Yimage/ReadJpeg.cpp
     src/Yimage/ReadPng.cpp
+    src/Yimage/Rgba8.cpp
     src/Yimage/WritePng.cpp
-    src/Yimage/Rgba8.cpp include/Yimage/Rgba8.hpp src/Yimage/ImageUtilities.hpp
-    include/Yimage/ImageAlgorithms.hpp
-    src/Yimage/ImageAlgorithms.cpp
-    src/Yimage/ColorBytes.cpp
-    src/Yimage/ColorBytes.hpp)
+)
 
 include(GNUInstallDirs)
 
