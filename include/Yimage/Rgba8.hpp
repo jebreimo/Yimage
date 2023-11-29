@@ -32,7 +32,7 @@ namespace Yimage
         uint8_t r = 0;
         uint8_t g = 0;
         uint8_t b = 0;
-        uint8_t a = 0;
+        uint8_t a = 0xFF;
     };
 
     bool operator==(const Rgba8& a, const Rgba8& b);
@@ -42,4 +42,17 @@ namespace Yimage
     std::string to_string(const Rgba8& rgba);
 
     std::ostream& operator<<(std::ostream& os, const Rgba8& rgba);
+
+    namespace Color
+    {
+        constexpr Rgba8 Black;
+        constexpr Rgba8 White{0xFF, 0xFF, 0xFF};
+        constexpr Rgba8 Red{0xFF, 0, 0};
+        constexpr Rgba8 Green{0, 0xFF, 0};
+        constexpr Rgba8 Blue{0, 0, 0xFF};
+        constexpr Rgba8 Yellow{0xFF, 0xFF, 0};
+        constexpr Rgba8 Cyan{0, 0xFF, 0xFF};
+        constexpr Rgba8 Magenta{0xFF, 0, 0xFF};
+        constexpr Rgba8 Transparent{0, 0, 0, 0};
+    }
 }
