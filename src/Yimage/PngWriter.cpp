@@ -30,13 +30,13 @@ namespace Yimage
             }
         }
 
-        size_t get_pixel_size(const PngMetadata& info,
+        size_t get_pixel_size(const PngMetadata& metadata,
                               const PngTransform& transform)
         {
-            if (info.bit_depth() == 0)
+            if (metadata.bit_depth == 0)
                 YIMAGE_THROW("Bit depth can not be 0.");
-            size_t component_count = get_pixel_components(info.color_type());
-            size_t component_size = info.bit_depth();
+            size_t component_count = get_pixel_components(metadata.color_type);
+            size_t component_size = metadata.bit_depth;
             if (component_size < 8 && component_count > 1)
                 YIMAGE_THROW("Invalid combination of color type and bit depth.");
 
@@ -50,7 +50,7 @@ namespace Yimage
 
         size_t get_row_size(const PngMetadata& info, const PngTransform& transform)
         {
-            return (info.width() * get_pixel_size(info, transform) + 7) / 8;
+            return (info.width * get_pixel_size(info, transform) + 7) / 8;
         }
 
         extern "C" {
@@ -136,12 +136,12 @@ namespace Yimage
             YIMAGE_THROW("Error while setting PNG info values.");
         }
 
-        png_set_IHDR(png_ptr_, info_ptr_, metadata_.width(), metadata_.height(),
-                     metadata_.bit_depth(), metadata_.color_type(),
-                     metadata_.interlace_type(), metadata_.compression_method(),
-                     metadata_.filter_method());
-        if (metadata_.gamma())
-            png_set_gAMA(png_ptr_, info_ptr_, *metadata_.gamma());
+        png_set_IHDR(png_ptr_, info_ptr_, metadata_.width, metadata_.height,
+                     metadata_.bit_depth, metadata_.color_type,
+                     metadata_.interlace_type, metadata_.compression_method,
+                     metadata_.filter_method);
+        if (metadata_.gamma)
+            png_set_gAMA(png_ptr_, info_ptr_, *metadata_.gamma);
 
         if (!metadata_.texts().empty())
         {
@@ -164,13 +164,13 @@ namespace Yimage
     void PngWriter::write(const void* image, size_t size)
     {
         auto rowSize = get_row_size(metadata_, transform_);
-        if (size != metadata_.height() * rowSize)
+        if (size != metadata_.height * rowSize)
             YIMAGE_THROW("Incorrect image size.");
         std::vector<unsigned char*> rows;
-        rows.reserve(metadata_.height());
+        rows.reserve(metadata_.height);
 
         auto ucImage = static_cast<unsigned char*>(const_cast<void*>(image));
-        for (size_t i = 0; i < metadata_.height(); ++i)
+        for (size_t i = 0; i < metadata_.height; ++i)
             rows.push_back(ucImage + i * rowSize);
 
         assert_is_valid();

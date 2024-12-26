@@ -99,7 +99,7 @@ namespace Yimage
     {
         UniqueFile file(fopen(path.c_str(), "rb"));
         auto img = read_jpeg(file.get());
-        img.metadata()->set_path(path);
+        img.metadata()->path = path;
         return img;
     }
 

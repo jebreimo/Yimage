@@ -167,18 +167,18 @@ namespace Yimage
         png_read_info(png.png_ptr, png.info_ptr);
 
         auto metadata = std::make_unique<PngMetadata>();
-        metadata->set_width(png_get_image_width(png.png_ptr, png.info_ptr));
-        metadata->set_height(png_get_image_height(png.png_ptr, png.info_ptr));
-        metadata->set_bit_depth(png_get_bit_depth(png.png_ptr, png.info_ptr));
-        metadata->set_color_type(png_get_color_type(png.png_ptr, png.info_ptr));
+        metadata->width = png_get_image_width(png.png_ptr, png.info_ptr);
+        metadata->height = png_get_image_height(png.png_ptr, png.info_ptr);
+        metadata->bit_depth = png_get_bit_depth(png.png_ptr, png.info_ptr);
+        metadata->color_type = png_get_color_type(png.png_ptr, png.info_ptr);
         //const auto channels = png_get_channels(png.png_ptr, png.info_ptr);
 
-        Image image(get_pixel_type(metadata->color_type(),
-                                   metadata->bit_depth()),
-                    metadata->width(), metadata->height());
+        Image image(get_pixel_type(metadata->color_type,
+                                   metadata->bit_depth),
+                    metadata->width, metadata->height);
 
-        std::vector<uint8_t*> row_pointers(metadata->height());
-        for (size_t i = 0; i < metadata->height(); ++i)
+        std::vector<uint8_t*> row_pointers(metadata->height);
+        for (size_t i = 0; i < metadata->height; ++i)
             row_pointers[i] = image.pixel_pointer(0, i);
         png_read_image(png.png_ptr, row_pointers.data());
 
@@ -199,7 +199,7 @@ namespace Yimage
         if (!file)
             YIMAGE_THROW("Can not open file: " + path);
         auto image = read_png(file);
-        image.metadata()->set_path(path);
+        image.metadata()->path = path;
         return image;
     }
 

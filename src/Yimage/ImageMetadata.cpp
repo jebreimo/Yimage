@@ -9,26 +9,8 @@
 
 namespace Yimage
 {
-    ImageMetadata::ImageMetadata(ImageFormat format): format_(format)
-    {}
-
-    std::string ImageMetadata::path() const
+    ImageMetadata::ImageMetadata(ImageFormat format)
+        : format(format)
     {
-        return path_;
-    }
-
-    void ImageMetadata::set_path(const std::string& path)
-    {
-        path_ = path;
-    }
-
-    ImageFormat ImageMetadata::format() const
-    {
-        return format_;
-    }
-
-    void ImageMetadata::set_format(ImageFormat format)
-    {
-        format_ = format;
     }
 }

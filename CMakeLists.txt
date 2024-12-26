@@ -90,8 +90,7 @@ if (YIMAGE_BUILD_TESTS)
 endif ()
 
 if (YIMAGE_BUILD_EXTRAS)
-    add_subdirectory(extras/jpg2png)
-    add_subdirectory(extras/transparent)
+    add_subdirectory(extras)
 endif()
 
 if (YIMAGE_MASTER_PROJECT AND DEFINED ENV{LOCAL_SOURCE_PACKAGE_DIR})

@@ -36,64 +36,64 @@ namespace Yimage
     void write_png(std::ostream& stream, const ImageView& img)
     {
         PngMetadata metadata;
-        metadata.set_width(img.width());
-        metadata.set_height(img.height());
+        metadata.width = img.width();
+        metadata.height = img.height();
 
         PngTransform transform;
 
         switch (img.pixel_type())
         {
         case PixelType::MONO_1:
-            metadata.set_bit_depth(1);
-            metadata.set_color_type(PNG_COLOR_TYPE_GRAY);
+            metadata.bit_depth = 1;
+            metadata.color_type = PNG_COLOR_TYPE_GRAY;
             break;
         case PixelType::MONO_2:
-            metadata.set_bit_depth(2);
-            metadata.set_color_type(PNG_COLOR_TYPE_GRAY);
+            metadata.bit_depth = 2;
+            metadata.color_type = PNG_COLOR_TYPE_GRAY;
             break;
         case PixelType::MONO_4:
-            metadata.set_bit_depth(4);
-            metadata.set_color_type(PNG_COLOR_TYPE_GRAY);
+            metadata.bit_depth = 4;
+            metadata.color_type = PNG_COLOR_TYPE_GRAY;
             break;
         case PixelType::MONO_8:
-            metadata.set_bit_depth(8);
-            metadata.set_color_type(PNG_COLOR_TYPE_GRAY);
+            metadata.bit_depth = 8;
+            metadata.color_type = PNG_COLOR_TYPE_GRAY;
             break;
         case PixelType::ALPHA_MONO_8:
             transform.invert_alpha(true);
             [[fallthrough]];
         case PixelType::MONO_ALPHA_8:
-            metadata.set_bit_depth(8);
-            metadata.set_color_type(PNG_COLOR_TYPE_GRAY_ALPHA);
+            metadata.bit_depth = 8;
+            metadata.color_type = PNG_COLOR_TYPE_GRAY_ALPHA;
             break;
         case PixelType::ALPHA_MONO_16:
             transform.invert_alpha(true);
             [[fallthrough]];
         case PixelType::MONO_ALPHA_16:
-            metadata.set_bit_depth(16);
-            metadata.set_color_type(PNG_COLOR_TYPE_GRAY_ALPHA);
+            metadata.bit_depth = 16;
+            metadata.color_type = PNG_COLOR_TYPE_GRAY_ALPHA;
             break;
         case PixelType::RGB_8:
-            metadata.set_bit_depth(8);
-            metadata.set_color_type(PNG_COLOR_TYPE_RGB);
+            metadata.bit_depth = 8;
+            metadata.color_type = PNG_COLOR_TYPE_RGB;
             break;
         case PixelType::RGB_16:
-            metadata.set_bit_depth(16);
-            metadata.set_color_type(PNG_COLOR_TYPE_RGB);
+            metadata.bit_depth = 16;
+            metadata.color_type = PNG_COLOR_TYPE_RGB;
             break;
         case PixelType::ARGB_8:
             transform.invert_alpha(true);
             [[fallthrough]];
         case PixelType::RGBA_8:
-            metadata.set_bit_depth(8);
-            metadata.set_color_type(PNG_COLOR_TYPE_RGBA);
+            metadata.bit_depth = 8;
+            metadata.color_type = PNG_COLOR_TYPE_RGBA;
             break;
         case PixelType::ARGB_16:
             transform.invert_alpha(true);
             [[fallthrough]];
         case PixelType::RGBA_16:
-            metadata.set_bit_depth(16);
-            metadata.set_color_type(PNG_COLOR_TYPE_RGBA);
+            metadata.bit_depth = 16;
+            metadata.color_type = PNG_COLOR_TYPE_RGBA;
             break;
         default:
             YIMAGE_THROW("Unsupported pixel type: "
