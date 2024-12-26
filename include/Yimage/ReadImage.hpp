@@ -11,13 +11,6 @@
 
 namespace Yimage
 {
-    enum class ImageFormat
-    {
-        UNKNOWN,
-        JPEG,
-        PNG
-    };
-
     /**
      * @brief Determines the image format from the file signature.
      * @param buffer The image or start of the image. The buffer should

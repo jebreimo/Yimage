@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
     if (jpg_path == png_path)
     {
         std::cerr << "Not a JPEG file: " << jpg_path.string() << "\n";
-        return 0;
+        return 1;
     }
     auto image = Yimage::read_jpeg(jpg_path.string());
     Yimage::write_png(png_path.string(), image);

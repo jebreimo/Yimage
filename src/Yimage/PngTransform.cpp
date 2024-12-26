@@ -11,34 +11,34 @@ namespace Yimage
 {
     bool PngTransform::invert_alpha() const
     {
-        return m_invert_alpha;
+        return invert_alpha_;
     }
 
     PngTransform& PngTransform::invert_alpha(bool value)
     {
-        m_invert_alpha = value;
+        invert_alpha_ = value;
         return *this;
     }
 
     const std::optional<uint32_t>& PngTransform::pixel_filler() const
     {
-        return m_pixel_filler;
+        return pixel_filler_;
     }
 
     PngTransform& PngTransform::pixel_filler(std::optional<uint32_t> filler)
     {
-        m_pixel_filler = filler;
+        pixel_filler_ = filler;
         return *this;
     }
 
     bool PngTransform::pixel_packing() const
     {
-        return m_pixel_packing;
+        return pixel_packing_;
     }
 
     PngTransform& PngTransform::pixel_packing(bool value)
     {
-        m_pixel_packing = value;
+        pixel_packing_ = value;
         return *this;
     }
 }

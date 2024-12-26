@@ -29,8 +29,8 @@ namespace Yimage
 
         PngTransform& pixel_packing(bool value);
     private:
-        std::optional<uint32_t> m_pixel_filler;
-        bool m_invert_alpha = false;
-        bool m_pixel_packing = false;
+        std::optional<uint32_t> pixel_filler_;
+        bool invert_alpha_ = false;
+        bool pixel_packing_ = false;
     };
 }

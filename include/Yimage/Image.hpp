@@ -8,6 +8,7 @@
 #pragma once
 #include <memory>
 #include <string>
+#include "ImageMetadata.hpp"
 #include "ImageView.hpp"
 #include "MutableImageView.hpp"
 
@@ -35,6 +36,14 @@ namespace Yimage
 
         [[nodiscard]]
         explicit operator bool() const;
+
+        [[nodiscard]]
+        const ImageMetadata* metadata() const;
+
+        [[nodiscard]]
+        ImageMetadata* metadata();
+
+        void set_metadata(std::unique_ptr<ImageMetadata> metadata);
 
         [[nodiscard]]
         const unsigned char* pixel_pointer(size_t x, size_t y) const;
@@ -68,10 +77,10 @@ namespace Yimage
         [[nodiscard]]
         size_t size() const;
 
-        [[nodiscard]]
         /**
          * @brief Returns the pixel size measured in bits.
          */
+        [[nodiscard]]
         size_t pixel_size() const;
 
         [[nodiscard]]
@@ -104,5 +113,6 @@ namespace Yimage
         size_t gap_size_ = 0;
         PixelType pixel_type_ = PixelType::NONE;
         std::unique_ptr<unsigned char> buffer_;
+        std::unique_ptr<ImageMetadata> metadata_;
     };
 }

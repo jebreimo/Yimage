@@ -11,6 +11,8 @@
 #include <fstream>
 #include <span>
 #include <vector>
+
+#include "Yimage/PngMetadata.hpp"
 #include "Yimage/YimageException.hpp"
 
 namespace Yimage
@@ -22,7 +24,8 @@ namespace Yimage
         public:
             MemoryReader(const void* buffer, size_t size)
                 : span_(static_cast<const unsigned char*>(buffer), size)
-            {}
+            {
+            }
 
             bool read(unsigned char* dest, size_t count)
             {
@@ -34,20 +37,20 @@ namespace Yimage
                 std::copy(first, last, dest);
                 return true;
             }
+
         private:
             std::span<const unsigned char> span_;
             size_t current_ = 0;
         };
 
         extern "C" {
-
         void user_read_istream_data(png_structp png_ptr,
                                     png_bytep data,
                                     png_size_t length)
         {
             auto stream = static_cast<std::istream*>(png_get_io_ptr(png_ptr));
             stream->read(reinterpret_cast<char*>(data),
-                          std::streamsize(length));
+                         std::streamsize(length));
             if (size_t(stream->gcount()) != length)
                 png_error(png_ptr, "Could not read the requested number of bytes.");
         }
@@ -70,7 +73,8 @@ namespace Yimage
         PngHandle(png_structp png_ptr, png_infop info_ptr)
             : png_ptr(png_ptr),
               info_ptr(info_ptr)
-        {}
+        {
+        }
 
         PngHandle(PngHandle&& obj) noexcept
         {
@@ -114,7 +118,7 @@ namespace Yimage
         return {png_ptr, info_ptr};
     }
 
-    PixelType get_pixel_type(unsigned char color_type, unsigned char bit_depth)
+    PixelType get_pixel_type(uint8_t color_type, uint8_t bit_depth)
     {
         switch (color_type)
         {
@@ -132,7 +136,7 @@ namespace Yimage
         case PNG_COLOR_TYPE_GRAY_ALPHA:
             if (bit_depth == 8)
                 return PixelType::MONO_ALPHA_8;
-            else if (bit_depth == 16)
+            if (bit_depth == 16)
                 return PixelType::MONO_ALPHA_16;
             break;
         case PNG_COLOR_TYPE_PALETTE:
@@ -140,38 +144,45 @@ namespace Yimage
         case PNG_COLOR_TYPE_RGB:
             if (bit_depth == 8)
                 return PixelType::RGB_8;
-            else if (bit_depth == 16)
+            if (bit_depth == 16)
                 return PixelType::RGB_16;
             break;
         case PNG_COLOR_TYPE_RGB_ALPHA:
             if (bit_depth == 8)
                 return PixelType::RGBA_8;
-            else if (bit_depth == 16)
+            if (bit_depth == 16)
                 return PixelType::RGBA_16;
+            break;
+        default:
             break;
         }
 
         YIMAGE_THROW("Unsupported combination of color_type, "
-                     + std::to_string(color_type) + ", and bit_depth, "
-                     + std::to_string(bit_depth) + ".");
+            + std::to_string(color_type) + ", and bit_depth, "
+            + std::to_string(bit_depth) + ".");
     }
 
     Image read_png(const PngHandle& png)
     {
         png_read_info(png.png_ptr, png.info_ptr);
-        const auto width = png_get_image_width(png.png_ptr, png.info_ptr);
-        const auto height = png_get_image_height(png.png_ptr, png.info_ptr);
-        const auto bit_depth = png_get_bit_depth(png.png_ptr, png.info_ptr);
-        const auto color_type = png_get_color_type(png.png_ptr, png.info_ptr);
+
+        auto metadata = std::make_unique<PngMetadata>();
+        metadata->set_width(png_get_image_width(png.png_ptr, png.info_ptr));
+        metadata->set_height(png_get_image_height(png.png_ptr, png.info_ptr));
+        metadata->set_bit_depth(png_get_bit_depth(png.png_ptr, png.info_ptr));
+        metadata->set_color_type(png_get_color_type(png.png_ptr, png.info_ptr));
         //const auto channels = png_get_channels(png.png_ptr, png.info_ptr);
-        //const auto pixel_size = channels * bit_depth;
-        //const auto row_size = width * pixel_size;
-        //const auto image_size = row_size * height;
-        Image image(get_pixel_type(color_type, bit_depth), width, height);
-        std::vector<uint8_t*> row_pointers(height);
-        for (size_t i = 0; i < height; ++i)
+
+        Image image(get_pixel_type(metadata->color_type(),
+                                   metadata->bit_depth()),
+                    metadata->width(), metadata->height());
+
+        std::vector<uint8_t*> row_pointers(metadata->height());
+        for (size_t i = 0; i < metadata->height(); ++i)
             row_pointers[i] = image.pixel_pointer(0, i);
         png_read_image(png.png_ptr, row_pointers.data());
+
+        image.set_metadata(std::move(metadata));
         return image;
     }
 
@@ -187,7 +198,9 @@ namespace Yimage
         std::ifstream file(path, std::ios::binary);
         if (!file)
             YIMAGE_THROW("Can not open file: " + path);
-        return read_png(file);
+        auto image = read_png(file);
+        image.metadata()->set_path(path);
+        return image;
     }
 
     Image read_png(const void* buffer, size_t size)

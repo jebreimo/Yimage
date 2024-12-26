@@ -9,7 +9,7 @@
 
 #include <string>
 #include <iosfwd>
-#include "PngInfo.hpp"
+#include "PngMetadata.hpp"
 #include "PngTransform.hpp"
 
 namespace Yimage
@@ -19,7 +19,7 @@ namespace Yimage
     public:
         PngWriter();
 
-        PngWriter(std::ostream& stream, PngInfo info, PngTransform transform);
+        PngWriter(std::ostream& stream, PngMetadata info, PngTransform transform);
 
         PngWriter(PngWriter&& obj) noexcept;
 
@@ -41,9 +41,9 @@ namespace Yimage
     private:
         void assert_is_valid() const;
 
-        PngInfo m_info;
-        PngTransform m_transform;
-        png_structp m_png_ptr = nullptr;
-        png_infop m_info_ptr = nullptr;
+        PngMetadata metadata_;
+        PngTransform transform_;
+        png_structp png_ptr_ = nullptr;
+        png_infop info_ptr_ = nullptr;
     };
 }

@@ -12,79 +12,83 @@
 #include <string>
 #include <vector>
 #include <png.h>
+#include "ImageMetadata.hpp"
 
 namespace Yimage
 {
-    class PngInfo
+    class PngMetadata : public ImageMetadata
     {
     public:
+        PngMetadata();
+
         [[nodiscard]]
         uint32_t width() const;
 
-        PngInfo& width(uint32_t value);
+        void set_width(uint32_t value);
 
         [[nodiscard]]
         uint32_t height() const;
 
-        PngInfo& height(uint32_t value);
+        void set_height(uint32_t value);
 
         [[nodiscard]]
         int32_t bit_depth() const;
 
-        PngInfo& bit_depth(int value);
+        void set_bit_depth(int value);
 
         [[nodiscard]]
         int32_t color_type() const;
 
-        PngInfo& color_type(int value);
+        void set_color_type(int value);
 
         [[nodiscard]]
         int32_t interlace_type() const;
 
-        PngInfo& interlace_type(int value);
+        void set_interlace_type(int value);
 
         [[nodiscard]]
         int32_t compression_method() const;
 
-        PngInfo& compression_method(int value);
+        void set_compression_method(int value);
 
         [[nodiscard]]
         int32_t filter_method() const;
 
-        PngInfo& filter_method(int value);
+        void set_filter_method(int value);
 
         [[nodiscard]]
         const std::optional<double>& gamma() const;
 
-        PngInfo& gamma(std::optional<double> gamma);
+        void set_gamma(std::optional<double> gamma);
 
         using Text = std::tuple<std::string, std::string, int>;
 
         [[nodiscard]]
         const std::vector<png_text>& texts() const;
 
-        PngInfo& add_text(std::string key, std::string value);
+        void add_text(std::string key, std::string value);
 
-        PngInfo& add_text(std::string key, const std::string& value,
-                          int32_t compression);
+        void add_text(std::string key, std::string value,
+                              int32_t compression);
 
         [[nodiscard]]
         const std::optional<std::pair<uint32_t, uint32_t>>& pixels_per_meter() const;
 
-        PngInfo& pixels_per_meter(uint32_t value);
+        void set_pixels_per_meter(uint32_t value);
 
-        PngInfo& pixels_per_meter(uint32_t hor_value, uint32_t ver_value);
+        void set_pixels_per_meter(uint32_t hor_value, uint32_t ver_value);
+
     private:
-        uint32_t m_width = 0;
-        uint32_t m_height = 0;
-        int32_t m_bit_depth = 8;
-        int32_t m_color_type = PNG_COLOR_TYPE_RGB_ALPHA;
-        int32_t m_interlace_type = PNG_INTERLACE_NONE;
-        int32_t m_compression_method = PNG_COMPRESSION_TYPE_DEFAULT;
-        int32_t m_filter_method = PNG_FILTER_TYPE_DEFAULT;
-        std::optional<double> m_gamma;
-        std::vector<png_text> m_texts;
-        std::list<std::string> m_strings;
-        std::optional<std::pair<uint32_t, uint32_t>> m_pixels_per_meter;
+        uint32_t width_ = 0;
+        uint32_t height_ = 0;
+        int32_t bit_depth_ = 8;
+        int32_t color_type_ = PNG_COLOR_TYPE_RGB_ALPHA;
+        int32_t interlace_type_ = PNG_INTERLACE_NONE;
+        int32_t compression_method_ = PNG_COMPRESSION_TYPE_DEFAULT;
+        int32_t filter_method_ = PNG_FILTER_TYPE_DEFAULT;
+        std::optional<double> gamma_;
+        std::vector<png_text> texts_;
+        std::list<std::string> strings_;
+        std::optional<std::pair<uint32_t, uint32_t>> pixels_per_meter_;
     };
 }

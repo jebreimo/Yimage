@@ -104,6 +104,21 @@ namespace Yimage
         return bool(buffer_);
     }
 
+    const ImageMetadata* Image::metadata() const
+    {
+        return metadata_.get();
+    }
+
+    ImageMetadata* Image::metadata()
+    {
+        return metadata_.get();
+    }
+
+    void Image::set_metadata(std::unique_ptr<ImageMetadata> metadata)
+    {
+        metadata_ = std::move(metadata);
+    }
+
     const unsigned char* Image::pixel_pointer(size_t x, size_t y) const
     {
         return ImageView(*this).pixel_pointer(x, y);

@@ -73,6 +73,8 @@ namespace Yimage
             jpeg_finish_decompress(&data.info);
             jpeg_destroy_decompress(&data.info);
 
+            image.set_metadata(std::make_unique<ImageMetadata>(ImageFormat::JPEG));
+
             return image;
         }
     }
@@ -96,7 +98,9 @@ namespace Yimage
     Image read_jpeg(const std::string& path)
     {
         UniqueFile file(fopen(path.c_str(), "rb"));
-        return read_jpeg(file.get());
+        auto img = read_jpeg(file.get());
+        img.metadata()->set_path(path);
+        return img;
     }
 
     Image read_jpeg(const void* buffer, size_t size)

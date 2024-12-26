@@ -30,7 +30,7 @@ namespace Yimage
             }
         }
 
-        size_t get_pixel_size(const PngInfo& info,
+        size_t get_pixel_size(const PngMetadata& info,
                               const PngTransform& transform)
         {
             if (info.bit_depth() == 0)
@@ -48,7 +48,7 @@ namespace Yimage
             return component_count * component_size;
         }
 
-        size_t get_row_size(const PngInfo& info, const PngTransform& transform)
+        size_t get_row_size(const PngMetadata& info, const PngTransform& transform)
         {
             return (info.width() * get_pixel_size(info, transform) + 7) / 8;
         }
@@ -75,35 +75,35 @@ namespace Yimage
 
     PngWriter::PngWriter() = default;
 
-    PngWriter::PngWriter(std::ostream& stream, PngInfo  info, PngTransform transform)
-        : m_info(std::move(info)),
-          m_transform(transform)
+    PngWriter::PngWriter(std::ostream& stream, PngMetadata  info, PngTransform transform)
+        : metadata_(std::move(info)),
+          transform_(transform)
     {
-        m_png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
-        if (!m_png_ptr)
+        png_ptr_ = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
+        if (!png_ptr_)
             YIMAGE_THROW("Can not create PNG struct.");
-        m_info_ptr = png_create_info_struct(m_png_ptr);
-        if (!m_info_ptr)
+        info_ptr_ = png_create_info_struct(png_ptr_);
+        if (!info_ptr_)
             YIMAGE_THROW("Can not create PNG info struct.");
-        png_set_write_fn(m_png_ptr, &stream, user_write_data, user_flush_data);
+        png_set_write_fn(png_ptr_, &stream, user_write_data, user_flush_data);
     }
 
     PngWriter::PngWriter(PngWriter&& obj) noexcept
-        : m_info(std::move(obj.m_info)),
-          m_transform(obj.m_transform),
-          m_png_ptr(nullptr),
-          m_info_ptr(nullptr)
+        : metadata_(std::move(obj.metadata_)),
+          transform_(obj.transform_),
+          png_ptr_(nullptr),
+          info_ptr_(nullptr)
     {
-        std::swap(m_png_ptr, obj.m_png_ptr);
-        std::swap(m_info_ptr, obj.m_info_ptr);
+        std::swap(png_ptr_, obj.png_ptr_);
+        std::swap(info_ptr_, obj.info_ptr_);
     }
 
     PngWriter::~PngWriter()
     {
-        if (m_png_ptr)
+        if (png_ptr_)
         {
-            png_write_flush(m_png_ptr);
-            png_destroy_write_struct(&m_png_ptr, &m_info_ptr);
+            png_write_flush(png_ptr_);
+            png_destroy_write_struct(&png_ptr_, &info_ptr_);
         }
     }
 
@@ -111,120 +111,120 @@ namespace Yimage
     {
         if (this == &obj)
             return *this;
-        if (m_png_ptr)
-            png_destroy_write_struct(&m_png_ptr, &m_info_ptr);
-        m_info = std::move(obj.m_info);
-        m_transform = obj.m_transform;
-        m_png_ptr = obj.m_png_ptr;
-        obj.m_png_ptr = nullptr;
-        m_info_ptr = obj.m_info_ptr;
-        obj.m_info_ptr = nullptr;
+        if (png_ptr_)
+            png_destroy_write_struct(&png_ptr_, &info_ptr_);
+        metadata_ = std::move(obj.metadata_);
+        transform_ = obj.transform_;
+        png_ptr_ = obj.png_ptr_;
+        obj.png_ptr_ = nullptr;
+        info_ptr_ = obj.info_ptr_;
+        obj.info_ptr_ = nullptr;
         return *this;
     }
 
     PngWriter::operator bool() const
     {
-        return m_png_ptr && m_info_ptr;
+        return png_ptr_ && info_ptr_;
     }
 
     void PngWriter::write_info()
     {
         assert_is_valid();
-        if (setjmp(png_jmpbuf(m_png_ptr)))
+        if (setjmp(png_jmpbuf(png_ptr_)))
         {
-            png_destroy_write_struct(&m_png_ptr, &m_info_ptr);
+            png_destroy_write_struct(&png_ptr_, &info_ptr_);
             YIMAGE_THROW("Error while setting PNG info values.");
         }
 
-        png_set_IHDR(m_png_ptr, m_info_ptr, m_info.width(), m_info.height(),
-                     m_info.bit_depth(), m_info.color_type(),
-                     m_info.interlace_type(), m_info.compression_method(),
-                     m_info.filter_method());
-        if (m_info.gamma())
-            png_set_gAMA(m_png_ptr, m_info_ptr, *m_info.gamma());
+        png_set_IHDR(png_ptr_, info_ptr_, metadata_.width(), metadata_.height(),
+                     metadata_.bit_depth(), metadata_.color_type(),
+                     metadata_.interlace_type(), metadata_.compression_method(),
+                     metadata_.filter_method());
+        if (metadata_.gamma())
+            png_set_gAMA(png_ptr_, info_ptr_, *metadata_.gamma());
 
-        if (!m_info.texts().empty())
+        if (!metadata_.texts().empty())
         {
-            png_set_text(m_png_ptr, m_info_ptr,
-                         m_info.texts().data(), int(m_info.texts().size()));
+            png_set_text(png_ptr_, info_ptr_,
+                         metadata_.texts().data(), int(metadata_.texts().size()));
         }
 
-        if (m_transform.invert_alpha())
-            png_set_invert_alpha(m_png_ptr);
+        if (transform_.invert_alpha())
+            png_set_invert_alpha(png_ptr_);
 
-        if (setjmp(png_jmpbuf(m_png_ptr)))
+        if (setjmp(png_jmpbuf(png_ptr_)))
         {
-            png_destroy_write_struct(&m_png_ptr, &m_info_ptr);
+            png_destroy_write_struct(&png_ptr_, &info_ptr_);
             YIMAGE_THROW("Error while writing PNG info.");
         }
 
-        png_write_info(m_png_ptr, m_info_ptr);
+        png_write_info(png_ptr_, info_ptr_);
     }
 
     void PngWriter::write(const void* image, size_t size)
     {
-        auto rowSize = get_row_size(m_info, m_transform);
-        if (size != m_info.height() * rowSize)
+        auto rowSize = get_row_size(metadata_, transform_);
+        if (size != metadata_.height() * rowSize)
             YIMAGE_THROW("Incorrect image size.");
         std::vector<unsigned char*> rows;
-        rows.reserve(m_info.height());
+        rows.reserve(metadata_.height());
 
         auto ucImage = static_cast<unsigned char*>(const_cast<void*>(image));
-        for (size_t i = 0; i < m_info.height(); ++i)
+        for (size_t i = 0; i < metadata_.height(); ++i)
             rows.push_back(ucImage + i * rowSize);
 
         assert_is_valid();
-        if (setjmp(png_jmpbuf(m_png_ptr)))
+        if (setjmp(png_jmpbuf(png_ptr_)))
         {
-            png_destroy_write_struct(&m_png_ptr, &m_info_ptr);
+            png_destroy_write_struct(&png_ptr_, &info_ptr_);
             YIMAGE_THROW("Error while writing PNG image data.");
         }
-        png_write_image(m_png_ptr, rows.data());
+        png_write_image(png_ptr_, rows.data());
     }
 
     void PngWriter::write_rows(const void* rows[], uint32_t count,
                                size_t row_size)
     {
-        if (row_size != get_row_size(m_info, m_transform))
+        if (row_size != get_row_size(metadata_, transform_))
             YIMAGE_THROW("Incorrect row size.");
 
         assert_is_valid();
-        if (setjmp(png_jmpbuf(m_png_ptr)))
+        if (setjmp(png_jmpbuf(png_ptr_)))
         {
-            png_destroy_write_struct(&m_png_ptr, &m_info_ptr);
+            png_destroy_write_struct(&png_ptr_, &info_ptr_);
             YIMAGE_THROW("Error while writing PNG rows.");
         }
         png_write_rows(
-            m_png_ptr,
+            png_ptr_,
             reinterpret_cast<unsigned char**>(const_cast<void**>(rows)),
             count);
     }
 
     void PngWriter::write_row(const void* row, size_t size)
     {
-        if (size != get_row_size(m_info, m_transform))
+        if (size != get_row_size(metadata_, transform_))
             YIMAGE_THROW("Incorrect row size.");
 
         assert_is_valid();
-        if (setjmp(png_jmpbuf(m_png_ptr)))
+        if (setjmp(png_jmpbuf(png_ptr_)))
         {
-            png_destroy_write_struct(&m_png_ptr, &m_info_ptr);
+            png_destroy_write_struct(&png_ptr_, &info_ptr_);
             YIMAGE_THROW("Error while writing PNG row.");
         }
         png_write_row(
-            m_png_ptr,
+            png_ptr_,
             reinterpret_cast<unsigned char*>(const_cast<void*>(row)));
     }
 
     void PngWriter::write_end()
     {
         assert_is_valid();
-        png_write_end(m_png_ptr, nullptr);
+        png_write_end(png_ptr_, nullptr);
     }
 
     void PngWriter::assert_is_valid() const
     {
-        if (!m_info_ptr || !m_png_ptr)
+        if (!info_ptr_ || !png_ptr_)
             YIMAGE_THROW("");
     }
 }

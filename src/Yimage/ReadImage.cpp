@@ -47,14 +47,15 @@ namespace Yimage
 
         switch (get_image_format(buffer, size_t(file.gcount())))
         {
-        case ImageFormat::UNKNOWN:
-            YIMAGE_THROW("Unrecognized image format.");
         case ImageFormat::JPEG:
             file.close();
             return read_jpeg(path);
         case ImageFormat::PNG:
             file.seekg(0, std::ios::beg);
             return read_png(file);
+        case ImageFormat::UNKNOWN:
+        default:
+            YIMAGE_THROW("Unrecognized image format.");
         }
     }
 
@@ -62,12 +63,13 @@ namespace Yimage
     {
         switch (get_image_format(buffer, size))
         {
-        case ImageFormat::UNKNOWN:
-            YIMAGE_THROW("Unrecognized image format.");
         case ImageFormat::JPEG:
             return read_jpeg(buffer, size);
         case ImageFormat::PNG:
             return read_png(buffer, size);
+        case ImageFormat::UNKNOWN:
+        default:
+            YIMAGE_THROW("Unrecognized image format.");
         }
     }
 }

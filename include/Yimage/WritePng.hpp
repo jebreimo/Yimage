@@ -7,18 +7,18 @@
 //****************************************************************************
 #pragma once
 #include "ImageView.hpp"
-#include "PngInfo.hpp"
+#include "PngMetadata.hpp"
 #include "PngTransform.hpp"
 
 namespace Yimage
 {
     void write_png(std::ostream& stream,
                    const void* image, size_t image_size,
-                   PngInfo options, PngTransform transform);
+                   PngMetadata options, PngTransform transform);
 
     void write_png(const std::string& fileName,
                    const void* image, size_t image_size,
-                   PngInfo info, PngTransform transform);
+                   PngMetadata info, PngTransform transform);
 
     void write_png(std::ostream& stream,
                    const ImageView& img);

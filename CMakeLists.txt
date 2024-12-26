@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.21)
-project(Yimage VERSION 0.1.8)
+project(Yimage VERSION 0.2.0)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -35,10 +35,11 @@ find_package(PNG REQUIRED)
 add_library(Yimage
     include/Yimage/Image.hpp
     include/Yimage/ImageAlgorithms.hpp
+    include/Yimage/ImageMetadata.hpp
     include/Yimage/ImageView.hpp
     include/Yimage/MutableImageView.hpp
     include/Yimage/PixelType.hpp
-    include/Yimage/PngInfo.hpp
+    include/Yimage/PngMetadata.hpp
     include/Yimage/PngTransform.hpp
     include/Yimage/PngWriter.hpp
     include/Yimage/ReadImage.hpp
@@ -52,11 +53,12 @@ add_library(Yimage
     src/Yimage/ColorBytes.hpp
     src/Yimage/Image.cpp
     src/Yimage/ImageAlgorithms.cpp
-    src/Yimage/ImageView.cpp
+    src/Yimage/ImageMetadata.cpp
     src/Yimage/ImageUtilities.hpp
+    src/Yimage/ImageView.cpp
     src/Yimage/MutableImageView.cpp
     src/Yimage/PixelType.cpp
-    src/Yimage/PngInfo.cpp
+    src/Yimage/PngMetadata.cpp
     src/Yimage/PngTransform.cpp
     src/Yimage/PngWriter.cpp
     src/Yimage/ReadImage.cpp

@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
             {
                 auto rgba = Yimage::get_rgba8(src, x, y);
                 auto a = 255 - std::max(rgba.r, std::max(rgba.g, rgba.b));
-                Yimage::set_rgba8(dst, x, y, Yimage::Rgba8{.a = uint8_t(a)});
+                Yimage::set_rgba8(dst, x, y, Yimage::Rgba8{0, 0, 0, uint8_t(a)});
             }
         }
         Yimage::write_png(args.value("OUTPUT FILE").as_string(), dst);
