@@ -21,6 +21,8 @@ namespace Yimage
         constexpr char JPEG_SIGNATURE[3] = {'\xFF', '\xD8', '\xFF'};
         constexpr char JPEG_JFIF_SIGNATURE[4] = {'J', 'F', 'I', 'F'};
         constexpr char JPEG_EXIF_SIGNATURE[4] = {'E', 'x', 'i', 'f'};
+        constexpr char TIFF_SIGNATURE_LE[4] = {'I', 'I', 0x2A, 0x00};
+        constexpr char TIFF_SIGNATURE_BE[4] = {'M', 'M', 0x00, 0x2A};
     }
 
     ImageFormat get_image_format(const void* buffer, size_t size)
@@ -36,6 +38,14 @@ namespace Yimage
         {
             return ImageFormat::JPEG;
         }
+
+        if (size >= 4
+            && (std::equal(bytes, bytes + 4, TIFF_SIGNATURE_LE)
+                || std::equal(bytes, bytes + 4, TIFF_SIGNATURE_BE)))
+        {
+            return ImageFormat::TIFF;
+        }
+
         return ImageFormat::UNKNOWN;
     }
 

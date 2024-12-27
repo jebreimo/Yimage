@@ -31,6 +31,7 @@ endif ()
 
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
+find_package(TIFF REQUIRED)
 
 add_library(Yimage
     include/Yimage/Image.hpp
@@ -45,6 +46,7 @@ add_library(Yimage
     include/Yimage/ReadImage.hpp
     include/Yimage/ReadJpeg.hpp
     include/Yimage/ReadPng.hpp
+    include/Yimage/ReadTiff.hpp
     include/Yimage/Rgba8.hpp
     include/Yimage/WritePng.hpp
     include/Yimage/Yimage.hpp
@@ -64,8 +66,11 @@ add_library(Yimage
     src/Yimage/ReadImage.cpp
     src/Yimage/ReadJpeg.cpp
     src/Yimage/ReadPng.cpp
+    src/Yimage/ReadTiff.cpp
     src/Yimage/Rgba8.cpp
     src/Yimage/WritePng.cpp
+    src/Yimage/TiffMetadata.cpp
+    include/Yimage/TiffMetadata.hpp
 )
 
 include(GNUInstallDirs)
@@ -80,6 +85,7 @@ target_link_libraries(Yimage
     PUBLIC
         JPEG::JPEG
         PNG::PNG
+        TIFF::TIFF
     )
 
 add_library(Yimage::Yimage ALIAS Yimage)

@@ -15,6 +15,7 @@ namespace Yimage
         UNKNOWN,
         JPEG,
         PNG,
+        TIFF
     };
 
     class ImageMetadata
