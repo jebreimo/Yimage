@@ -22,9 +22,9 @@ namespace Yimage
     public:
         ImageView();
 
-        ImageView(const Image& img);
+        explicit ImageView(const Image& img);
 
-        ImageView(const MutableImageView& view);
+        explicit ImageView(const MutableImageView& view);
 
         ImageView(const unsigned char* buffer,
                   PixelType pixel_type,

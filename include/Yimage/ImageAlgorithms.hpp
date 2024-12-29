@@ -16,5 +16,8 @@ namespace Yimage
 
     void flip_vertically(MutableImageView image);
 
-    void paste(ImageView src, MutableImageView dst, ptrdiff_t x, ptrdiff_t y);
+    void paste(ImageView src,
+               MutableImageView dst,
+               ptrdiff_t x = 0,
+               ptrdiff_t y = 0);
 }

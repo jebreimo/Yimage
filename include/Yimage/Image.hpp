@@ -93,11 +93,17 @@ namespace Yimage
         size_t row_gap_size() const;
 
         [[nodiscard]]
+        ImageView view() const;
+
+        [[nodiscard]]
         ImageView subimage(size_t x, size_t y) const;
 
         [[nodiscard]]
         ImageView subimage(size_t x, size_t y,
                            size_t width, size_t height) const;
+
+        [[nodiscard]]
+        MutableImageView mutable_view();
 
         [[nodiscard]]
         MutableImageView mutable_subimage(size_t x, size_t y);

@@ -5,8 +5,15 @@
 // This file is distributed under the Zero-Clause BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
+#include <iomanip>
 #include <iostream>
 #include <Yimage/ReadTiff.hpp>
+
+float get_float_pixel(const Yimage::Image& img, size_t x, size_t y)
+{
+    auto ptr = img.pixel_pointer(x, y);
+    return *reinterpret_cast<const float*>(ptr);
+}
 
 int main(int argc, char* argv[])
 {
@@ -24,6 +31,20 @@ int main(int argc, char* argv[])
     }
 
     std::cout << "Image: " << image.width() << "x" << image.height() << std::endl;
+    std::cout << std::fixed << std::setprecision(1);
+
+    if (image.pixel_type() == Yimage::PixelType::MONO_FLOAT_32)
+    {
+        for (size_t y = 0; y < image.height(); ++y)
+        {
+            for (size_t x = 0; x < image.width(); ++x)
+            {
+                auto pixel = get_float_pixel(image, x, y);
+                std::cout << pixel << " ";
+            }
+            std::cout << "\n" << std::endl;
+        }
+    }
 
     return 0;
 }

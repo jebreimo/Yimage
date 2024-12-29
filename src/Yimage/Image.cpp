@@ -191,6 +191,11 @@ namespace Yimage
         return gap_size_;
     }
 
+    ImageView Image::view() const
+    {
+        return ImageView(*this);
+    }
+
     ImageView Image::subimage(size_t x, size_t y) const
     {
         return subimage(x, y, SIZE_MAX, SIZE_MAX);
@@ -200,6 +205,11 @@ namespace Yimage
     Image::subimage(size_t x, size_t y, size_t width, size_t height) const
     {
         return make_subimage<ImageView>(*this, x, y, width, height);
+    }
+
+    MutableImageView Image::mutable_view()
+    {
+        return MutableImageView(*this);
     }
 
     MutableImageView Image::mutable_subimage(size_t x, size_t y)

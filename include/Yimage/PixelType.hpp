@@ -18,6 +18,7 @@ namespace Yimage
         MONO_4,
         MONO_8,
         MONO_16,
+        MONO_FLOAT_32,
         ALPHA_MONO_8,
         MONO_ALPHA_8,
         ALPHA_MONO_16,

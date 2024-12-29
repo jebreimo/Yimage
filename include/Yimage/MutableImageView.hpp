@@ -15,7 +15,7 @@ namespace Yimage
     public:
         MutableImageView();
 
-        MutableImageView(Image& img);
+        explicit MutableImageView(Image& img);
 
         MutableImageView(unsigned char* buffer,
                          PixelType pixel_type,
