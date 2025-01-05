@@ -21,11 +21,18 @@ namespace Yimage
                          PixelType pixel_type,
                          size_t width,
                          size_t height,
-                         size_t row_gap_size = 0);
+                         size_t row_gap_size = 0,
+                         ImageMetadata* metadata = nullptr);
 
         explicit constexpr operator bool() const
         {
             return buffer_ && width_ && height_;
+        }
+
+        [[nodiscard]]
+        ImageMetadata* metadata() const
+        {
+            return metadata_;
         }
 
         [[nodiscard]]
@@ -111,6 +118,7 @@ namespace Yimage
         size_t pixel_size_ = 0;
         PixelType pixel_type_ = PixelType::NONE;
         unsigned char* buffer_ = nullptr;
+        ImageMetadata* metadata_ = nullptr;
     };
 
     bool operator==(const MutableImageView& a, const MutableImageView& b);

@@ -21,26 +21,32 @@ namespace Yimage
     ImageView::ImageView(const Image& img)
         : ImageView(img.data(), img.pixel_type(),
                     img.width(), img.height(),
-                    img.row_gap_size())
-    {}
+                    img.row_gap_size(),
+                    img.metadata())
+    {
+    }
 
     ImageView::ImageView(const MutableImageView& view)
         : ImageView(view.data(), view.pixel_type(),
                     view.width(), view.height(),
-                    view.row_gap_size())
-    {}
+                    view.row_gap_size(),
+                    view.metadata())
+    {
+    }
 
     ImageView::ImageView(const unsigned char* buffer,
                          PixelType pixel_type,
                          size_t width,
                          size_t height,
-                         size_t row_gap_size)
+                         size_t row_gap_size,
+                         const ImageMetadata* metadata)
         : width_(width),
           height_(height),
           gap_size_(row_gap_size),
           pixel_size_(get_pixel_size(pixel_type)),
           pixel_type_(pixel_type),
-          buffer_(buffer)
+          buffer_(buffer),
+          metadata_(metadata)
     {
         if (pixel_size_ % 8 != 0 && (width_ * pixel_size_) % 8)
             YIMAGE_THROW("The size of a row of pixels must be divisible by 8.");
@@ -134,6 +140,6 @@ namespace Yimage
             break;
         }
         YIMAGE_THROW("Unsupported pixel type: "
-                     + std::to_string(int(image.pixel_type())));
+            + std::to_string(int(image.pixel_type())));
     }
 }

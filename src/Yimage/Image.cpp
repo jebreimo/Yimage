@@ -65,8 +65,10 @@ namespace Yimage
         : width_(rhs.width()),
           height_(rhs.height()),
           pixel_type_(rhs.pixel_type()),
-          buffer_(rhs.release())
-    {}
+          buffer_(rhs.release()),
+          metadata_(std::move(rhs.metadata_))
+    {
+    }
 
     Image& Image::operator=(const Image& rhs)
     {
@@ -96,6 +98,7 @@ namespace Yimage
         gap_size_ = rhs.gap_size_;
         pixel_type_ = rhs.pixel_type();
         buffer_ = rhs.release();
+        metadata_ = std::move(rhs.metadata_);
         return *this;
     }
 

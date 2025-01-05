@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <iosfwd>
 #include <utility>
+#include "ImageMetadata.hpp"
 #include "PixelType.hpp"
 #include "Rgba8.hpp"
 
@@ -30,11 +31,18 @@ namespace Yimage
                   PixelType pixel_type,
                   size_t width,
                   size_t height,
-                  size_t row_gap_size = 0);
+                  size_t row_gap_size = 0,
+                  const ImageMetadata* metadata = nullptr);
 
         explicit constexpr operator bool() const
         {
             return buffer_ && width_ && height_;
+        }
+
+        [[nodiscard]]
+        const ImageMetadata* metadata() const
+        {
+            return metadata_;
         }
 
         [[nodiscard]]
@@ -120,6 +128,7 @@ namespace Yimage
         size_t pixel_size_ = 0;
         PixelType pixel_type_ = PixelType::NONE;
         const unsigned char* buffer_ = nullptr;
+        const ImageMetadata* metadata_ = nullptr;
     };
 
     bool operator==(const ImageView& a, const ImageView& b);

@@ -8,7 +8,6 @@
 #pragma once
 #include <memory>
 #include <string>
-#include "ImageMetadata.hpp"
 #include "ImageView.hpp"
 #include "MutableImageView.hpp"
 

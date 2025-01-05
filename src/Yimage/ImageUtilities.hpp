@@ -24,6 +24,6 @@ namespace Yimage
                         + ((img.width() - width) * img.pixel_size()) / 8;
         auto buffer = img.data() + y * img.row_size()
                       + x * img.pixel_size() / 8;
-        return {buffer, img.pixel_type(), width, height, gap_size};
+        return {buffer, img.pixel_type(), width, height, gap_size, img.metadata()};
     }
 }

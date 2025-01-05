@@ -20,14 +20,16 @@ namespace Yimage
     MutableImageView::MutableImageView(Image& img)
         : MutableImageView(img.data(), img.pixel_type(),
                            img.width(), img.height(),
-                           img.row_gap_size())
+                           img.row_gap_size(),
+                           img.metadata())
     {}
 
     MutableImageView::MutableImageView(unsigned char* buffer,
                                        PixelType pixel_type,
                                        size_t width,
                                        size_t height,
-                                       size_t row_gap_size)
+                                       size_t row_gap_size,
+                                       ImageMetadata* metadata)
         : width_(width),
           height_(height),
           gap_size_(row_gap_size),
