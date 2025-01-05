@@ -13,7 +13,7 @@
 argos::ParsedArguments parse_arguments(int argc, char* argv[])
 {
     using namespace argos;
-    return ArgumentParser(argc ? argv[0] : "jpg2png")
+    return ArgumentParser()
         .add(Argument("FILE").help("The path to a JPEG file."))
         .parse(argc, argv);
 }
@@ -29,6 +29,6 @@ int main(int argc, char* argv[])
         return 1;
     }
     auto image = Yimage::read_jpeg(jpg_path.string());
-    Yimage::write_png(png_path.string(), image);
+    Yimage::write_png(png_path.string(), image.view());
     return 0;
 }

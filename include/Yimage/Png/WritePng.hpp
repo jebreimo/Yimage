@@ -6,7 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include "ImageView.hpp"
+#include "../ImageView.hpp"
 #include "PngMetadata.hpp"
 #include "PngTransform.hpp"
 

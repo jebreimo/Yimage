@@ -5,7 +5,7 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Yimage/PngTransform.hpp"
+#include "Yimage/Png/PngTransform.hpp"
 
 namespace Yimage
 {

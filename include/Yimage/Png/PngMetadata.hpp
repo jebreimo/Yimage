@@ -12,7 +12,7 @@
 #include <string>
 #include <vector>
 #include <png.h>
-#include "ImageMetadata.hpp"
+#include "../ImageMetadata.hpp"
 
 namespace Yimage
 {
@@ -29,7 +29,7 @@ namespace Yimage
         void add_text(std::string key, std::string value);
 
         void add_text(std::string key, std::string value,
-                              int32_t compression);
+                      int32_t compression);
 
         uint32_t width = 0;
         uint32_t height = 0;
@@ -40,6 +40,7 @@ namespace Yimage
         int32_t filter_method = PNG_FILTER_TYPE_DEFAULT;
         std::optional<double> gamma;
         std::optional<std::pair<uint32_t, uint32_t>> pixels_per_meter;
+
     private:
         std::vector<png_text> texts_;
         std::list<std::string> strings_;

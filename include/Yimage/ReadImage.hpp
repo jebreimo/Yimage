@@ -14,7 +14,7 @@ namespace Yimage
     /**
      * @brief Determines the image format from the file signature.
      * @param buffer The image or start of the image. The buffer should
-     *      should contain at least the first 16 bytes of the image.
+     *      contain at least the first 16 bytes of the image.
      * @param size The size of buffer in bytes.
      * @return The image format or UNKNOWN if the format is unrecognized
      *      or the buffer is too small to be determined.

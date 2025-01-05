@@ -5,7 +5,7 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Yimage/PngMetadata.hpp"
+#include "Yimage/Png/PngMetadata.hpp"
 
 namespace Yimage
 {

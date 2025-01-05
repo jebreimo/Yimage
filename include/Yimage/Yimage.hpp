@@ -9,7 +9,7 @@
 
 #include "ImageAlgorithms.hpp"
 #include "ReadImage.hpp"
-#include "ReadJpeg.hpp"
-#include "ReadPng.hpp"
-#include "WritePng.hpp"
+#include "Jpeg/ReadJpeg.hpp"
+#include "Png/ReadPng.hpp"
+#include "Png/WritePng.hpp"
 #include "YimageException.hpp"

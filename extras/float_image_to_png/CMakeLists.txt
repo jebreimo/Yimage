@@ -8,10 +8,19 @@
 cmake_minimum_required(VERSION 3.21)
 project(tiffreader)
 
+include(FetchContent)
+
+FetchContent_Declare(argos
+    GIT_REPOSITORY "https://github.com/jebreimo/Argos.git"
+    GIT_TAG "v1.6")
+
+FetchContent_MakeAvailable(argos)
+
 add_executable(tiffreader
-    tiffreader.cpp
+    float_image_to_png.cpp
 )
 
 target_link_libraries(tiffreader
+    Argos::Argos
     Yimage::Yimage
 )

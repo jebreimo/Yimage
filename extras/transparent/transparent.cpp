@@ -8,7 +8,7 @@
 #include <iostream>
 #include <Argos/Argos.hpp>
 #include <Yimage/ReadImage.hpp>
-#include <Yimage/WritePng.hpp>
+#include <Yimage/Png/WritePng.hpp>
 
 argos::ParsedArguments parse_arguments(int argc, char* argv[])
 {
@@ -40,12 +40,12 @@ int main(int argc, char* argv[])
         {
             for (unsigned x = 0; x < src.width(); ++x)
             {
-                auto rgba = Yimage::get_rgba8(src, x, y);
+                auto rgba = Yimage::get_rgba8(src.view(), x, y);
                 auto a = 255 - std::max(rgba.r, std::max(rgba.g, rgba.b));
-                Yimage::set_rgba8(dst, x, y, Yimage::Rgba8{0, 0, 0, uint8_t(a)});
+                Yimage::set_rgba8(dst.mutable_view(), x, y, Yimage::Rgba8{0, 0, 0, uint8_t(a)});
             }
         }
-        Yimage::write_png(args.value("OUTPUT FILE").as_string(), dst);
+        Yimage::write_png(args.value("OUTPUT FILE").as_string(), dst.view());
     }
     catch (std::exception& ex)
     {

@@ -5,7 +5,7 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Yimage/PngWriter.hpp"
+#include "Yimage/Png/PngWriter.hpp"
 
 #include <ostream>
 #include <utility>

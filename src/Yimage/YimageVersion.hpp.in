@@ -1,0 +1,45 @@
+//****************************************************************************
+// Copyright © 2025 Jan Erik Breimo. All rights reserved.
+// Created by Jan Erik Breimo on 2025-01-04.
+//
+// This file is distributed under the BSD License.
+// License text is included with the source distribution.
+//****************************************************************************
+#pragma once
+
+/**
+ * @file
+ * @brief Defines the current Yimage version.
+ */
+
+/**
+ * @brief String representation of the complete version number.
+ */
+constexpr char YIMAGE_VERSION[] = "@Yimage_VERSION@";
+
+/**
+ * @brief Incremented if a new version is significantly incompatible
+ *      with the previous version.
+ */
+constexpr unsigned YIMAGE_VERSION_MAJOR = @Yimage_VERSION_MAJOR@;
+
+/**
+ * @brief Incremented when Yimage's interface is modified without introducing
+ *      incompatibilities with previous versions.
+ */
+constexpr unsigned YIMAGE_VERSION_MINOR = @Yimage_VERSION_MINOR@;
+
+/**
+ * @brief Incremented when Yimage's internals are modified without modifying
+ *      its interface.
+ */
+constexpr unsigned YIMAGE_VERSION_PATCH = @Yimage_VERSION_PATCH@;
+
+/**
+ * @brief Support for TIFF files is enabled if this is defined.
+ *
+ * This definition is controlled by CMake. Run CMake with
+ * -DYIMAGE_USE_LIBTIFF=ON to enable it, and
+ * -DYIMAGE_USE_LIBTIFF=OFF to disable it.
+*/
+#cmakedefine YIMAGE_USE_LIBTIFF

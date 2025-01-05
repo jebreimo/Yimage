@@ -8,7 +8,7 @@
 #pragma once
 #include <algorithm>
 #include <cstddef>
-#include "Yimage/MutableImageView.hpp"
+
 namespace Yimage
 {
     template <typename ViewType, typename ImageType>

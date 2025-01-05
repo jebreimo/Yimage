@@ -25,30 +25,36 @@ option(YIMAGE_BUILD_TESTS "Build unit tests" ${YIMAGE_MASTER_PROJECT})
 
 option(YIMAGE_INSTALL "Generate the install target" ${YIMAGE_MASTER_PROJECT})
 
+option(YIMAGE_USE_LIBTIFF "Use libtiff" OFF)
+
 if (EMSCRIPTEN)
     list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/emscripten)
 endif ()
 
 find_package(JPEG REQUIRED)
 find_package(PNG REQUIRED)
-find_package(TIFF REQUIRED)
+
+if (YIMAGE_USE_LIBTIFF)
+    find_package(TIFF REQUIRED COMPONENTS CXX)
+endif ()
+
+configure_file(src/Yimage/YimageVersion.hpp.in YimageVersion.hpp @ONLY)
 
 add_library(Yimage
     include/Yimage/Image.hpp
     include/Yimage/ImageAlgorithms.hpp
     include/Yimage/ImageMetadata.hpp
     include/Yimage/ImageView.hpp
+    include/Yimage/Jpeg/ReadJpeg.hpp
     include/Yimage/MutableImageView.hpp
     include/Yimage/PixelType.hpp
-    include/Yimage/PngMetadata.hpp
-    include/Yimage/PngTransform.hpp
-    include/Yimage/PngWriter.hpp
+    include/Yimage/Png/PngMetadata.hpp
+    include/Yimage/Png/PngTransform.hpp
+    include/Yimage/Png/PngWriter.hpp
+    include/Yimage/Png/ReadPng.hpp
+    include/Yimage/Png/WritePng.hpp
     include/Yimage/ReadImage.hpp
-    include/Yimage/ReadJpeg.hpp
-    include/Yimage/ReadPng.hpp
-    include/Yimage/ReadTiff.hpp
     include/Yimage/Rgba8.hpp
-    include/Yimage/WritePng.hpp
     include/Yimage/Yimage.hpp
     include/Yimage/YimageException.hpp
     src/Yimage/ColorBytes.cpp
@@ -58,19 +64,18 @@ add_library(Yimage
     src/Yimage/ImageMetadata.cpp
     src/Yimage/ImageUtilities.hpp
     src/Yimage/ImageView.cpp
+    src/Yimage/Jpeg/ReadJpeg.cpp
     src/Yimage/MutableImageView.cpp
     src/Yimage/PixelType.cpp
-    src/Yimage/PngMetadata.cpp
-    src/Yimage/PngTransform.cpp
-    src/Yimage/PngWriter.cpp
+    src/Yimage/Png/PngMetadata.cpp
+    src/Yimage/Png/PngTransform.cpp
+    src/Yimage/Png/PngWriter.cpp
+    src/Yimage/Png/ReadPng.cpp
+    src/Yimage/Png/WritePng.cpp
     src/Yimage/ReadImage.cpp
-    src/Yimage/ReadJpeg.cpp
-    src/Yimage/ReadPng.cpp
-    src/Yimage/ReadTiff.cpp
     src/Yimage/Rgba8.cpp
-    src/Yimage/WritePng.cpp
-    src/Yimage/TiffMetadata.cpp
-    include/Yimage/TiffMetadata.hpp
+    src/Yimage/FileUtilities.hpp
+    src/Yimage/ReadOnlyStreamBuffer.hpp
 )
 
 include(GNUInstallDirs)
@@ -79,14 +84,34 @@ target_include_directories(Yimage
     PUBLIC
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    )
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+)
 
 target_link_libraries(Yimage
     PUBLIC
         JPEG::JPEG
         PNG::PNG
-        TIFF::TIFF
+)
+
+if (YIMAGE_USE_LIBTIFF)
+    target_sources(Yimage PUBLIC
+        include/Yimage/Tiff/GeoTiffMetadata.hpp
+        include/Yimage/Tiff/ReadTiff.hpp
+        include/Yimage/Tiff/TiffMetadata.hpp
     )
+
+    target_sources(Yimage PRIVATE
+        src/Yimage/Tiff/GeoTiffMetadata.cpp
+        src/Yimage/Tiff/ReadGeoTiffMetadata.cpp
+        src/Yimage/Tiff/ReadGeoTiffMetadata.hpp
+        src/Yimage/Tiff/ReadTiff.cpp
+        src/Yimage/Tiff/TiffMetadata.cpp
+    )
+
+    target_link_libraries(Yimage PUBLIC
+        TIFF::CXX
+    )
+endif ()
 
 add_library(Yimage::Yimage ALIAS Yimage)
 
@@ -98,12 +123,3 @@ endif ()
 if (YIMAGE_BUILD_EXTRAS)
     add_subdirectory(extras)
 endif()
-
-if (YIMAGE_MASTER_PROJECT AND DEFINED ENV{LOCAL_SOURCE_PACKAGE_DIR})
-    set(LOCAL_SOURCE_PACKAGE_DIR $ENV{LOCAL_SOURCE_PACKAGE_DIR})
-    set(TARBALL_NAME ${LOCAL_SOURCE_PACKAGE_DIR}/${PROJECT_NAME}-${PROJECT_VERSION}.tar.gz)
-    add_custom_target(${PROJECT_NAME}_BUILD_SRC_TARBALL
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMAND git archive -v --format=tar.gz --prefix=${PROJECT_NAME}/ HEAD > ${TARBALL_NAME}
-        )
-endif ()

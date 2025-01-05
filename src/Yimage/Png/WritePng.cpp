@@ -5,10 +5,10 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Yimage/WritePng.hpp"
+#include "Yimage/Png/WritePng.hpp"
 
 #include <fstream>
-#include "Yimage/PngWriter.hpp"
+#include "Yimage/Png/PngWriter.hpp"
 #include "Yimage/YimageException.hpp"
 
 namespace Yimage

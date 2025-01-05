@@ -51,9 +51,10 @@ namespace Yimage
         : width_(rhs.width()),
           height_(rhs.height()),
           gap_size_(rhs.gap_size_),
-          pixel_type_(rhs.pixel_type())
+          pixel_type_(rhs.pixel_type()),
+          metadata_(rhs.metadata_ ? rhs.metadata_->clone() : nullptr)
     {
-        auto size = this->size();
+        const auto size = this->size();
         if (size)
         {
             buffer_.reset(new unsigned char[size]);
@@ -82,12 +83,13 @@ namespace Yimage
         if (auto size = this->size())
         {
             buffer_.reset(new unsigned char[size]);
-            std::copy(rhs.data(), rhs.data() + size, data());
+            std::copy_n(rhs.data(), size, data());
         }
         else
         {
             buffer_.reset();
         }
+        metadata_.reset(rhs.metadata_ ? rhs.metadata_->clone() : nullptr);
         return *this;
     }
 

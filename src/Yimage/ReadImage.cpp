@@ -9,9 +9,14 @@
 
 #include <algorithm>
 #include <fstream>
-#include "Yimage/ReadJpeg.hpp"
-#include "Yimage/ReadPng.hpp"
+#include "Yimage/Jpeg/ReadJpeg.hpp"
+#include "Yimage/Png/ReadPng.hpp"
 #include "Yimage/YimageException.hpp"
+#include "YimageVersion.hpp"
+
+#ifdef YIMAGE_USE_LIBTIFF
+    #include "Yimage/Tiff/ReadTiff.hpp"
+#endif
 
 namespace Yimage
 {
@@ -63,6 +68,11 @@ namespace Yimage
         case ImageFormat::PNG:
             file.seekg(0, std::ios::beg);
             return read_png(file);
+        case ImageFormat::TIFF:
+#ifdef YIMAGE_USE_LIBTIFF
+            file.seekg(0, std::ios::beg);
+            return read_tiff(file, path);
+#endif
         case ImageFormat::UNKNOWN:
         default:
             YIMAGE_THROW("Unrecognized image format.");
@@ -77,6 +87,10 @@ namespace Yimage
             return read_jpeg(buffer, size);
         case ImageFormat::PNG:
             return read_png(buffer, size);
+        case ImageFormat::TIFF:
+#ifdef YIMAGE_USE_LIBTIFF
+            return read_tiff(buffer, size);
+#endif
         case ImageFormat::UNKNOWN:
         default:
             YIMAGE_THROW("Unrecognized image format.");

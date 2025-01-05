@@ -8,23 +8,20 @@
 #pragma once
 #include <array>
 #include <cstdint>
-#include <memory>
 #include <optional>
 #include <vector>
 
-#include "ImageMetadata.hpp"
+#include "../ImageMetadata.hpp"
 
 namespace Yimage
 {
-    struct GeoTiffMetadata;
-
     struct Strip
     {
         uint64_t byte_count = 0;
         uint64_t offset = 0;
     };
 
-    struct Strips
+    struct StripInfo
     {
         uint32_t rows_per_strip = 0;
         std::vector<Strip> strips;
@@ -38,7 +35,7 @@ namespace Yimage
         uint64_t offset = 0;
     };
 
-    struct Tiles
+    struct TileInfo
     {
         uint32_t width = 0;
         uint32_t height = 0;
@@ -49,6 +46,8 @@ namespace Yimage
     {
     public:
         TiffMetadata();
+
+        [[nodiscard]] TiffMetadata* clone() const override;
 
         uint32_t width = 0;
         uint32_t height = 0;
@@ -77,48 +76,11 @@ namespace Yimage
         std::string artist;
         std::string host_computer;
 
-        std::optional<Strips> strips;
+        std::optional<StripInfo> strips;
 
-        std::optional<Tiles> tiles;
+        std::optional<TileInfo> tiles;
 
         double min_sample_value = 0;
         double max_sample_value = 0;
-
-        std::unique_ptr<GeoTiffMetadata> geo_tiff;
-    };
-
-    struct GeoTiffMetadata
-    {
-        std::array<double, 3> model_pixel_scale = {};
-        std::array<double, 6> model_tie_point = {};
-        std::array<double, 16> model_transformation = {};
-
-        std::string citation;
-        std::string geog_citation;
-        std::string projected_citation;
-        std::string gdal_metadata;
-
-        double angular_unit_size = 0;
-        double geog_semi_major_axis = 0;
-        double geog_inv_flattening = 0;
-        double geog_prime_meridian_longitude = 0;
-
-        int16_t key_directory_version = 0;
-        int16_t key_revision = 0;
-        int16_t minor_revision = 0;
-        int16_t model_type = 0;
-        int16_t raster_type = 0;
-        int16_t geodetic_crs = 0;
-        int16_t geodetic_datum = 0;
-        int16_t prime_meridian = 0;
-        int16_t projected_crs = 0;
-        int16_t geog_azimuth_units = 0;
-        int16_t projection_zone = 0;
-        int16_t projected_linear_units = 0;
-        int16_t ellipsoid = 0;
-        int16_t linear_units = 0;
-        int16_t vertical_units = 0;
-        int16_t angular_units = 0;
-        int16_t coordinate_system = 0;
     };
 }

@@ -5,21 +5,19 @@
 // This file is distributed under the Zero-Clause BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Yimage/ImageMetadata.hpp"
+#pragma once
+#include "../Image.hpp"
+#include "TiffMetadata.hpp"
+#include <tiffio.hxx>
 
 namespace Yimage
 {
-    ImageMetadata::ImageMetadata(ImageFormat format)
-        : format(format)
-    {
-    }
+    Image read_tiff(std::istream& stream,
+                    const std::string& name = "TiffStream");
 
-    ImageMetadata::~ImageMetadata()
-    {
-    }
+    Image read_tiff(const std::string& path);
 
-    ImageMetadata* ImageMetadata::clone() const
-    {
-        return new ImageMetadata(*this);
-    }
+    Image read_tiff(const void* buffer, size_t size);
+
+    std::unique_ptr<TiffMetadata> read_tiff_metadata(const std::string& path);
 }

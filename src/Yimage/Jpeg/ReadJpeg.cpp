@@ -5,10 +5,11 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include <Yimage/ReadJpeg.hpp>
+#include "Yimage/Jpeg/ReadJpeg.hpp"
 
 #include <jpeglib.h>
-#include <Yimage/YimageException.hpp>
+#include "Yimage/YimageException.hpp"
+#include "../FileUtilities.hpp"
 
 namespace Yimage
 {
@@ -21,16 +22,6 @@ namespace Yimage
             throw YimageException("Could not read JPEG image: "
                                   + std::string(msg));
         }
-
-        struct FileCloser
-        {
-            void operator()(FILE* file) const
-            {
-                fclose(file);
-            }
-        };
-
-        using UniqueFile = std::unique_ptr<FILE, FileCloser>;
 
         struct JpegData
         {
@@ -98,8 +89,11 @@ namespace Yimage
     Image read_jpeg(const std::string& path)
     {
         UniqueFile file(fopen(path.c_str(), "rb"));
+        if (!file)
+            YIMAGE_THROW("Could not open file: " + path);
         auto img = read_jpeg(file.get());
-        img.metadata()->path = path;
+        if (auto metadata = img.metadata())
+            metadata->path = path;
         return img;
     }
 

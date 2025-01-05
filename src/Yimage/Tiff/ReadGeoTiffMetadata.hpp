@@ -1,16 +1,15 @@
 //****************************************************************************
-// Copyright © 2024 Jan Erik Breimo. All rights reserved.
-// Created by Jan Erik Breimo on 2024-12-26.
+// Copyright © 2025 Jan Erik Breimo. All rights reserved.
+// Created by Jan Erik Breimo on 2025-01-04.
 //
 // This file is distributed under the Zero-Clause BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "../../include/Yimage/TiffMetadata.hpp"
+#pragma once
+#include <tiffio.h>
+#include "Yimage/Tiff/GeoTiffMetadata.hpp"
 
 namespace Yimage
 {
-    TiffMetadata::TiffMetadata()
-        : ImageMetadata(ImageFormat::TIFF)
-    {
-    }
+    std::unique_ptr<GeoTiffMetadata> read_geotiff_metadata(TIFF * tiff);
 }

@@ -5,14 +5,14 @@
 // This file is distributed under the BSD License.
 // License text is included with the source distribution.
 //****************************************************************************
-#include "Yimage/ReadPng.hpp"
+#include "Yimage/Png/ReadPng.hpp"
 
 #include <png.h>
 #include <fstream>
 #include <span>
 #include <vector>
 
-#include "Yimage/PngMetadata.hpp"
+#include "Yimage/Png/PngMetadata.hpp"
 #include "Yimage/YimageException.hpp"
 
 namespace Yimage

@@ -23,6 +23,10 @@ namespace Yimage
     public:
         explicit ImageMetadata(ImageFormat format = ImageFormat::UNKNOWN);
 
+        virtual ~ImageMetadata();
+
+        virtual ImageMetadata* clone() const;
+
         std::string path;
         ImageFormat format = ImageFormat::UNKNOWN;
     };
