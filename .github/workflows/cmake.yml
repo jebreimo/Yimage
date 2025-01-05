@@ -26,12 +26,12 @@ jobs:
         brew upgrade
         brew install libpng
         brew install jpeg-turbo
-        echo "-DCMAKE_PREFIX_PATH=/opt/homebrew" >> $GITHUB_ENV
+        echo "CMAKE_PREFIX_PATH=/opt/homebrew" >> $GITHUB_ENV
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{env.CMAKE_PREFIX_PATH}}
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PREFIX_PATH=${{env.CMAKE_PREFIX_PATH}}
 
     - name: Build
       # Build your program with the given configuration
