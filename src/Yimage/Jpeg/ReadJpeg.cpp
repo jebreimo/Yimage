@@ -104,7 +104,8 @@ namespace Yimage
         {
             create_decompress(data);
             const auto* uc_buffer = static_cast<const unsigned char*>(buffer);
-            jpeg_mem_src(&data.info, uc_buffer, size);
+            // const_cast is necessary for compatibility with older non-const API.
+            jpeg_mem_src(&data.info, const_cast<unsigned char*>(uc_buffer), size);
             return read_image(data);
         }
         catch (std::exception&)
