@@ -32,7 +32,7 @@ if (EMSCRIPTEN)
 endif ()
 
 find_package(JPEG REQUIRED)
-find_package(PNG REQUIRED)
+find_package(PNG REQUIRED VERSION 1.6)
 
 if (YIMAGE_USE_LIBTIFF)
     find_package(TIFF REQUIRED COMPONENTS CXX)
