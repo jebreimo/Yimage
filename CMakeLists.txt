@@ -94,18 +94,16 @@ target_link_libraries(Yimage
 )
 
 if (YIMAGE_USE_LIBTIFF)
-    target_sources(Yimage PUBLIC
-        include/Yimage/Tiff/GeoTiffMetadata.hpp
-        include/Yimage/Tiff/ReadTiff.hpp
-        include/Yimage/Tiff/TiffMetadata.hpp
-    )
-
-    target_sources(Yimage PRIVATE
-        src/Yimage/Tiff/GeoTiffMetadata.cpp
-        src/Yimage/Tiff/ReadGeoTiffMetadata.cpp
-        src/Yimage/Tiff/ReadGeoTiffMetadata.hpp
-        src/Yimage/Tiff/ReadTiff.cpp
-        src/Yimage/Tiff/TiffMetadata.cpp
+    target_sources(Yimage
+        PRIVATE
+            include/Yimage/Tiff/GeoTiffMetadata.hpp
+            include/Yimage/Tiff/ReadTiff.hpp
+            include/Yimage/Tiff/TiffMetadata.hpp
+            src/Yimage/Tiff/GeoTiffMetadata.cpp
+            src/Yimage/Tiff/ReadGeoTiffMetadata.cpp
+            src/Yimage/Tiff/ReadGeoTiffMetadata.hpp
+            src/Yimage/Tiff/ReadTiff.cpp
+            src/Yimage/Tiff/TiffMetadata.cpp
     )
 
     target_link_libraries(Yimage PUBLIC
@@ -123,3 +121,52 @@ endif ()
 if (YIMAGE_BUILD_EXTRAS)
     add_subdirectory(extras)
 endif()
+
+if (YIMAGE_INSTALL)
+    install(TARGETS Yimage
+        EXPORT YimageConfig
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    )
+
+    install(
+        DIRECTORY include/Yimage
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        PATTERN include/Yimage/Tiff EXCLUDE
+    )
+
+    if (YIMAGE_USE_LIBTIFF)
+        install(
+            DIRECTORY include/Yimage/Tiff
+            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Yimage
+        )
+    endif ()
+
+    install(
+        EXPORT YimageConfig
+        FILE YimageConfig.cmake
+        NAMESPACE Yimage::
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Yimage
+    )
+
+    install(
+        FILES
+            ${CMAKE_CURRENT_BINARY_DIR}/YimageVersion.hpp
+        DESTINATION
+            ${CMAKE_INSTALL_INCLUDEDIR}/Yimage
+    )
+
+    include(CMakePackageConfigHelpers)
+
+    write_basic_package_version_file(YimageConfigVersion.cmake
+        COMPATIBILITY SameMajorVersion
+    )
+
+    install(
+        FILES
+            ${CMAKE_CURRENT_BINARY_DIR}/YimageConfigVersion.cmake
+        DESTINATION
+            ${CMAKE_INSTALL_LIBDIR}/cmake/Yimage
+    )
+endif ()
