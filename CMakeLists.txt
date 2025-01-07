@@ -105,6 +105,8 @@ if (YIMAGE_USE_LIBTIFF)
             include/Yimage/Tiff/ReadTiff.hpp
             include/Yimage/Tiff/TiffMetadata.hpp
             src/Yimage/Tiff/GeoTiffMetadata.cpp
+            src/Yimage/Tiff/OpenTiff.cpp
+            src/Yimage/Tiff/OpenTiff.hpp
             src/Yimage/Tiff/ReadGeoTiffMetadata.cpp
             src/Yimage/Tiff/ReadGeoTiffMetadata.hpp
             src/Yimage/Tiff/ReadTiff.cpp

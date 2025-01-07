@@ -6,9 +6,9 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
+#include <iosfwd>
 #include "../Image.hpp"
 #include "TiffMetadata.hpp"
-#include <tiffio.hxx>
 
 namespace Yimage
 {

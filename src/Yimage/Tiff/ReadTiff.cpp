@@ -8,13 +8,13 @@
 #include "Yimage/Tiff/ReadTiff.hpp"
 
 #include <fstream>
-#include <tiffio.hxx>
 #include "Yimage/ImageAlgorithms.hpp"
 #include "Yimage/Tiff/TiffMetadata.hpp"
 #include "Yimage/YimageException.hpp"
 #include "../FileUtilities.hpp"
-#include "ReadGeoTiffMetadata.hpp"
 #include "../ReadOnlyStreamBuffer.hpp"
+#include "OpenTiff.hpp"
+#include "ReadGeoTiffMetadata.hpp"
 
 namespace Yimage
 {
@@ -42,14 +42,6 @@ namespace Yimage
                 return false;
             return true;
         }
-
-        struct TiffDeleter
-        {
-            void operator()(TIFF* tiff) const
-            {
-                TIFFClose(tiff);
-            }
-        };
 
         std::optional<TileInfo> get_tile_info(TIFF* tiff, uint32_t width, uint32_t height)
         {
@@ -164,7 +156,7 @@ namespace Yimage
 
     Image read_tiff(std::istream& stream, const std::string& name)
     {
-        auto tiff = std::unique_ptr<TIFF, TiffDeleter>(TIFFStreamOpen("TiffStream", &stream));
+        auto tiff = open_tiff(stream, name.c_str());
         if (!tiff)
             return {};
 
@@ -217,7 +209,7 @@ namespace Yimage
     {
         ReadOnlyStreamBuffer stream_buffer(static_cast<const char*>(buffer), size);
         std::istream stream(&stream_buffer);
-        return read_tiff(stream, "TiffBuffer");
+        return read_tiff(stream);
     }
 
     std::unique_ptr<TiffMetadata> read_tiff_metadata(const std::string& path)
