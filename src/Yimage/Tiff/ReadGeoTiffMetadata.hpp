@@ -6,6 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
+#include <memory>
 #include <tiffio.h>
 #include "Yimage/Tiff/GeoTiffMetadata.hpp"
 
