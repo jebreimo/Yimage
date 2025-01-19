@@ -27,7 +27,7 @@ jobs:
         brew reinstall libpng
         brew reinstall jpeg-turbo
         brew config
-        whereis cmake
+        env
         echo "CMAKE_PREFIX_PATH=/opt/homebrew" >> $GITHUB_ENV
 
     - name: Configure CMake
