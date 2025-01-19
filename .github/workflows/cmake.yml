@@ -24,8 +24,8 @@ jobs:
       if: matrix.os == 'macOS-latest'
       run: |
         brew upgrade
-        brew reinstall libpng
-        brew reinstall jpeg-turbo
+        brew install libpng
+        brew install jpeg-turbo
         brew config
         env
         echo "CMAKE_PREFIX_PATH=/opt/homebrew" >> $GITHUB_ENV
