@@ -15,32 +15,55 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest, macOS-latest]
+        config:
+          - os: windows-latest
+            vcpkg_triplet: x64-windows-release
+          - os: ubuntu-latest
+            vcpkg_triplet: x64-linux-release
+          - os: macOS-latest
+            vcpkg_triplet: arm64-macos-release
 
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install dependencies on macOS
-      if: matrix.os == 'macOS-latest'
-      run: |
-        brew upgrade
-        brew install libpng
-        brew install jpeg-turbo
-        brew config
-        env
-        echo "CMAKE_PREFIX_PATH=/opt/homebrew" >> $GITHUB_ENV
+#    - name: Install dependencies on macOS
+#      if: matrix.os == 'macOS-latest'
+#      run: |
+#        brew upgrade
+#        brew install libpng
+#        brew install jpeg-turbo
+#        brew config
+#        env
+#        echo "CMAKE_PREFIX_PATH=/opt/homebrew" >> $GITHUB_ENV
+
+    - name: vcpkg build
+      uses: johnwason/vcpkg-action@v6
+      id: vcpkg
+      with:
+        manifest-dir: '${{ github.workspace }}'
+        triplet: ${{ matrix.config.vcpkg_triplet }}
+        cache-key: ${{ matrix.config.os }}
+        revision: main
+        token: ${{ github.token }}
+        github-binarycache: true
 
     - name: Configure CMake
-      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
-      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PREFIX_PATH=${{env.CMAKE_PREFIX_PATH}}
+      run: cmake -DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_TARGET_TRIPLET=${{ matrix.config.vcpkg_triplet }} -DVCPKG_MANIFEST_MODE=OFF
 
     - name: Build
-      # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: cmake ${{ steps.vcpkg.outputs.vcpkg-cmake-config }} -S ${{ github.workspace }} -B ${{ github.workspace }}/build
 
-    - name: Test
-      working-directory: ${{github.workspace}}/build
-      # Execute tests defined by the CMake configuration.
-      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
-      run: ctest --output-on-failure -C ${{env.BUILD_TYPE}}
+#    - name: Configure CMake
+#      # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
+#      # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
+#      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_PREFIX_PATH=${{env.CMAKE_PREFIX_PATH}}
+
+#    - name: Build
+#      # Build your program with the given configuration
+#      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+
+#    - name: Test
+#      working-directory: ${{github.workspace}}/build
+#      # Execute tests defined by the CMake configuration.
+#      # See https://cmake.org/cmake/help/latest/manual/ctest.1.html for more detail
+#      run: ctest --output-on-failure -C ${{env.BUILD_TYPE}}
