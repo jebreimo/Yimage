@@ -15,13 +15,14 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
+        os: [ windows-latest, ubuntu-latest, macOS-latest ]
         config:
           - os: windows-latest
             vcpkg_triplet: x64-windows-release
           - os: ubuntu-latest
             vcpkg_triplet: x64-linux-release
           - os: macOS-latest
-            vcpkg_triplet: arm64-macos-release
+            vcpkg_triplet: arm64-osx-release
 
     steps:
     - uses: actions/checkout@v4
