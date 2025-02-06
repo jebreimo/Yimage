@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.21)
-project(Yimage VERSION 0.2.0)
+project(Yimage VERSION 0.2.1)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -133,8 +133,15 @@ if (YIMAGE_BUILD_EXTRAS)
     add_subdirectory(extras)
 endif()
 
+export(
+    TARGETS Yimage
+    NAMESPACE Yimage::
+    FILE YimageConfig.cmake
+)
+
 if (YIMAGE_INSTALL)
-    install(TARGETS Yimage
+    install(
+        TARGETS Yimage
         EXPORT YimageConfig
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
