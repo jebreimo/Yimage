@@ -19,9 +19,9 @@ namespace Yimage
      * @return The image format or UNKNOWN if the format is unrecognized
      *      or the buffer is too small to be determined.
      */
-    ImageFormat get_image_format(const void* buffer, size_t size);
+    [[nodiscard]] ImageFormat get_image_format(const void* buffer, size_t size);
 
-    Image read_image(const std::string& path);
+    [[nodiscard]] Image read_image(const std::string& path);
 
-    Image read_image(const void* buffer, size_t size);
+    [[nodiscard]] Image read_image(const void* buffer, size_t size);
 }

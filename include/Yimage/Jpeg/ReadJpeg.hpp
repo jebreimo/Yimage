@@ -12,9 +12,9 @@
 
 namespace Yimage
 {
-    Image read_jpeg(const std::string& path);
+    [[nodiscard]] Image read_jpeg(const std::string& path);
 
-    Image read_jpeg(FILE* file);
+    [[nodiscard]] Image read_jpeg(FILE* file);
 
-    Image read_jpeg(const void* buffer, size_t size);
+    [[nodiscard]] Image read_jpeg(const void* buffer, size_t size);
 }

@@ -12,12 +12,20 @@
 
 namespace Yimage
 {
-    Image read_tiff(std::istream& stream,
-                    const std::string& name = "TiffStream");
+    /**
+     * @brief Reads a TIFF image from a stream.
+     *
+     * @param stream The stream to read the image from.
+     * @param name The name of the stream. Used for error messages.
+     * @return The image read from the stream.
+     */
+    [[nodiscard]] Image
+    read_tiff(std::istream& stream, const std::string& name = "TiffStream");
 
-    Image read_tiff(const std::string& path);
+    [[nodiscard]] Image read_tiff(const std::string& path);
 
-    Image read_tiff(const void* buffer, size_t size);
+    [[nodiscard]] Image read_tiff(const void* buffer, size_t size);
 
-    std::unique_ptr<TiffMetadata> read_tiff_metadata(const std::string& path);
+    [[nodiscard]] std::unique_ptr<TiffMetadata>
+    read_tiff_metadata(const std::string& path);
 }
