@@ -9,12 +9,16 @@
 
 #include <algorithm>
 #include <fstream>
-#include "Yimage/Jpeg/ReadJpeg.hpp"
-#include "Yimage/Png/ReadPng.hpp"
 #include "Yimage/YimageException.hpp"
 #include "YimageVersion.hpp"
 
-#ifdef YIMAGE_USE_LIBTIFF
+#ifdef YIMAGE_JPEG
+    #include "Yimage/Jpeg/ReadJpeg.hpp"
+#endif
+#ifdef YIMAGE_PNG
+    #include "Yimage/Png/ReadPng.hpp"
+#endif
+#ifdef YIMAGE_TIFF
     #include "Yimage/Tiff/ReadTiff.hpp"
 #endif
 
@@ -62,14 +66,18 @@ namespace Yimage
 
         switch (get_image_format(buffer, size_t(file.gcount())))
         {
+#ifdef YIMAGE_JPEG
         case ImageFormat::JPEG:
             file.close();
             return read_jpeg(path);
+#endif
+#ifdef YIMAGE_PNG
         case ImageFormat::PNG:
             file.seekg(0, std::ios::beg);
             return read_png(file);
+#endif
+#ifdef YIMAGE_TIFF
         case ImageFormat::TIFF:
-#ifdef YIMAGE_USE_LIBTIFF
             file.seekg(0, std::ios::beg);
             return read_tiff(file, path);
 #endif
@@ -83,12 +91,16 @@ namespace Yimage
     {
         switch (get_image_format(buffer, size))
         {
+#ifdef YIMAGE_JPEG
         case ImageFormat::JPEG:
             return read_jpeg(buffer, size);
+#endif
+#ifdef YIMAGE_PNG
         case ImageFormat::PNG:
             return read_png(buffer, size);
+#endif
+#ifdef YIMAGE_TIFF
         case ImageFormat::TIFF:
-#ifdef YIMAGE_USE_LIBTIFF
             return read_tiff(buffer, size);
 #endif
         case ImageFormat::UNKNOWN:

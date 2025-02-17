@@ -36,10 +36,28 @@ constexpr unsigned YIMAGE_VERSION_MINOR = @Yimage_VERSION_MINOR@;
 constexpr unsigned YIMAGE_VERSION_PATCH = @Yimage_VERSION_PATCH@;
 
 /**
+ * @brief Support for JPEG files is enabled if this is defined.
+ *
+ * This definition is controlled by CMake. Run CMake with
+ * -DYIMAGE_JPEG=ON to enable it, and
+ * -DYIMAGE_JPEG=OFF to disable it.
+*/
+#cmakedefine YIMAGE_JPEG
+
+/**
+ * @brief Support for PNG files is enabled if this is defined.
+ *
+ * This definition is controlled by CMake. Run CMake with
+ * -DYIMAGE_PNG=ON to enable it, and
+ * -DYIMAGE_PNG=OFF to disable it.
+*/
+#cmakedefine YIMAGE_PNG
+
+/**
  * @brief Support for TIFF files is enabled if this is defined.
  *
  * This definition is controlled by CMake. Run CMake with
- * -DYIMAGE_USE_LIBTIFF=ON to enable it, and
- * -DYIMAGE_USE_LIBTIFF=OFF to disable it.
+ * -DYIMAGE_TIFF=ON to enable it, and
+ * -DYIMAGE_TIFF=OFF to disable it.
 */
-#cmakedefine YIMAGE_USE_LIBTIFF
+#cmakedefine YIMAGE_TIFF

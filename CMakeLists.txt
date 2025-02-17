@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.21)
-project(Yimage VERSION 0.2.1)
+project(Yimage VERSION 0.2.2)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -25,26 +25,26 @@ option(YIMAGE_BUILD_TESTS "Build unit tests" ${YIMAGE_MASTER_PROJECT})
 
 option(YIMAGE_INSTALL "Generate the install target" ${YIMAGE_MASTER_PROJECT})
 
-option(YIMAGE_USE_LIBTIFF "Use libtiff" OFF)
+option(YIMAGE_JPEG "Enable JPEG support (libjpeg-turbo)" ON)
+
+option(YIMAGE_PNG "Enable PNG support (libpng)" ON)
+
+option(YIMAGE_TIFF "Enable TIFF support (libtiff)" ON)
 
 if (EMSCRIPTEN)
     list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/emscripten)
 endif ()
 
-find_package(JPEG REQUIRED)
+if (YIMAGE_JPEG)
+    find_package(JPEG REQUIRED)
+endif ()
 
-message(STATUS "JPEG_LIBRARIES: ${JPEG_LIBRARIES}")
-message(STATUS "JPEG_INCLUDE_DIR: ${JPEG_INCLUDE_DIR}")
-message(STATUS "JPEG_VERSION: ${JPEG_VERSION}")
+if (YIMAGE_PNG)
+    find_package(PNG REQUIRED)
+endif ()
 
-find_package(PNG REQUIRED)
-
-message(STATUS "PNG_LIBRARIES: ${PNG_LIBRARIES}")
-message(STATUS "PNG_INCLUDE_DIRS: ${PNG_INCLUDE_DIRS}")
-message(STATUS "PNG_VERSION_STRING: ${PNG_VERSION_STRING}")
-
-if (YIMAGE_USE_LIBTIFF)
-    find_package(TIFF REQUIRED COMPONENTS CXX)
+if (YIMAGE_TIFF)
+    find_package(TIFF REQUIRED)
 endif ()
 
 configure_file(src/Yimage/YimageVersion.hpp.in YimageVersion.hpp @ONLY)
@@ -54,14 +54,8 @@ add_library(Yimage
     include/Yimage/ImageAlgorithms.hpp
     include/Yimage/ImageMetadata.hpp
     include/Yimage/ImageView.hpp
-    include/Yimage/Jpeg/ReadJpeg.hpp
     include/Yimage/MutableImageView.hpp
     include/Yimage/PixelType.hpp
-    include/Yimage/Png/PngMetadata.hpp
-    include/Yimage/Png/PngTransform.hpp
-    include/Yimage/Png/PngWriter.hpp
-    include/Yimage/Png/ReadPng.hpp
-    include/Yimage/Png/WritePng.hpp
     include/Yimage/ReadImage.hpp
     include/Yimage/Rgba8.hpp
     include/Yimage/Yimage.hpp
@@ -73,14 +67,8 @@ add_library(Yimage
     src/Yimage/ImageMetadata.cpp
     src/Yimage/ImageUtilities.hpp
     src/Yimage/ImageView.cpp
-    src/Yimage/Jpeg/ReadJpeg.cpp
     src/Yimage/MutableImageView.cpp
     src/Yimage/PixelType.cpp
-    src/Yimage/Png/PngMetadata.cpp
-    src/Yimage/Png/PngTransform.cpp
-    src/Yimage/Png/PngWriter.cpp
-    src/Yimage/Png/ReadPng.cpp
-    src/Yimage/Png/WritePng.cpp
     src/Yimage/ReadImage.cpp
     src/Yimage/Rgba8.cpp
     src/Yimage/FileUtilities.hpp
@@ -96,13 +84,41 @@ target_include_directories(Yimage
         $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
 )
 
-target_link_libraries(Yimage
-    PUBLIC
-        JPEG::JPEG
-        PNG::PNG
-)
+if (YIMAGE_JPEG)
+    target_sources(Yimage
+        PRIVATE
+            include/Yimage/Jpeg/ReadJpeg.hpp
+            src/Yimage/Jpeg/ReadJpeg.cpp
+    )
 
-if (YIMAGE_USE_LIBTIFF)
+    target_link_libraries(Yimage
+        PUBLIC
+            JPEG::JPEG
+    )
+endif ()
+
+if (YIMAGE_PNG)
+    target_sources(Yimage
+        PRIVATE
+            include/Yimage/Png/PngMetadata.hpp
+            include/Yimage/Png/PngTransform.hpp
+            include/Yimage/Png/PngWriter.hpp
+            include/Yimage/Png/ReadPng.hpp
+            include/Yimage/Png/WritePng.hpp
+            src/Yimage/Png/PngMetadata.cpp
+            src/Yimage/Png/PngTransform.cpp
+            src/Yimage/Png/PngWriter.cpp
+            src/Yimage/Png/ReadPng.cpp
+            src/Yimage/Png/WritePng.cpp
+    )
+
+    target_link_libraries(Yimage
+        PUBLIC
+            PNG::PNG
+    )
+endif ()
+
+if (YIMAGE_TIFF)
     target_sources(Yimage
         PRIVATE
             include/Yimage/Tiff/GeoTiffMetadata.hpp
@@ -118,7 +134,7 @@ if (YIMAGE_USE_LIBTIFF)
     )
 
     target_link_libraries(Yimage PUBLIC
-        TIFF::CXX
+        TIFF::TIFF
     )
 endif ()
 
@@ -154,7 +170,7 @@ if (YIMAGE_INSTALL)
         PATTERN include/Yimage/Tiff EXCLUDE
     )
 
-    if (YIMAGE_USE_LIBTIFF)
+    if (YIMAGE_TIFF)
         install(
             DIRECTORY include/Yimage/Tiff
             DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Yimage
