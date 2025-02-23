@@ -51,3 +51,4 @@ jobs:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
           configurePreset: vcpkg
           buildPreset: vcpkg
+          testPreset: vcpkg
