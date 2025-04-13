@@ -23,6 +23,7 @@ namespace Yimage
         std::string geog_citation;
         std::string projected_citation;
         std::string gdal_metadata;
+        std::string gdal_no_data;
 
         double angular_unit_size = 0;
         double geog_semi_major_axis = 0;
@@ -38,6 +39,7 @@ namespace Yimage
         int16_t geodetic_datum = 0;
         int16_t prime_meridian = 0;
         int16_t projected_crs = 0;
+        int16_t vertical_crs = 0;
         int16_t geog_azimuth_units = 0;
         int16_t projection_zone = 0;
         int16_t projected_linear_units = 0;

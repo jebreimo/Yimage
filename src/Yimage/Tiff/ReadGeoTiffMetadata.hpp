@@ -12,5 +12,7 @@
 
 namespace Yimage
 {
+    void register_geotiff_tags(TIFF* tiff);
+    
     std::unique_ptr<GeoTiffMetadata> read_geotiff_metadata(TIFF * tiff);
 }

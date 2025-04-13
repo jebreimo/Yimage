@@ -6,8 +6,10 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #include "OpenTiff.hpp"
+
 #include <iostream>
 #include <tiffio.h>
+#include "ReadGeoTiffMetadata.hpp"
 
 // This file is based on the TIFFOpenStream function from the TIFF library.
 
@@ -87,6 +89,8 @@ namespace
         std::istream* stream_;
         std::ios::pos_type start_pos_;
     };
+
+    bool has_registered_extra_tags = false;
 }
 
 extern "C" {
@@ -127,6 +131,11 @@ static int tiff_dummy_map_proc(thandle_t, void** /*base*/, toff_t* /*size*/)
 static void tiff_dummy_unmap_proc(thandle_t, void* /*base*/, toff_t /*size*/)
 {
 }
+
+static void register_extra_tags(TIFF* tiff)
+{
+    Yimage::register_geotiff_tags(tiff);
+}
 }
 
 namespace Yimage
@@ -139,6 +148,11 @@ namespace Yimage
     std::unique_ptr<TIFF, TiffDeleter>
     open_tiff(std::istream& is, const char* name)
     {
+        if (!has_registered_extra_tags)
+        {
+            TIFFSetTagExtender(register_extra_tags);
+            has_registered_extra_tags = true;
+        }
         auto* reader = new TiffInputStream(is);
         std::unique_ptr<TIFF, TiffDeleter> tiff(TIFFClientOpen(
             name, "rm", reader, tiff_read_proc,
