@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.21)
-project(tiffreader)
+project(float_image_to_png)
 
 include(FetchContent)
 
@@ -16,11 +16,11 @@ FetchContent_Declare(argos
 
 FetchContent_MakeAvailable(argos)
 
-add_executable(tiffreader
+add_executable(float_image_to_png
     float_image_to_png.cpp
 )
 
-target_link_libraries(tiffreader
+target_link_libraries(float_image_to_png
     Argos::Argos
     Yimage::Yimage
 )

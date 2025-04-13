@@ -61,13 +61,11 @@ float get_float_pixel(const Yimage::Image& img, size_t x, size_t y)
     return *reinterpret_cast<const float*>(ptr);
 }
 
-int main(int argc, char* argv[])
+int convert_image(const std::filesystem::path& input_path)
 {
-    auto args = parse_arguments(argc, argv);
-    auto tiff_path = std::filesystem::path(args.value("FILE").as_string());
-    auto png_path = std::filesystem::path(tiff_path).replace_extension(".png");
+    auto png_path = std::filesystem::path(input_path).replace_extension(".png");
 
-    auto src_image = Yimage::read_image(tiff_path.string());
+    auto src_image = Yimage::read_image(input_path.string());
     if (!src_image)
     {
         std::cerr << "Failed to read image." << std::endl;
@@ -101,6 +99,19 @@ int main(int argc, char* argv[])
     }
 
     Yimage::write_png(png_path.string(), dst_image.view());
-
     return 0;
+}
+
+int main(int argc, char* argv[])
+{
+    try
+    {
+        auto args = parse_arguments(argc, argv);
+        return convert_image(args.value("FILE").as_string());
+    }
+    catch (const std::exception& ex)
+    {
+        std::cerr << "Error: " << ex.what() << std::endl;
+        return 1;
+    }
 }
