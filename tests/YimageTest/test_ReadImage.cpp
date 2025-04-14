@@ -31,10 +31,3 @@ TEST_CASE("Read TIFF")
     REQUIRE(bool(image));
     REQUIRE(image.pixel_type() == Yimage::PixelType::MONO_FLOAT_32);
 }
-
-TEST_CASE("Read TIFF")
-{
-    auto image = Yimage::read_image(GEOID_TIF, GEOID_TIF_SIZE);
-    REQUIRE(bool(image));
-    REQUIRE(image.pixel_type() == Yimage::PixelType::MONO_FLOAT_32);
-}

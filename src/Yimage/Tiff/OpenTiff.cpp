@@ -170,11 +170,26 @@ namespace Yimage
         return tiff;
     }
 
+    namespace
+    {
+#ifdef _WIN32
+        TIFF* my_TIFFOpen(const std::filesystem::path& path)
+        {
+            return TIFFOpenW(path.c_str(), "r");
+        }
+#else
+        TIFF* my_TIFFOpen(const std::filesystem::path& path)
+        {
+            return TIFFOpen(path.c_str(), "r");
+        }
+#endif
+    }
+
     std::unique_ptr<TIFF, TiffDeleter>
     open_tiff(const std::filesystem::path& path)
     {
         register_additional_tags();
 
-        return std::unique_ptr<TIFF, TiffDeleter>(TIFFOpen(path.c_str(), "r"));
+        return std::unique_ptr<TIFF, TiffDeleter>(my_TIFFOpen(path));
     }
 }
