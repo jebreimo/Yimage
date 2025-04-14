@@ -7,7 +7,6 @@ jobs:
     name: ${{ matrix.os }}-${{ github.workflow }}
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: false
       matrix:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
         include:
@@ -19,9 +18,7 @@ jobs:
             vcpkgCommitId: cf035d9916a0a23042b41fcae7ee0386d245af08
 
     steps:
-      - uses: actions/checkout@v3
-        with:
-          submodules: true
+      - uses: actions/checkout@v4
 
       - uses: lukka/get-cmake@latest
       - name: Dump the content of $RUNNER_TEMP
