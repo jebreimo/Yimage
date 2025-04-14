@@ -7,6 +7,7 @@
 //****************************************************************************
 #include "Yimage/Jpeg/ReadJpeg.hpp"
 
+#include <algorithm>
 #include <jpeglib.h>
 #include "Yimage/YimageException.hpp"
 #include "../FileUtilities.hpp"
