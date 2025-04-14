@@ -90,21 +90,21 @@ namespace Yimage
     namespace
     {
 #ifdef _WIN32
-        FILE* my_fopen(const std::filesystem::path& path, const char* mode)
+        FILE* my_fopen(const std::filesystem::path& path)
         {
-            return _wfopen(path.c_str(), mode);
+            return _wfopen(path.c_str(), L"rb");
         }
 #else
-        FILE* my_fopen(const std::filesystem::path& path, const char* mode)
+        FILE* my_fopen(const std::filesystem::path& path)
         {
-            return fopen(path.c_str(), mode);
+            return fopen(path.c_str(), "rb");
         }
 #endif
     }
 
     Image read_jpeg(const std::filesystem::path& path)
     {
-        UniqueFile file(my_fopen(path.c_str(), "rb"));
+        UniqueFile file(my_fopen(path));
         if (!file)
             YIMAGE_THROW("Could not open file: " + path.string());
         auto img = read_jpeg(file.get());

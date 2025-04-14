@@ -9,7 +9,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include "Resources.hpp"
 
-TEST_CASE("Open PNG")
+TEST_CASE("Read PNG")
 {
     auto image = Yimage::read_image(THUMB_UP_PNG, THUMB_UP_PNG_SIZE);
     REQUIRE(bool(image));
@@ -17,10 +17,24 @@ TEST_CASE("Open PNG")
     REQUIRE(Yimage::get_rgba8(image.view(), 7, 27) == Yimage::Rgba8(0xC99132F1));
 }
 
-TEST_CASE("Open JPEG")
+TEST_CASE("Read JPEG")
 {
     auto image = Yimage::read_image(CITY_JPG, CITY_JPG_SIZE);
     REQUIRE(bool(image));
     REQUIRE(Yimage::get_rgba8(image.view(), 0, 0) == Yimage::Rgba8(0x363636FF));
     REQUIRE(Yimage::get_rgba8(image.view(), 64, 55) == Yimage::Rgba8(0x484848FF));
+}
+
+TEST_CASE("Read TIFF")
+{
+    auto image = Yimage::read_image(GEOID_TIF, GEOID_TIF_SIZE);
+    REQUIRE(bool(image));
+    REQUIRE(image.pixel_type() == Yimage::PixelType::MONO_FLOAT_32);
+}
+
+TEST_CASE("Read TIFF")
+{
+    auto image = Yimage::read_image(GEOID_TIF, GEOID_TIF_SIZE);
+    REQUIRE(bool(image));
+    REQUIRE(image.pixel_type() == Yimage::PixelType::MONO_FLOAT_32);
 }

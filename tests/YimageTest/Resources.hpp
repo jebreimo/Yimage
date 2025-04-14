@@ -12,3 +12,5 @@ extern const void* THUMB_UP_PNG;
 extern const size_t THUMB_UP_PNG_SIZE;
 extern const void* CITY_JPG;
 extern const size_t CITY_JPG_SIZE;
+extern const void* GEOID_TIF;
+extern const size_t GEOID_TIF_SIZE;
