@@ -6,14 +6,14 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include <string>
+#include <filesystem>
 #include "../Image.hpp"
 
 namespace Yimage
 {
     [[nodiscard]] Image read_png(std::istream& stream);
 
-    [[nodiscard]] Image read_png(const std::string& path);
+    [[nodiscard]] Image read_png(const std::filesystem::path& path);
 
     [[nodiscard]] Image read_png(const void* buffer, size_t size);
 }

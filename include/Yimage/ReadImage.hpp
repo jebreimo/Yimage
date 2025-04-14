@@ -6,11 +6,14 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include <string>
+#include <filesystem>
 #include "Image.hpp"
 
 namespace Yimage
 {
+    [[nodiscard]]
+    ImageFormat get_image_format(const std::filesystem::path& path);
+
     /**
      * @brief Determines the image format from the file signature.
      * @param buffer The image or start of the image. The buffer should
@@ -21,7 +24,7 @@ namespace Yimage
      */
     [[nodiscard]] ImageFormat get_image_format(const void* buffer, size_t size);
 
-    [[nodiscard]] Image read_image(const std::string& path);
+    [[nodiscard]] Image read_image(const std::filesystem::path& path);
 
     [[nodiscard]] Image read_image(const void* buffer, size_t size);
 }

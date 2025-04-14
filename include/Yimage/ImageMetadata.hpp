@@ -6,7 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
-#include <string>
+#include <filesystem>
 
 namespace Yimage
 {
@@ -27,7 +27,7 @@ namespace Yimage
 
         virtual ImageMetadata* clone() const;
 
-        std::string path;
+        std::filesystem::path path;
         ImageFormat format = ImageFormat::UNKNOWN;
     };
 }

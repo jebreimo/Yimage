@@ -6,7 +6,7 @@
 # License text is included with the source distribution.
 # ===========================================================================
 cmake_minimum_required(VERSION 3.21)
-project(Yimage VERSION 0.2.3)
+project(Yimage VERSION 0.2.4)
 
 set(CMAKE_CXX_STANDARD 20)
 

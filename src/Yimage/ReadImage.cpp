@@ -34,6 +34,14 @@ namespace Yimage
         constexpr char TIFF_SIGNATURE_BE[4] = {'M', 'M', 0x00, 0x2A};
     }
 
+    ImageFormat get_image_format(const std::filesystem::path& path)
+    {
+        std::ifstream file(path, std::ios::binary);
+        char buffer[16];
+        file.read(buffer, 16);
+        return get_image_format(buffer, size_t(file.gcount()));
+    }
+
     ImageFormat get_image_format(const void* buffer, size_t size)
     {
         auto bytes = static_cast<const char*>(buffer);
@@ -58,7 +66,7 @@ namespace Yimage
         return ImageFormat::UNKNOWN;
     }
 
-    Image read_image(const std::string& path)
+    Image read_image(const std::filesystem::path& path)
     {
         std::ifstream file(path, std::ios::binary);
         char buffer[16];

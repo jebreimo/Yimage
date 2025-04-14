@@ -6,6 +6,7 @@
 // License text is included with the source distribution.
 //****************************************************************************
 #pragma once
+#include <filesystem>
 #include <iosfwd>
 #include <memory>
 #include <tiffio.h>
@@ -18,5 +19,8 @@ namespace Yimage
     };
 
     std::unique_ptr<TIFF, TiffDeleter>
-    open_tiff(std::istream& is, const char* name);
+    open_tiff(std::istream& is, const char* stream_name);
+
+    std::unique_ptr<TIFF, TiffDeleter>
+    open_tiff(const std::filesystem::path& path);
 }

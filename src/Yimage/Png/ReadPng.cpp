@@ -193,11 +193,11 @@ namespace Yimage
         return read_png(png);
     }
 
-    Image read_png(const std::string& path)
+    Image read_png(const std::filesystem::path& path)
     {
         std::ifstream file(path, std::ios::binary);
         if (!file)
-            YIMAGE_THROW("Can not open file: " + path);
+            YIMAGE_THROW("Can not open file: " + path.string());
         auto image = read_png(file);
         image.metadata()->path = path;
         return image;

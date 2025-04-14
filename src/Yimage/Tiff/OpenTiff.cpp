@@ -89,8 +89,6 @@ namespace
         std::istream* stream_;
         std::ios::pos_type start_pos_;
     };
-
-    bool has_registered_extra_tags = false;
 }
 
 extern "C" {
@@ -145,17 +143,24 @@ namespace Yimage
         TIFFClose(tiff);
     }
 
-    std::unique_ptr<TIFF, TiffDeleter>
-    open_tiff(std::istream& is, const char* name)
+    void register_additional_tags()
     {
+        static bool has_registered_extra_tags = false;
         if (!has_registered_extra_tags)
         {
             TIFFSetTagExtender(register_extra_tags);
             has_registered_extra_tags = true;
         }
+    }
+
+    std::unique_ptr<TIFF, TiffDeleter>
+    open_tiff(std::istream& is, const char* stream_name)
+    {
+        register_additional_tags();
+
         auto* reader = new TiffInputStream(is);
         std::unique_ptr<TIFF, TiffDeleter> tiff(TIFFClientOpen(
-            name, "rm", reader, tiff_read_proc,
+            stream_name, "rm", reader, tiff_read_proc,
             tiff_write_proc, tiff_seek_proc, tiff_close_proc,
             tiff_size_proc, tiff_dummy_map_proc, tiff_dummy_unmap_proc));
 
@@ -163,5 +168,13 @@ namespace Yimage
             delete reader;
 
         return tiff;
+    }
+
+    std::unique_ptr<TIFF, TiffDeleter>
+    open_tiff(const std::filesystem::path& path)
+    {
+        register_additional_tags();
+
+        return std::unique_ptr<TIFF, TiffDeleter>(TIFFOpen(path.c_str(), "r"));
     }
 }

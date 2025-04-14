@@ -43,7 +43,7 @@ namespace Yimage
             auto row_size = data.info.output_width
                             * data.info.output_components;
             auto* buffer = (*data.info.mem->alloc_sarray)
-                ((j_common_ptr)&data.info, JPOOL_IMAGE, row_size, 1);
+                (j_common_ptr(&data.info), JPOOL_IMAGE, row_size, 1);
             jpeg_start_decompress(&data.info);
 
             Image image(data.info.output_components == 3
@@ -57,7 +57,7 @@ namespace Yimage
             while (data.info.output_scanline < data.info.output_height)
             {
                 jpeg_read_scanlines(&data.info, buffer, 1);
-                std::copy(buffer[0], buffer[0] + row_size, dst);
+                std::copy_n(buffer[0], row_size, dst);
                 dst += row_size;
             }
 
@@ -86,11 +86,11 @@ namespace Yimage
         }
     }
 
-    Image read_jpeg(const std::string& path)
+    Image read_jpeg(const std::filesystem::path& path)
     {
         UniqueFile file(fopen(path.c_str(), "rb"));
         if (!file)
-            YIMAGE_THROW("Could not open file: " + path);
+            YIMAGE_THROW("Could not open file: " + path.string());
         auto img = read_jpeg(file.get());
         if (auto metadata = img.metadata())
             metadata->path = path;

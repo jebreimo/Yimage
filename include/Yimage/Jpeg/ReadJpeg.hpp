@@ -7,12 +7,12 @@
 //****************************************************************************
 #pragma once
 #include <cstdio>
-#include <string>
+#include <filesystem>
 #include "../Image.hpp"
 
 namespace Yimage
 {
-    [[nodiscard]] Image read_jpeg(const std::string& path);
+    [[nodiscard]] Image read_jpeg(const std::filesystem::path& path);
 
     [[nodiscard]] Image read_jpeg(FILE* file);
 

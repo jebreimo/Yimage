@@ -23,13 +23,13 @@ namespace Yimage
         writer.write_end();
     }
 
-    void write_png(const std::string& fileName,
+    void write_png(const std::filesystem::path& path,
                    const void* image, size_t image_size,
                    PngMetadata options, PngTransform transform)
     {
-        std::ofstream stream(fileName);
+        std::ofstream stream(path);
         if (!stream)
-            YIMAGE_THROW("Can not create " + fileName);
+            YIMAGE_THROW("Can not create " + path.string());
         write_png(stream, image, image_size, std::move(options), transform);
     }
 
@@ -102,11 +102,11 @@ namespace Yimage
         write_png(stream, img.data(), img.size(), metadata, transform);
     }
 
-    void write_png(const std::string& fileName, const ImageView& img)
+    void write_png(const std::filesystem::path& path, const ImageView& img)
     {
-        std::ofstream stream(fileName);
+        std::ofstream stream(path);
         if (!stream)
-            YIMAGE_THROW("Can not create " + fileName);
+            YIMAGE_THROW("Can not create " + path.string());
         write_png(stream, img);
     }
 }

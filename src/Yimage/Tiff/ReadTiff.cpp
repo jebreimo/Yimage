@@ -194,11 +194,11 @@ namespace Yimage
         return image;
     }
 
-    Image read_tiff(const std::string& path)
+    Image read_tiff(const std::filesystem::path& path)
     {
         std::ifstream file(path, std::ios::binary);
         if (!file)
-            YIMAGE_THROW("Could not open file: " + path);
+            YIMAGE_THROW("Could not open file: " + path.string());
         auto img = read_tiff(file, path);
         if (auto metadata = img.metadata())
             metadata->path = path;
@@ -212,9 +212,9 @@ namespace Yimage
         return read_tiff(stream);
     }
 
-    std::unique_ptr<TiffMetadata> read_tiff_metadata(const std::string& path)
+    std::unique_ptr<TiffMetadata> read_tiff_metadata(const std::filesystem::path& path)
     {
-        auto tiff = std::unique_ptr<TIFF, TiffDeleter>(TIFFOpen(path.c_str(), "r"));
+        auto tiff = open_tiff(path);
         if (!tiff)
             return {};
 
