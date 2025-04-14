@@ -154,9 +154,11 @@ namespace Yimage
         }
     }
 
-    Image read_tiff(std::istream& stream, const std::string& name)
+    Image read_tiff(std::istream& stream,
+                    const std::filesystem::path& path)
     {
-        auto tiff = open_tiff(stream, name.c_str());
+        std::string stream_name = path.string();
+        auto tiff = open_tiff(stream, stream_name.c_str());
         if (!tiff)
             return {};
 
@@ -188,7 +190,7 @@ namespace Yimage
             }
         }
 
-        metadata->path = name;
+        metadata->path = path;
 
         image.set_metadata(std::move(metadata));
         return image;
@@ -199,10 +201,7 @@ namespace Yimage
         std::ifstream file(path, std::ios::binary);
         if (!file)
             YIMAGE_THROW("Could not open file: " + path.string());
-        auto img = read_tiff(file, path);
-        if (auto metadata = img.metadata())
-            metadata->path = path;
-        return img;
+        return read_tiff(file, path);
     }
 
     Image read_tiff(const void* buffer, size_t size)

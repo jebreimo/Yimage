@@ -68,26 +68,26 @@ namespace Yimage
 
     Image read_image(const std::filesystem::path& path)
     {
-        std::ifstream file(path, std::ios::binary);
+        std::ifstream stream(path, std::ios::binary);
         char buffer[16];
-        file.read(buffer, 16);
+        stream.read(buffer, 16);
 
-        switch (get_image_format(buffer, size_t(file.gcount())))
+        switch (get_image_format(buffer, size_t(stream.gcount())))
         {
 #ifdef YIMAGE_JPEG
         case ImageFormat::JPEG:
-            file.close();
+            stream.close();
             return read_jpeg(path);
 #endif
 #ifdef YIMAGE_PNG
         case ImageFormat::PNG:
-            file.seekg(0, std::ios::beg);
-            return read_png(file);
+            stream.seekg(0, std::ios::beg);
+            return read_png(stream);
 #endif
 #ifdef YIMAGE_TIFF
         case ImageFormat::TIFF:
-            file.seekg(0, std::ios::beg);
-            return read_tiff(file, path);
+            stream.seekg(0, std::ios::beg);
+            return read_tiff(stream, path);
 #endif
         case ImageFormat::UNKNOWN:
         default:

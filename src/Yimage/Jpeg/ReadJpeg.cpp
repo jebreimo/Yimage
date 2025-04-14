@@ -87,9 +87,24 @@ namespace Yimage
         }
     }
 
+    namespace
+    {
+#ifdef _WIN32
+        FILE* my_fopen(const std::filesystem::path& path, const char* mode)
+        {
+            return _wfopen(path.c_str(), mode);
+        }
+#else
+        FILE* my_fopen(const std::filesystem::path& path, const char* mode)
+        {
+            return fopen(path.c_str(), mode);
+        }
+#endif
+    }
+
     Image read_jpeg(const std::filesystem::path& path)
     {
-        UniqueFile file(fopen(path.c_str(), "rb"));
+        UniqueFile file(my_fopen(path.c_str(), "rb"));
         if (!file)
             YIMAGE_THROW("Could not open file: " + path.string());
         auto img = read_jpeg(file.get());

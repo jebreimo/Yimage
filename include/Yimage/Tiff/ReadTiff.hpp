@@ -16,11 +16,12 @@ namespace Yimage
      * @brief Reads a TIFF image from a stream.
      *
      * @param stream The stream to read the image from.
-     * @param name The name of the stream. Used for error messages.
+     * @param path The name of the stream. Used for error messages.
      * @return The image read from the stream.
      */
     [[nodiscard]] Image
-    read_tiff(std::istream& stream, const std::string& name = "TIFF stream");
+    read_tiff(std::istream& stream,
+              const std::filesystem::path& path = "TIFF stream");
 
     [[nodiscard]] Image read_tiff(const std::filesystem::path& path);
 
