@@ -157,9 +157,9 @@ namespace Yimage
             break;
         }
 
-        YIMAGE_THROW("Unsupported combination of color_type, "
-            + std::to_string(color_type) + ", and bit_depth, "
-            + std::to_string(bit_depth) + ".");
+        YIMAGE_THROW("Unsupported combination of color_type ("
+            + std::to_string(color_type) + ") and bit_depth ("
+            + std::to_string(bit_depth) + ").");
     }
 
     Image read_png(const PngHandle& png)

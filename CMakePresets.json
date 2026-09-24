@@ -11,7 +11,7 @@
       "name": "debug",
       "inherits": "vcpkg-base",
       "displayName": "Debug",
-      "binaryDir": "${sourceDir}/build/cmake-build-debug",
+      "binaryDir": "${sourceDir}/cmake-build-debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug"
       }
@@ -20,7 +20,7 @@
       "name": "release",
       "inherits": "vcpkg-base",
       "displayName": "Release",
-      "binaryDir": "${sourceDir}/build/cmake-build-release",
+      "binaryDir": "${sourceDir}/cmake-build-release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
