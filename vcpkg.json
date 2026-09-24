@@ -1,5 +1,8 @@
 {
-  "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+  "name": "yimage",
+  "version-string": "0.2.5",
+  "license": "0BSD",
+  "builtin-baseline": "dc1232a6e05dcc49703091e83743e3b4df9b9b7c",
   "dependencies": [
     "libpng",
     "tiff",

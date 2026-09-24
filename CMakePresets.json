@@ -2,27 +2,23 @@
   "version": 3,
   "configurePresets": [
     {
-      "name": "vcpkg-base",
-      "hidden": true,
-      "generator": "Ninja",
-      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-    },
-    {
       "name": "debug",
-      "inherits": "vcpkg-base",
       "displayName": "Debug",
+      "generator": "Ninja",
       "binaryDir": "${sourceDir}/cmake-build-debug",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
       }
     },
     {
       "name": "release",
-      "inherits": "vcpkg-base",
       "displayName": "Release",
+      "generator": "Ninja",
       "binaryDir": "${sourceDir}/cmake-build-release",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
       }
     }
   ],
@@ -30,22 +26,24 @@
     {
       "name": "debug",
       "configurePreset": "debug",
-      "displayName": "Debug"
+      "displayName": "Build Debug"
     },
     {
       "name": "release",
       "configurePreset": "release",
-      "displayName": "Release"
+      "displayName": "Build Release"
     }
   ],
   "testPresets": [
     {
       "name": "debug",
-      "configurePreset": "debug"
+      "configurePreset": "debug",
+      "displayName": "Test Debug"
     },
     {
       "name": "release",
-      "configurePreset": "release"
+      "configurePreset": "release",
+      "displayName": "Test Release"
     }
   ]
 }
