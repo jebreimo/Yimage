@@ -73,6 +73,7 @@ add_library(Yimage
     src/Yimage/Rgba8.cpp
     src/Yimage/FileUtilities.hpp
     src/Yimage/ReadOnlyStreamBuffer.hpp
+        include/Yimage/AllowedPixelType.hpp
 )
 
 include(GNUInstallDirs)
