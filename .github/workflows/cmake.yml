@@ -46,6 +46,6 @@ jobs:
         uses: lukka/run-cmake@v10
         with:
           cmakeListsTxtPath: '${{ github.workspace }}/CMakeLists.txt'
-          configurePreset: vcpkg
-          buildPreset: vcpkg
-          testPreset: vcpkg
+          configurePreset: release
+          buildPreset: release
+          testPreset: release
