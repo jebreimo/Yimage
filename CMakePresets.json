@@ -2,24 +2,50 @@
   "version": 3,
   "configurePresets": [
     {
-      "name": "vcpkg",
+      "name": "vcpkg-base",
+      "hidden": true,
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build",
       "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+    },
+    {
+      "name": "debug",
+      "inherits": "vcpkg-base",
+      "displayName": "Debug",
+      "binaryDir": "${sourceDir}/build/cmake-build-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "release",
+      "inherits": "vcpkg-base",
+      "displayName": "Release",
+      "binaryDir": "${sourceDir}/build/cmake-build-release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
     }
   ],
   "buildPresets": [
     {
-      "name": "vcpkg",
-      "configurePreset": "vcpkg",
-      "displayName": "Build vcpkg",
-      "description": "Build vcpkg Configurations"
+      "name": "debug",
+      "configurePreset": "debug",
+      "displayName": "Debug"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release",
+      "displayName": "Release"
     }
   ],
   "testPresets": [
     {
-      "name": "vcpkg",
-      "configurePreset": "vcpkg"
+      "name": "debug",
+      "configurePreset": "debug"
+    },
+    {
+      "name": "release",
+      "configurePreset": "release"
     }
   ]
 }
