@@ -12,7 +12,6 @@ jobs:
         os: [ ubuntu-latest, macos-latest, windows-latest ]
 
     env:
-      VCPKG_ROOT: ${{ github.workspace }}/../vcpkg
       VCPKG_BINARY_SOURCES: clear;files,${{ github.workspace }}/../vcpkg-cache,readwrite
 
     steps:
@@ -26,15 +25,20 @@ jobs:
         if: runner.os == 'Windows'
 
       # A full clone, so vcpkg can resolve the builtin-baseline in vcpkg.json.
+      # VCPKG_ROOT is set through GITHUB_ENV, after msvc-dev-cmd, because
+      # vcvars points VCPKG_ROOT at the vcpkg bundled with Visual Studio.
       - name: Set up vcpkg
         shell: bash
+        env:
+          VCPKG_DIR: ${{ github.workspace }}/../vcpkg
         run: |
-          git clone https://github.com/microsoft/vcpkg.git "$VCPKG_ROOT"
+          git clone https://github.com/microsoft/vcpkg.git "$VCPKG_DIR"
           if [ "$RUNNER_OS" = "Windows" ]; then
-            "$VCPKG_ROOT/bootstrap-vcpkg.bat" -disableMetrics
+            "$VCPKG_DIR/bootstrap-vcpkg.bat" -disableMetrics
           else
-            "$VCPKG_ROOT/bootstrap-vcpkg.sh" -disableMetrics
+            "$VCPKG_DIR/bootstrap-vcpkg.sh" -disableMetrics
           fi
+          echo "VCPKG_ROOT=$VCPKG_DIR" >> "$GITHUB_ENV"
           mkdir -p "${{ github.workspace }}/../vcpkg-cache"
 
       # Caches the built packages, so dependencies are only rebuilt when
