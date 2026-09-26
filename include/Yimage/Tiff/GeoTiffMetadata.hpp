@@ -17,7 +17,12 @@ namespace Yimage
 
         std::array<double, 3> model_pixel_scale = {};
         std::array<double, 6> model_tie_point = {};
-        std::array<double, 16> model_transformation = {};
+        std::array<double, 16> model_transformation = {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        };
 
         std::string citation;
         std::string geog_citation;

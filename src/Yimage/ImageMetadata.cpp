@@ -14,12 +14,27 @@ namespace Yimage
     {
     }
 
-    ImageMetadata::~ImageMetadata()
-    {
-    }
+    ImageMetadata::~ImageMetadata() = default;
 
     ImageMetadata* ImageMetadata::clone() const
     {
         return new ImageMetadata(*this);
+    }
+
+    std::string to_string(ImageFormat format)
+    {
+        switch (format)
+        {
+        case ImageFormat::UNKNOWN:
+            return "UNKNOWN";
+        case ImageFormat::JPEG:
+            return "JPEG";
+        case ImageFormat::PNG:
+            return "PNG";
+        case ImageFormat::TIFF:
+            return "TIFF";
+        default:
+            return "INVALID";
+        }
     }
 }

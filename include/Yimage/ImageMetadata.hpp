@@ -18,6 +18,8 @@ namespace Yimage
         TIFF
     };
 
+    std::string to_string(ImageFormat format);
+
     class ImageMetadata
     {
     public:
@@ -25,7 +27,7 @@ namespace Yimage
 
         virtual ~ImageMetadata();
 
-        virtual ImageMetadata* clone() const;
+        [[nodiscard]] virtual ImageMetadata* clone() const;
 
         std::filesystem::path path;
         ImageFormat format = ImageFormat::UNKNOWN;

@@ -11,14 +11,19 @@ project(imginfo)
 include(FetchContent)
 
 FetchContent_Declare(argos
-        GIT_REPOSITORY "https://github.com/jebreimo/Argos.git"
-        GIT_TAG "v1.7.2")
+    GIT_REPOSITORY "https://github.com/jebreimo/Argos.git"
+    GIT_TAG "v1.7.2")
 
-FetchContent_MakeAvailable(argos)
+FetchContent_Declare(yson
+    GIT_REPOSITORY "https://github.com/jebreimo/Yson.git"
+    GIT_TAG "v1.5.0")
+
+FetchContent_MakeAvailable(argos yson)
 
 add_executable(imginfo
-        imginfo.cpp)
+    imginfo.cpp)
 
 target_link_libraries(imginfo
-        Argos::Argos
-        Yimage::Yimage)
+    Argos::Argos
+    Yson::Yson
+    Yimage::Yimage)
