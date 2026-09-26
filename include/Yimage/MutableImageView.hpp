@@ -22,7 +22,8 @@ namespace Yimage
                          size_t width,
                          size_t height,
                          size_t row_gap_size = 0,
-                         ImageMetadata* metadata = nullptr);
+                         ImageMetadata* metadata = nullptr,
+                         std::vector<Rgba8>* palette = nullptr);
 
         explicit constexpr operator bool() const
         {
@@ -54,6 +55,12 @@ namespace Yimage
         constexpr unsigned char* data() const
         {
             return buffer_;
+        }
+
+        [[nodiscard]]
+        constexpr std::vector<Rgba8>* palette() const
+        {
+            return palette_;
         }
 
         [[nodiscard]]
@@ -119,6 +126,7 @@ namespace Yimage
         PixelType pixel_type_ = PixelType::NONE;
         unsigned char* buffer_ = nullptr;
         ImageMetadata* metadata_ = nullptr;
+        std::vector<Rgba8>* palette_ = nullptr;
     };
 
     bool operator==(const MutableImageView& a, const MutableImageView& b);

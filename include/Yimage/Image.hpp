@@ -111,6 +111,13 @@ namespace Yimage
         MutableImageView mutable_subimage(size_t x, size_t y,
                                           size_t width, size_t height);
 
+        [[nodiscard]]
+        const std::vector<Rgba8>& palette() const;
+
+        [[nodiscard]]
+        std::vector<Rgba8>& palette();
+
+        [[nodiscard]]
         std::unique_ptr<unsigned char> release();
     private:
         size_t width_ = 0;
@@ -119,5 +126,6 @@ namespace Yimage
         PixelType pixel_type_ = PixelType::NONE;
         std::unique_ptr<unsigned char> buffer_;
         std::unique_ptr<ImageMetadata> metadata_;
+        std::vector<Rgba8> palette_;
     };
 }

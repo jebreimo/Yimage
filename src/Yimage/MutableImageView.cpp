@@ -21,7 +21,8 @@ namespace Yimage
         : MutableImageView(img.data(), img.pixel_type(),
                            img.width(), img.height(),
                            img.row_gap_size(),
-                           img.metadata())
+                           img.metadata(),
+                           &img.palette())
     {}
 
     MutableImageView::MutableImageView(unsigned char* buffer,
@@ -29,13 +30,16 @@ namespace Yimage
                                        size_t width,
                                        size_t height,
                                        size_t row_gap_size,
-                                       ImageMetadata* metadata)
+                                       ImageMetadata* metadata,
+                                       std::vector<Rgba8>* palette)
         : width_(width),
           height_(height),
           gap_size_(row_gap_size),
           pixel_size_(get_pixel_size(pixel_type)),
           pixel_type_(pixel_type),
-          buffer_(buffer)
+          buffer_(buffer),
+          metadata_(metadata),
+          palette_(palette)
     {
         if (pixel_size_ % 8 != 0 && (width_ * pixel_size_) % 8)
             YIMAGE_THROW("The size of a row of pixels must be divisible by 8.");
@@ -60,8 +64,7 @@ namespace Yimage
 
     void set_rgba8(const MutableImageView& image, size_t x, size_t y, Rgba8 rgba)
     {
-        auto bytes = get_color_bytes(rgba, image.pixel_type());
-        std::copy(bytes.bytes, bytes.bytes + bytes.size,
-                  image.pixel_pointer(x, y));
+        auto [bytes, size] = get_color_bytes(rgba, image.pixel_type());
+        std::copy_n(bytes, size, image.pixel_pointer(x, y));
     }
 }

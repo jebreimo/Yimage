@@ -8,6 +8,7 @@
 #pragma once
 #include <cstdint>
 #include <iosfwd>
+#include <span>
 #include <utility>
 #include "ImageMetadata.hpp"
 #include "PixelType.hpp"
@@ -32,7 +33,8 @@ namespace Yimage
                   size_t width,
                   size_t height,
                   size_t row_gap_size = 0,
-                  const ImageMetadata* metadata = nullptr);
+                  const ImageMetadata* metadata = nullptr,
+                  std::span<const Rgba8> palette = {});
 
         explicit constexpr operator bool() const
         {
@@ -116,6 +118,12 @@ namespace Yimage
         }
 
         [[nodiscard]]
+        std::span<const Rgba8> palette() const
+        {
+            return palette_;
+        }
+
+        [[nodiscard]]
         ImageView subimage(size_t x, size_t y) const;
 
         [[nodiscard]]
@@ -129,6 +137,7 @@ namespace Yimage
         PixelType pixel_type_ = PixelType::NONE;
         const unsigned char* buffer_ = nullptr;
         const ImageMetadata* metadata_ = nullptr;
+        std::span<const Rgba8> palette_;
     };
 
     bool operator==(const ImageView& a, const ImageView& b);

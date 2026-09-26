@@ -11,11 +11,11 @@ project(YimageTest)
 include(FetchContent)
 FetchContent_Declare(catch
     GIT_REPOSITORY "https://github.com/catchorg/Catch2.git"
-    GIT_TAG "v3.4.0"
+    GIT_TAG "v3.16.0"
 )
 FetchContent_Declare(cppembed
     GIT_REPOSITORY "https://github.com/jebreimo/cppembed.git"
-    GIT_TAG "v0.1.0"
+    GIT_TAG "v0.1.10"
 )
 FetchContent_MakeAvailable(catch cppembed)
 

@@ -52,7 +52,8 @@ namespace Yimage
           height_(rhs.height()),
           gap_size_(rhs.gap_size_),
           pixel_type_(rhs.pixel_type()),
-          metadata_(rhs.metadata_ ? rhs.metadata_->clone() : nullptr)
+          metadata_(rhs.metadata_ ? rhs.metadata_->clone() : nullptr),
+          palette_(rhs.palette())
     {
         const auto size = this->size();
         if (size)
@@ -67,7 +68,8 @@ namespace Yimage
           height_(rhs.height()),
           pixel_type_(rhs.pixel_type()),
           buffer_(rhs.release()),
-          metadata_(std::move(rhs.metadata_))
+          metadata_(std::move(rhs.metadata_)),
+          palette_(std::move(rhs.palette_))
     {
     }
 
@@ -90,6 +92,7 @@ namespace Yimage
             buffer_.reset();
         }
         metadata_.reset(rhs.metadata_ ? rhs.metadata_->clone() : nullptr);
+        palette_ = rhs.palette();
         return *this;
     }
 
@@ -101,6 +104,7 @@ namespace Yimage
         pixel_type_ = rhs.pixel_type();
         buffer_ = rhs.release();
         metadata_ = std::move(rhs.metadata_);
+        palette_ = std::move(rhs.palette_);
         return *this;
     }
 
@@ -228,10 +232,21 @@ namespace Yimage
         return make_subimage<MutableImageView>(*this, x, y, width, height);
     }
 
+    const std::vector<Rgba8>& Image::palette() const
+    {
+        return palette_;
+    }
+
+    std::vector<Rgba8>& Image::palette()
+    {
+        return palette_;
+    }
+
     std::unique_ptr<unsigned char> Image::release()
     {
         width_ = height_ = gap_size_ = 0;
         pixel_type_ = PixelType::NONE;
+        palette_.clear();
         return std::move(buffer_);
     }
 }

@@ -57,57 +57,42 @@ namespace Yimage
             result.size = 4;
             break;
         case PixelType::MONO_16:
-        {
             result.bytes[0] = result.bytes[1] = get_max(rgba);
             result.size = 2;
             break;
-        }
         case PixelType::ALPHA_MONO_16:
-        {
             result.bytes[0] = result.bytes[1] = get_max(rgba);
             result.bytes[2] = result.bytes[3] = rgba.a;
             result.size = 4;
             break;
-        }
         case PixelType::MONO_ALPHA_16:
-        {
             result.bytes[0] = result.bytes[1] = rgba.a;
             result.bytes[2] = result.bytes[3] = get_max(rgba);
             result.size = 4;
             break;
-        }
         case PixelType::RGB_16:
-        {
             result.bytes[0] = result.bytes[1] = rgba.r;
             result.bytes[2] = result.bytes[3] = rgba.g;
             result.bytes[4] = result.bytes[5] = rgba.b;
             result.size = 6;
             break;
-        }
         case PixelType::ARGB_16:
-        {
             result.bytes[0] = result.bytes[1] = rgba.a;
             result.bytes[2] = result.bytes[3] = rgba.r;
             result.bytes[4] = result.bytes[5] = rgba.g;
             result.bytes[6] = result.bytes[7] = rgba.b;
-            result.size = 6;
+            result.size = 8;
             break;
-        }
         case PixelType::RGBA_16:
-        {
             result.bytes[0] = result.bytes[1] = rgba.r;
             result.bytes[2] = result.bytes[3] = rgba.g;
             result.bytes[4] = result.bytes[5] = rgba.b;
             result.bytes[6] = result.bytes[7] = rgba.a;
             result.size = 8;
             break;
-        }
-        case PixelType::MONO_1:
-        case PixelType::MONO_2:
-        case PixelType::MONO_4:
         default:
             YIMAGE_THROW("Unsupported pixel type: "
-                         + std::to_string(int(pixel_type)));
+                + std::to_string(int(pixel_type)));
         }
         return result;
     }

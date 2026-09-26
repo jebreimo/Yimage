@@ -38,6 +38,7 @@ TEST_CASE("test get_rgba8")
     SECTION("MONO_4")
     {
         ImageView img(buffer.data(), PixelType::MONO_4, 8, 8);
+        REQUIRE(get_rgba8(img, 6, 3) == Rgba8{0xFF, 0xFF, 0xFF, 0xFF});
         REQUIRE(get_rgba8(img, 4, 6) == Rgba8{0xAA, 0xAA, 0xAA, 0xFF});
         REQUIRE(get_rgba8(img, 5, 6) == Rgba8{0x88, 0x88, 0x88, 0xFF});
     }

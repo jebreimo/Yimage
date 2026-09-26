@@ -7,6 +7,7 @@
 //****************************************************************************
 #pragma once
 #include <cstddef>
+#include <string>
 
 namespace Yimage
 {
@@ -19,17 +20,23 @@ namespace Yimage
         MONO_8,
         MONO_16,
         MONO_FLOAT_32,
-        ALPHA_MONO_8,
         MONO_ALPHA_8,
-        ALPHA_MONO_16,
         MONO_ALPHA_16,
+        ALPHA_MONO_8,
+        ALPHA_MONO_16,
         RGB_8,
         RGB_16,
-        ARGB_8,
         RGBA_8,
+        RGBA_16,
+        ARGB_8,
         ARGB_16,
-        RGBA_16
+        INDEX_1,
+        INDEX_2,
+        INDEX_4,
+        INDEX_8,
     };
 
     size_t get_pixel_size(PixelType type);
+
+    std::string to_string(PixelType type);
 }

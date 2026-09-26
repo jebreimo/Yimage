@@ -12,6 +12,9 @@
 const void* THUMB_UP_PNG = THUMB_UP_PNG_RAW;
 const size_t THUMB_UP_PNG_SIZE = sizeof(THUMB_UP_PNG_RAW) - 1;
 
+const void* THUMB_UP_PALETTE_PNG = THUMB_UP_PALETTE_PNG_RAW;
+const size_t THUMB_UP_PALETTE_PNG_SIZE = sizeof(THUMB_UP_PALETTE_PNG_RAW) - 1;
+
 const void* CITY_JPG = CITY_JPG_RAW;
 const size_t CITY_JPG_SIZE = sizeof(CITY_JPG_RAW) - 1;
 
