@@ -7,7 +7,6 @@
 //****************************************************************************
 #pragma once
 #include <cstdint>
-#include <iosfwd>
 #include <span>
 #include <utility>
 #include "ImageMetadata.hpp"
