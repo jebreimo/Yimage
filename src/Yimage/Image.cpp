@@ -15,7 +15,7 @@ namespace Yimage
 {
     Image::Image() = default;
 
-    Image::Image(std::unique_ptr<unsigned char> buffer,
+    Image::Image(std::unique_ptr<unsigned char[]> buffer,
                  PixelType pixel_type,
                  size_t width, size_t height,
                  size_t row_gap_size)
@@ -67,7 +67,7 @@ namespace Yimage
         : width_(rhs.width()),
           height_(rhs.height()),
           pixel_type_(rhs.pixel_type()),
-          buffer_(rhs.release()),
+          buffer_(std::move(rhs.buffer_)),
           metadata_(std::move(rhs.metadata_)),
           palette_(std::move(rhs.palette_))
     {
@@ -102,7 +102,7 @@ namespace Yimage
         height_ = rhs.height();
         gap_size_ = rhs.gap_size_;
         pixel_type_ = rhs.pixel_type();
-        buffer_ = rhs.release();
+        buffer_ = std::move((rhs.buffer_));
         metadata_ = std::move(rhs.metadata_);
         palette_ = std::move(rhs.palette_);
         return *this;
@@ -242,11 +242,14 @@ namespace Yimage
         return palette_;
     }
 
-    std::unique_ptr<unsigned char> Image::release()
+    std::tuple<
+        std::unique_ptr<unsigned char[]>,
+        std::unique_ptr<ImageMetadata>,
+        std::vector<Rgba8>>
+    Image::release()
     {
         width_ = height_ = gap_size_ = 0;
         pixel_type_ = PixelType::NONE;
-        palette_.clear();
-        return std::move(buffer_);
+        return {std::move(buffer_), std::move(metadata_), std::move(palette_)};
     }
 }

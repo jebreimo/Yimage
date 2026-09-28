@@ -18,7 +18,7 @@ namespace Yimage
     public:
         Image();
 
-        Image(std::unique_ptr<unsigned char> buffer,
+        Image(std::unique_ptr<unsigned char[]> buffer,
               PixelType pixel_type,
               size_t width, size_t height, size_t row_gap_size = 0);
 
@@ -118,13 +118,17 @@ namespace Yimage
         std::vector<Rgba8>& palette();
 
         [[nodiscard]]
-        std::unique_ptr<unsigned char> release();
+        std::tuple<
+            std::unique_ptr<unsigned char[]>,
+            std::unique_ptr<ImageMetadata>,
+            std::vector<Rgba8>>
+        release();
     private:
         size_t width_ = 0;
         size_t height_ = 0;
         size_t gap_size_ = 0;
         PixelType pixel_type_ = PixelType::NONE;
-        std::unique_ptr<unsigned char> buffer_;
+        std::unique_ptr<unsigned char[]> buffer_;
         std::unique_ptr<ImageMetadata> metadata_;
         std::vector<Rgba8> palette_;
     };

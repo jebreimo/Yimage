@@ -44,7 +44,7 @@ namespace Yimage
             auto row_size = data.info.output_width
                             * data.info.output_components;
             auto* buffer = (*data.info.mem->alloc_sarray)
-                (j_common_ptr(&data.info), JPOOL_IMAGE, row_size, 1);
+                (reinterpret_cast<j_common_ptr>(&data.info), JPOOL_IMAGE, row_size, 1);
             jpeg_start_decompress(&data.info);
 
             Image image(data.info.output_components == 3
@@ -92,7 +92,10 @@ namespace Yimage
 #ifdef _WIN32
         FILE* my_fopen(const std::filesystem::path& path)
         {
-            return _wfopen(path.c_str(), L"rb");
+            FILE* file = nullptr;
+            if (const auto result = _wfopen_s(&file, path.c_str(), L"rb"); result != 0)
+                YIMAGE_THROW("Could not open file: " + path.string() + " (error code: " + std::to_string(result) + ")");
+            return file;
         }
 #else
         FILE* my_fopen(const std::filesystem::path& path)
