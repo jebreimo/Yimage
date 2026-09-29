@@ -20,7 +20,16 @@ namespace
     {
         using namespace argos;
         return ArgumentParser()
-            .add(Argument("FILE").help("An image file."))
+            .add(Arg("FILE").help("An image file."))
+            .add(Opt("-a", "--allow")
+                .argument("PIXEL_TYPE")
+                .operation(OptionOperation::APPEND)
+                .help("Allow the given pixel type."))
+            .text(TextId::FINAL_TEXT,
+                "Allowed pixel types are: MONO_1, MONO_2, MONO_4, MONO_8, MONO_16, "
+                "MONO_FLOAT_32, MONO_ALPHA_8, MONO_ALPHA_16, ALPHA_MONO_8, "
+                "ALPHA_MONO_16, RGB_8, RGB_16, RGBA_8, RGBA_16, ARGB_8, ARGB_16, "
+                "INDEX_1, INDEX_2, INDEX_4 and INDEX_8.")
             .parse(argc, argv);
     }
 
@@ -205,11 +214,17 @@ namespace
 }
 int main(int argc, char* argv[])
 {
-    const auto args = parse_arguments(argc, argv);
-
     try
     {
-        Yimage::Image image = Yimage::read_image(args.value("FILE").as_string());
+        const auto args = parse_arguments(argc, argv);
+        const auto pixel_types = args.values("--allow").as_strings();
+        std::vector<Yimage::PixelType> allowed_pixel_types;
+        if (!pixel_types.empty())
+        {
+            for (const auto& pixel_type : pixel_types)
+                allowed_pixel_types.push_back(Yimage::to_pixel_type(pixel_type));
+        }
+        Yimage::Image image = Yimage::read_image(args.value("FILE").as_string(), allowed_pixel_types);
         Yson::JsonWriter writer(std::cout);
         write(writer, image);
         std::cout << std::endl;

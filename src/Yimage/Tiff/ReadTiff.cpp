@@ -12,6 +12,7 @@
 #include "Yimage/Tiff/TiffMetadata.hpp"
 #include "Yimage/YimageException.hpp"
 #include "../FileUtilities.hpp"
+#include "../ImageUtilities.hpp"
 #include "../ReadOnlyStreamBuffer.hpp"
 #include "OpenTiff.hpp"
 #include "ReadGeoTiffMetadata.hpp"
@@ -155,7 +156,8 @@ namespace Yimage
     }
 
     Image read_tiff(std::istream& stream,
-                    const std::filesystem::path& path)
+                    const std::filesystem::path& path,
+                    std::span<const PixelType> allowed_pixel_types)
     {
         std::string stream_name = path.string();
         auto tiff = open_tiff(stream, stream_name.c_str());
@@ -167,6 +169,7 @@ namespace Yimage
         Image image;
         if (metadata->bits_per_sample <= 16)
         {
+            check_pixel_type(PixelType::RGBA_8, allowed_pixel_types);
             image = Image(PixelType::RGBA_8, metadata->width, metadata->height);
             if (!image)
                 return {};
@@ -186,6 +189,7 @@ namespace Yimage
         {
             if (metadata->tiles)
             {
+                check_pixel_type(PixelType::MONO_FLOAT_32, allowed_pixel_types);
                 image = read_float32_tiles(tiff.get(), *metadata);
             }
         }
@@ -196,19 +200,21 @@ namespace Yimage
         return image;
     }
 
-    Image read_tiff(const std::filesystem::path& path)
+    Image read_tiff(const std::filesystem::path& path,
+                    std::span<const PixelType> allowed_pixel_types)
     {
         std::ifstream file(path, std::ios::binary);
         if (!file)
             YIMAGE_THROW("Could not open file: " + path.string());
-        return read_tiff(file, path);
+        return read_tiff(file, path, allowed_pixel_types);
     }
 
-    Image read_tiff(const void* buffer, size_t size)
+    Image read_tiff(const void* buffer, size_t size,
+                    std::span<const PixelType> allowed_pixel_types)
     {
         ReadOnlyStreamBuffer stream_buffer(static_cast<const char*>(buffer), size);
         std::istream stream(&stream_buffer);
-        return read_tiff(stream);
+        return read_tiff(stream, "TIFF stream", allowed_pixel_types);
     }
 
     std::unique_ptr<TiffMetadata> read_tiff_metadata(const std::filesystem::path& path)

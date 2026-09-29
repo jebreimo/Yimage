@@ -8,6 +8,10 @@
 #pragma once
 #include <algorithm>
 #include <cstddef>
+#include <span>
+#include <string>
+#include "Yimage/PixelType.hpp"
+#include "Yimage/YimageException.hpp"
 
 namespace Yimage
 {
@@ -25,5 +29,39 @@ namespace Yimage
         auto buffer = img.data() + y * img.row_size()
                       + x * img.pixel_size() / 8;
         return {buffer, img.pixel_type(), width, height, gap_size, img.metadata()};
+    }
+
+    [[nodiscard]]
+    inline bool has_pixel_type(std::span<const PixelType> pixel_types,
+                               PixelType pixel_type)
+    {
+        return std::ranges::find(pixel_types, pixel_type) != pixel_types.end();
+    }
+
+    /**
+     * @brief Throws YimageException if @a pixel_type isn't in
+     *  @a allowed_pixel_types.
+     *
+     * An empty @a allowed_pixel_types accepts all pixel types.
+     */
+    inline void check_pixel_type(PixelType pixel_type,
+                                 std::span<const PixelType> allowed_pixel_types)
+    {
+        if (allowed_pixel_types.empty()
+            || has_pixel_type(allowed_pixel_types, pixel_type))
+        {
+            return;
+        }
+
+        std::string allowed;
+        for (auto type : allowed_pixel_types)
+        {
+            if (!allowed.empty())
+                allowed += ", ";
+            allowed += to_string(type);
+        }
+        throw YimageException("The image's pixel type (" + to_string(pixel_type)
+                              + ") is not among the allowed pixel types: "
+                              + allowed + ".");
     }
 }

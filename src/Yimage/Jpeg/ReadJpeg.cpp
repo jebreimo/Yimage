@@ -11,6 +11,7 @@
 #include <jpeglib.h>
 #include "Yimage/YimageException.hpp"
 #include "../FileUtilities.hpp"
+#include "../ImageUtilities.hpp"
 
 namespace Yimage
 {
@@ -37,19 +38,23 @@ namespace Yimage
             jpeg_create_decompress(&data.info);
         }
 
-        Image read_image(JpegData& data)
+        Image read_image(JpegData& data,
+                         std::span<const PixelType> allowed_pixel_types)
         {
             jpeg_read_header(&data.info, TRUE);
             jpeg_calc_output_dimensions(&data.info);
+            const auto pixel_type = data.info.output_components == 3
+                                        ? PixelType::RGB_8
+                                        : PixelType::MONO_8;
+            check_pixel_type(pixel_type, allowed_pixel_types);
+
             auto row_size = data.info.output_width
                             * data.info.output_components;
             auto* buffer = (*data.info.mem->alloc_sarray)
                 (reinterpret_cast<j_common_ptr>(&data.info), JPOOL_IMAGE, row_size, 1);
             jpeg_start_decompress(&data.info);
 
-            Image image(data.info.output_components == 3
-                                  ? PixelType::RGB_8
-                                  : PixelType::MONO_8,
+            Image image(pixel_type,
                         data.info.output_width,
                         data.info.output_height);
 
@@ -71,14 +76,15 @@ namespace Yimage
         }
     }
 
-    Image read_jpeg(FILE* file)
+    Image read_jpeg(FILE* file,
+                    std::span<const PixelType> allowed_pixel_types)
     {
         JpegData data = {};
         try
         {
             create_decompress(data);
             jpeg_stdio_src(&data.info, file);
-            return read_image(data);
+            return read_image(data, allowed_pixel_types);
         }
         catch (std::exception&)
         {
@@ -105,18 +111,20 @@ namespace Yimage
 #endif
     }
 
-    Image read_jpeg(const std::filesystem::path& path)
+    Image read_jpeg(const std::filesystem::path& path,
+                    std::span<const PixelType> allowed_pixel_types)
     {
         UniqueFile file(my_fopen(path));
         if (!file)
             YIMAGE_THROW("Could not open file: " + path.string());
-        auto img = read_jpeg(file.get());
+        auto img = read_jpeg(file.get(), allowed_pixel_types);
         if (auto metadata = img.metadata())
             metadata->path = path;
         return img;
     }
 
-    Image read_jpeg(const void* buffer, size_t size)
+    Image read_jpeg(const void* buffer, size_t size,
+                    std::span<const PixelType> allowed_pixel_types)
     {
         JpegData data = {};
         try
@@ -124,7 +132,7 @@ namespace Yimage
             create_decompress(data);
             const auto* uc_buffer = static_cast<const unsigned char*>(buffer);
             jpeg_mem_src(&data.info, uc_buffer, size);
-            return read_image(data);
+            return read_image(data, allowed_pixel_types);
         }
         catch (std::exception&)
         {

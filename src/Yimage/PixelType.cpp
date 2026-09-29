@@ -7,6 +7,8 @@
 //****************************************************************************
 #include "Yimage/PixelType.hpp"
 
+#include "Yimage/YimageException.hpp"
+
 namespace Yimage
 {
     size_t get_pixel_size(PixelType type)
@@ -75,5 +77,32 @@ namespace Yimage
         default:
             return "UNKNOWN:" + std::to_string(static_cast<int>(type));
         }
+    }
+
+    PixelType to_pixel_type(const std::string& str)
+    {
+        if (str == "NONE") return PixelType::NONE;
+        if (str == "MONO_1") return PixelType::MONO_1;
+        if (str == "MONO_2") return PixelType::MONO_2;
+        if (str == "MONO_4") return PixelType::MONO_4;
+        if (str == "MONO_8") return PixelType::MONO_8;
+        if (str == "MONO_16") return PixelType::MONO_16;
+        if (str == "MONO_FLOAT_32") return PixelType::MONO_FLOAT_32;
+        if (str == "MONO_ALPHA_8") return PixelType::MONO_ALPHA_8;
+        if (str == "MONO_ALPHA_16") return PixelType::MONO_ALPHA_16;
+        if (str == "ALPHA_MONO_8") return PixelType::ALPHA_MONO_8;
+        if (str == "ALPHA_MONO_16") return PixelType::ALPHA_MONO_16;
+        if (str == "RGB_8") return PixelType::RGB_8;
+        if (str == "RGB_16") return PixelType::RGB_16;
+        if (str == "RGBA_8") return PixelType::RGBA_8;
+        if (str == "RGBA_16") return PixelType::RGBA_16;
+        if (str == "ARGB_8") return PixelType::ARGB_8;
+        if (str == "ARGB_16") return PixelType::ARGB_16;
+        if (str == "INDEX_1") return PixelType::INDEX_1;
+        if (str == "INDEX_2") return PixelType::INDEX_2;
+        if (str == "INDEX_4") return PixelType::INDEX_4;
+        if (str == "INDEX_8") return PixelType::INDEX_8;
+
+        YIMAGE_THROW("Unknown pixel type: '" + str + "'");
     }
 }

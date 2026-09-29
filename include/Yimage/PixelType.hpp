@@ -39,4 +39,6 @@ namespace Yimage
     size_t get_pixel_size(PixelType type);
 
     std::string to_string(PixelType type);
+
+    PixelType to_pixel_type(const std::string& str);
 }
