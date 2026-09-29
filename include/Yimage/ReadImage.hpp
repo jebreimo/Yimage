@@ -24,7 +24,11 @@ namespace Yimage
      */
     [[nodiscard]] ImageFormat get_image_format(const void* buffer, size_t size);
 
-    [[nodiscard]] Image read_image(const std::filesystem::path& path);
+    [[nodiscard]]
+    Image read_image(const std::filesystem::path& path,
+                     std::span<const PixelType> allowed_pixel_types = {});
 
-    [[nodiscard]] Image read_image(const void* buffer, size_t size);
+    [[nodiscard]]
+    Image read_image(const void* buffer, size_t size,
+                     std::span<const PixelType> allowed_pixel_types = {});
 }

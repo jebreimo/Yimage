@@ -21,11 +21,14 @@ namespace Yimage
      */
     [[nodiscard]] Image
     read_tiff(std::istream& stream,
-              const std::filesystem::path& path = "TIFF stream");
+              const std::filesystem::path& path = "TIFF stream",
+              std::span<const PixelType> allowed_pixel_types = {});
 
-    [[nodiscard]] Image read_tiff(const std::filesystem::path& path);
+    [[nodiscard]] Image read_tiff(const std::filesystem::path& path,
+                                  std::span<const PixelType> allowed_pixel_types = {});
 
-    [[nodiscard]] Image read_tiff(const void* buffer, size_t size);
+    [[nodiscard]] Image read_tiff(const void* buffer, size_t size,
+                                  std::span<const PixelType> allowed_pixel_types = {});
 
     [[nodiscard]] std::unique_ptr<TiffMetadata>
     read_tiff_metadata(const std::filesystem::path& path);

@@ -206,7 +206,61 @@ namespace Yimage
             return result;
         }
 
-        Image read_png(const PngHandle& png)
+        bool has_pixel_type(std::span<const PixelType> pixel_types,
+                            PixelType pixel_type)
+        {
+            return std::ranges::find(pixel_types, pixel_type) != pixel_types.end();
+        }
+
+        void set_transformations(const PngHandle& png,
+                                 std::span<const PixelType> allowed_pixel_types)
+        {
+            if (allowed_pixel_types.empty())
+                return;
+
+            auto color_type = png_get_color_type(png.png_ptr, png.info_ptr);
+            auto bit_depth = png_get_bit_depth(png.png_ptr, png.info_ptr);
+            auto pixel_type = get_pixel_type(color_type, bit_depth);
+
+            if (has_pixel_type(allowed_pixel_types, pixel_type))
+                return;
+
+            if (has_pixel_type(allowed_pixel_types, PixelType::ARGB_8))
+            {
+                if (color_type == PNG_COLOR_TYPE_PALETTE)
+                    png_set_palette_to_rgb(png.png_ptr);
+                if (png_get_valid(png.png_ptr, png.info_ptr, PNG_INFO_tRNS))
+                    png_set_tRNS_to_alpha(png.png_ptr);
+                if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+                    png_set_expand_gray_1_2_4_to_8(png.png_ptr);
+                if (bit_depth == 16)
+                    png_set_strip_16(png.png_ptr);
+                if (color_type == PNG_COLOR_TYPE_GRAY ||
+                    color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+                {
+                    png_set_gray_to_rgb(png.png_ptr);
+                }
+            }
+            else if (has_pixel_type(allowed_pixel_types, PixelType::RGB_8))
+            {
+                if (color_type == PNG_COLOR_TYPE_PALETTE)
+                    png_set_palette_to_rgb(png.png_ptr);
+                if (png_get_valid(png.png_ptr, png.info_ptr, PNG_INFO_tRNS))
+                    png_set_tRNS_to_alpha(png.png_ptr);
+                if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
+                    png_set_expand_gray_1_2_4_to_8(png.png_ptr);
+                if (bit_depth == 16)
+                    png_set_strip_16(png.png_ptr);
+                if (color_type == PNG_COLOR_TYPE_GRAY ||
+                    color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+                {
+                    png_set_gray_to_rgb(png.png_ptr);
+                }
+                png_set_background(png.png_ptr, {0xFF, 0xFF, 0xFF}, PNG_BACKGROUND_GAMMA_SCREEN, 1, 1.0);
+            }
+        }
+
+        Image read_png(const PngHandle& png, std::span<const PixelType> allowed_pixel_types)
         {
             png_read_info(png.png_ptr, png.info_ptr);
 
@@ -217,8 +271,7 @@ namespace Yimage
             metadata->color_type = png_get_color_type(png.png_ptr, png.info_ptr);
             //const auto channels = png_get_channels(png.png_ptr, png.info_ptr);
 
-            Image image(get_pixel_type(metadata->color_type,
-                                       metadata->bit_depth),
+            Image image(get_pixel_type(metadata->color_type, metadata->bit_depth),
                         metadata->width, metadata->height);
 
             std::vector<uint8_t*> row_pointers(metadata->height);
@@ -234,28 +287,31 @@ namespace Yimage
         }
     }
 
-    Image read_png(std::istream& stream)
+    Image read_png(std::istream& stream,
+                   std::span<const PixelType> allowed_pixel_types)
     {
         auto png = create_png_handle();
         png_set_read_fn(png.png_ptr, &stream, user_read_istream_data);
-        return read_png(png);
+        return read_png(png, allowed_pixel_types);
     }
 
-    Image read_png(const std::filesystem::path& path)
+    Image read_png(const std::filesystem::path& path,
+                   std::span<const PixelType> allowed_pixel_types)
     {
         std::ifstream file(path, std::ios::binary);
         if (!file)
             YIMAGE_THROW("Can not open file: " + path.string());
-        auto image = read_png(file);
+        auto image = read_png(file, allowed_pixel_types);
         image.metadata()->path = path;
         return image;
     }
 
-    Image read_png(const void* buffer, size_t size)
+    Image read_png(const void* buffer, size_t size,
+                   std::span<const PixelType> allowed_pixel_types)
     {
         auto png = create_png_handle();
         MemoryReader reader(buffer, size);
         png_set_read_fn(png.png_ptr, &reader, user_read_buffer_data);
-        return read_png(png);
+        return read_png(png, allowed_pixel_types);
     }
 }

@@ -13,13 +13,13 @@
 #include "YimageVersion.hpp"
 
 #ifdef YIMAGE_JPEG
-    #include "Yimage/Jpeg/ReadJpeg.hpp"
+#include "Yimage/Jpeg/ReadJpeg.hpp"
 #endif
 #ifdef YIMAGE_PNG
-    #include "Yimage/Png/ReadPng.hpp"
+#include "Yimage/Png/ReadPng.hpp"
 #endif
 #ifdef YIMAGE_TIFF
-    #include "Yimage/Tiff/ReadTiff.hpp"
+#include "Yimage/Tiff/ReadTiff.hpp"
 #endif
 
 namespace Yimage
@@ -66,7 +66,8 @@ namespace Yimage
         return ImageFormat::UNKNOWN;
     }
 
-    Image read_image(const std::filesystem::path& path)
+    Image read_image(const std::filesystem::path& path,
+                     std::span<const PixelType> allowed_pixel_types)
     {
         std::ifstream stream(path, std::ios::binary);
         char buffer[16];
@@ -77,17 +78,17 @@ namespace Yimage
 #ifdef YIMAGE_JPEG
         case ImageFormat::JPEG:
             stream.close();
-            return read_jpeg(path);
+            return read_jpeg(path, allowed_pixel_types);
 #endif
 #ifdef YIMAGE_PNG
         case ImageFormat::PNG:
             stream.seekg(0, std::ios::beg);
-            return read_png(stream);
+            return read_png(stream, allowed_pixel_types);
 #endif
 #ifdef YIMAGE_TIFF
         case ImageFormat::TIFF:
             stream.seekg(0, std::ios::beg);
-            return read_tiff(stream, path);
+            return read_tiff(stream, path, allowed_pixel_types);
 #endif
         case ImageFormat::UNKNOWN:
         default:
@@ -95,21 +96,22 @@ namespace Yimage
         }
     }
 
-    Image read_image(const void* buffer, size_t size)
+    Image read_image(const void* buffer, size_t size,
+                     std::span<const PixelType> allowed_pixel_types)
     {
         switch (get_image_format(buffer, size))
         {
 #ifdef YIMAGE_JPEG
         case ImageFormat::JPEG:
-            return read_jpeg(buffer, size);
+            return read_jpeg(buffer, size, allowed_pixel_types);
 #endif
 #ifdef YIMAGE_PNG
         case ImageFormat::PNG:
-            return read_png(buffer, size);
+            return read_png(buffer, size, allowed_pixel_types);
 #endif
 #ifdef YIMAGE_TIFF
         case ImageFormat::TIFF:
-            return read_tiff(buffer, size);
+            return read_tiff(buffer, size, allowed_pixel_types);
 #endif
         case ImageFormat::UNKNOWN:
         default:
